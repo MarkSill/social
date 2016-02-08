@@ -106,17 +106,17 @@ public class Instance implements Cloneable {
 		return null;
 	}
 	
-	@Override
-	protected void finalize() {
-		//STOOF GOES HERE
-	}
-	
-	protected void removeChild(Instance child) {
+	public void removeChild(Instance child) {
 		children.remove(child);
 	}
 	
-	protected void addChild(Instance child) {
+	public void addChild(Instance child) {
 		children.add(child);
+	}
+	
+	@Override
+	protected void finalize() {
+		//STOOF GOES HERE
 	}
 
 }

@@ -9,5 +9,9 @@ public class OS {
 	public long time() {
 		return System.currentTimeMillis();
 	}
+	
+	public long nanoTime() {
+		return System.nanoTime();
+	}
 
 }
