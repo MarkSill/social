@@ -11,11 +11,8 @@ public class Instance implements Cloneable {
 	
 	public static InstanceGame game = null;
 	
-	public Instance parent;
+	private Instance parent;
 	public String name;
-	public boolean initialized;
-	
-	private Instance oldParent;
 	
 	private List<Instance> children;
 
@@ -33,10 +30,10 @@ public class Instance implements Cloneable {
 	
 	public Instance(String name, Instance parent) {
 		this.name = name;
-		this.parent = parent;
+		this.setParent(parent);
 		children = new ArrayList<Instance>();
 		NotGameState.instances.add(this);
-		initialized = false;
+		init();
 	}
 	
 	public void init() {
@@ -44,23 +41,11 @@ public class Instance implements Cloneable {
 	}
 	
 	public void update(int delta) {
-		if (oldParent != parent) {
-			if (oldParent != null) {
-				oldParent.removeChild(this);
-			}
-			if (parent != null) {
-				parent.addChild(this);
-			}
-			oldParent = parent;
-		}
-		if (!initialized) {
-			init();
-			initialized = true;
-		}
+		
 	}
 	
 	public void delete() {
-		parent = null;
+		setParent(null);
 		NotGameState.instances.remove(this);
 	}
 	
@@ -92,13 +77,10 @@ public class Instance implements Cloneable {
 	}
 	
 	@Override
-	public Object clone() {
+	public Instance clone() {
 		try {
 			Instance inst = (Instance) super.clone();
 			NotGameState.instances.add(inst);
-			inst.initialized = false;
-			inst.init();
-			inst.oldParent = null;
 			return inst;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
@@ -114,6 +96,46 @@ public class Instance implements Cloneable {
 		children.add(child);
 	}
 	
+	public void clearChildren() {
+		clearChildren(new ArrayList<Object>());
+	}
+	
+	public void clearChildren(List<Object> exceptions) {
+		for (int i = 0; i < children.size(); i++) {
+			Instance inst = children.get(i);
+			boolean found = false;
+			for (Object o : exceptions) {
+				if (o instanceof Instance) {
+					if (inst == o) {
+						found = true;
+					}
+				} else if (o instanceof String) {
+					if (inst.name.equals(o)) {
+						found = true;
+					}
+				}
+			}
+			if (!found) {
+				children.remove(inst);
+				i--;
+			}
+		}
+	}
+	
+	public Instance getParent() {
+		return parent;
+	}
+
+	public void setParent(Instance parent) {
+		if (this.parent != null) {
+			this.parent.removeChild(this);
+		}
+		this.parent = parent;
+		if (parent != null) {
+			parent.addChild(this);
+		}
+	}
+
 	@Override
 	protected void finalize() {
 		//STOOF GOES HERE

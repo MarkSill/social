@@ -23,7 +23,7 @@ public class InstanceGame extends Instance {
 	@Override
 	public void init() {
 		Instance.game = this;
-		new InstanceWorld().parent = this;
+		new InstanceWorld(this);
 	}
 
 }

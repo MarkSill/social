@@ -1,19 +1,21 @@
 package com.marksill.social.instance;
 
+import java.util.List;
+
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.dynamics.World;
+import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.MassType;
-import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Color;
 
-public class InstanceBlock extends Instance {
+public class InstanceBlock extends Instance implements Cloneable {
 	
 	public static final String CLASS_NAME = "Block";
 	
 	public boolean anchored = false;
 	public Vector2 position = new Vector2();
-	public Vector2 size = new Vector2();
 	public Color color = Color.white;
 	public boolean visible = true;
 	public double mass = 1;
@@ -22,7 +24,6 @@ public class InstanceBlock extends Instance {
 	
 	private Body body;
 	private Vector2 lastPosition = new Vector2();
-	private Vector2 lastSize = new Vector2();
 	private double lastMass = 1;
 	private double lastDensity = 1;
 	private double lastElasticity = 0.2;
@@ -46,14 +47,6 @@ public class InstanceBlock extends Instance {
 	@Override
 	public void init() {
 		body = new Body();
-		Rectangle shape = new Rectangle(1, 1);
-		shape.createMass(mass);
-		BodyFixture fixture = new BodyFixture(shape);
-		fixture.setDensity(density);
-		fixture.setRestitution(elasticity);
-		fixture.createMass();
-		body.addFixture(fixture);
-		body.setMass(MassType.NORMAL);
 		((InstanceWorld) Instance.game.findChild("World")).getWorld().addBody(body);
 	}
 	
@@ -69,38 +62,55 @@ public class InstanceBlock extends Instance {
 			body.translate(position.difference(body.getWorldCenter()));
 		}
 		lastPosition = position;
-		if (!size.difference(lastSize).isZero()) {
-			body.removeAllFixtures();
-			Rectangle shape = new Rectangle(size.x, size.y);
-			shape.createMass(mass);
-			BodyFixture fixture = new BodyFixture(shape);
-			fixture.setDensity(density);
-			fixture.setRestitution(elasticity);
-			fixture.createMass();
-			body.addFixture(fixture);
-		}
-		lastSize = size;
 		if (mass != lastMass) {
-			BodyFixture fixture = body.getFixture(0);
-			fixture.getShape().createMass(mass);
-			fixture.createMass();
+			for (BodyFixture f : body.getFixtures()) {
+				f.getShape().createMass(mass);
+				f.createMass();
+			}
 		}
 		lastMass = mass;
 		if (density != lastDensity) {
-			BodyFixture fixture = body.getFixture(0);
-			fixture.setDensity(density);
-			fixture.createMass();
+			for (BodyFixture f : body.getFixtures()) {
+				f.setDensity(density);
+				f.createMass();
+			}
 		}
 		lastDensity = density;
 		if (elasticity != lastElasticity) {
-			BodyFixture fixture = body.getFixture(0);
-			fixture.setRestitution(elasticity);
+			for (BodyFixture f : body.getFixtures()) {
+				f.setRestitution(elasticity);
+			}
 		}
 		lastElasticity = elasticity;
 	}
 	
 	public Body getBody() {
 		return body;
+	}
+	
+	public void addShape(Convex shape) {
+		shape.createMass(mass);
+		BodyFixture fixture = new BodyFixture(shape);
+		fixture.setDensity(density);
+		fixture.createMass();
+		body.addFixture(fixture);
+	}
+	
+	@Override
+	public InstanceBlock clone() {
+		InstanceBlock block = (InstanceBlock) super.clone();
+		Body body = block.getBody();
+		Body nBody = new Body();
+		nBody.setTransform(body.getTransform());
+		List<BodyFixture> fixtures = body.getFixtures();
+		block.body = nBody;
+		for (BodyFixture f : fixtures) {
+			Convex shape = f.getShape();
+			block.addShape(shape);
+		}
+		World world = ((InstanceWorld) Instance.game.findChild("World")).getWorld();
+		world.addBody(nBody);
+		return block;
 	}
 
 }
