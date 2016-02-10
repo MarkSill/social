@@ -16,9 +16,8 @@ import com.marksill.social.state.State;
 public class Social extends StateBasedGame {
 	
 	public static boolean debug = true;
-	
 	/** The instance of Social. */
-	private static Social instance;
+	public static Social instance;
 	
 	/** Does this instance have graphics enabled (e.g. is it not a server?)? */
 	private boolean graphics = false;
@@ -144,6 +143,12 @@ public class Social extends StateBasedGame {
 	 */
 	public static Social getInstance() {
 		return instance;
+	}
+	
+	public void shutdown() {
+		if (graphics) {
+			getContainer().exit();
+		}
 	}
 
 }

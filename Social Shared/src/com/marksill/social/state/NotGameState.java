@@ -60,31 +60,34 @@ public class NotGameState extends NotState {
 			InstanceBlock block = (InstanceBlock) parent;
 			if (block.visible) {
 				Body body = block.getBody();
-				Vector2 pos = body.getWorldCenter().difference(body.getLocalCenter());
+				Vector2 pos = body.getWorldCenter();//.difference(body.getLocalCenter());
 				List<BodyFixture> fixtures = body.getFixtures();
-				//TODO: Find out why positioning is incorrect depending on rotation with multiple fixtures.
+				float rot = (float) (Math.toDegrees(body.getTransform().getRotation()));
+				g.pushTransform();
+				g.translate((float) pos.x * PPM, (float) -pos.y * PPM + social.getContainer().getHeight());
+				g.rotate(0, 0, rot);
 				for (BodyFixture f : fixtures) {
 					Convex shape = f.getShape();
-					float vx = (float) (pos.x) * PPM;
-					float vy = (float) (-pos.y) * PPM + social.getContainer().getHeight();
-					float svx = (float) (pos.x + shape.getCenter().x) * PPM;
-					float svy = (float) (-pos.y - shape.getCenter().y) * PPM + social.getContainer().getHeight();
-					float rot = (float) (-Math.toDegrees(body.getTransform().getRotation()));
-					g.rotate(vx, vy, rot);
 					g.setColor(block.color);
+					g.pushTransform();
+					g.translate((float) shape.getCenter().x * PPM, (float) shape.getCenter().y * PPM);
 					if (shape instanceof Rectangle) {
 						Rectangle rect = (Rectangle) shape;
-						g.rotate(svx, svy, (float) (-Math.toDegrees(rect.getRotation())));
+						float srot = (float) (-Math.toDegrees(rect.getRotation()));
+						g.pushTransform();
+						g.rotate(0, 0, srot);
 						float w = (float) (rect.getWidth()) * PPM;
 						float h = (float) (rect.getHeight()) * PPM;
-						g.fillRect(svx - w / 2, svy - h / 2, w, h);
+						g.fillRect(-w / 2, -h / 2, w, h);
+						g.popTransform();
 					} else if (shape instanceof Circle) {
 						Circle cir = (Circle) shape;
 						float rad = (float) (cir.getRadius() * 2) * PPM;
-						g.fillOval(svx - rad / 2, svy - rad / 2, rad, rad);
+						g.fillOval(-rad / 2, -rad / 2, rad, rad);
 					}
-					g.rotate(vx, vy, -rot);
+					g.popTransform();
 				}
+				g.popTransform();
 			}
 		}
 		List<Instance> children = parent.getChildren();

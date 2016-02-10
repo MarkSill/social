@@ -5,6 +5,10 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/dyn4j"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/LuaJ"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/LWJGL"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Slick"/>
+	<classpathentry kind="lib" path="/lib/Slick2D/lib/slick.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="http://slick.ninjacave.com/javadoc/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
