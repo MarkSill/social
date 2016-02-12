@@ -1,5 +1,6 @@
 package com.marksill.social.instance;
 
+import org.dyn4j.geometry.Rectangle;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
@@ -33,7 +34,10 @@ public class InstanceScript extends Instance {
 	public void init() {
 		enabled = true;
 		running = false;
-		code = "";
+		code = "print('HI')";
+		/*code = "local instance = Instance:create('block') print(instance)\n" +
+		"--instance:addShape(Rectangle.new(1, 1))\n" +
+		"instance:setParent(game:findChild('World'))";*/
 	}
 	
 	@Override
@@ -63,6 +67,9 @@ class SpecialThread extends Thread {
 		this.code = code;
 		this.script = script;
 		g.set("script", CoerceJavaToLua.coerce(script));
+		g.set("game", CoerceJavaToLua.coerce(Instance.game));
+		g.set("Instance", CoerceJavaToLua.coerce(Instance.class));
+		g.set("Rectangle", CoerceJavaToLua.coerce(Rectangle.class));
 		chunk = g.load(code);
 	}
 	

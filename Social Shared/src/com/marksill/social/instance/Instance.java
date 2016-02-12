@@ -140,5 +140,49 @@ public class Instance implements Cloneable {
 	protected void finalize() {
 		//STOOF GOES HERE
 	}
+	
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " " + name;
+	}
+	
+	public static Instance create(String className) {
+		return create(className, className);
+	}
+	
+	public static Instance create(String className, String name) {
+		return create(className, name, null);
+	}
+	
+	public static Instance create(String className, Instance parent) {
+		return create(className, className, parent);
+	}
+	
+	public static Instance create(String className, String name, Instance parent) {
+		return create(className, parent, name);
+	}
+	
+	public static Instance create(String className, Instance parent, String name) {
+		Instance instance = null;
+		className = className.toLowerCase();
+		switch (className) {
+		case "game":
+			instance = new InstanceGame(name, parent);
+			break;
+		case "world":
+			instance = new InstanceWorld(name, parent);
+			break;
+		case "script":
+			instance = new InstanceScript(name, parent);
+			break;
+		case "block":
+			instance = new InstanceScript(name, parent);
+			break;
+		case "instance": default:
+			instance = new Instance(name, parent);
+			break;
+		}
+		return instance;
+	}
 
 }
