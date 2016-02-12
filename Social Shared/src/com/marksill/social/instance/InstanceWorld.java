@@ -40,8 +40,6 @@ public class InstanceWorld extends Instance {
 		world.update((double) delta / 1000);
 		if (i++ > 100) {
 			script.enabled = false;
-		} else {
-			System.out.println(i);
 		}
 	}
 	

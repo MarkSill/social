@@ -166,7 +166,7 @@ public class LuaThread extends LuaValue {
 
 	public static class State implements Runnable {
 		private final Globals globals;
-		final WeakReference lua_thread;
+		final WeakReference<LuaThread> lua_thread;
 		public final LuaValue function;
 		Varargs args = LuaValue.NONE;
 		Varargs result = LuaValue.NONE;
@@ -187,7 +187,7 @@ public class LuaThread extends LuaValue {
 
 		State(Globals globals, LuaThread lua_thread, LuaValue function) {
 			this.globals = globals;
-			this.lua_thread = new WeakReference(lua_thread);
+			this.lua_thread = new WeakReference<LuaThread>(lua_thread);
 			this.function = function;
 		}
 		

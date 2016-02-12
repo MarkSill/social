@@ -5,15 +5,13 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
-import com.marksill.social.lua.CallOrphanedThread;
-
 public class InstanceScript extends Instance {
 	
 	public boolean enabled;
+	public String code;
 	
 	private boolean running;
-	private Globals g;
-	private LuaValue chunk;
+	private SpecialThread thread;
 
 	public InstanceScript() {
 		super();
@@ -29,13 +27,13 @@ public class InstanceScript extends Instance {
 
 	public InstanceScript(String name, Instance parent) {
 		super(name, parent);
-		enabled = true;
 	}
 	
 	@Override
 	public void init() {
 		enabled = true;
 		running = false;
+		code = "";
 	}
 	
 	@Override
@@ -43,16 +41,39 @@ public class InstanceScript extends Instance {
 		super.update(delta);
 		if (enabled && !running) {
 			running = true;
-			g = JsePlatform.debugGlobals();
-			g.set("script", CoerceJavaToLua.coerce(this));
-			g.set("kill", new CallOrphanedThread());
-			chunk = g.loadfile("src/lua/multithread.lua");
-			chunk.call();
-			g.get("start").call(LuaValue.valueOf("print('hi')"));
+			thread = new SpecialThread(this, code);
+			thread.start();
 		} else if (!enabled && running) {
 			running = false;
-			g.get("stop").call();
+			thread.kill();
 		}
 	}
 
+}
+
+class SpecialThread extends Thread {
+	
+	Globals g;
+	LuaValue chunk;
+	String code;
+	InstanceScript script;
+	
+	public SpecialThread(InstanceScript script, String code) {
+		g = JsePlatform.debugGlobals();
+		this.code = code;
+		this.script = script;
+		g.set("script", CoerceJavaToLua.coerce(script));
+		chunk = g.load(code);
+	}
+	
+	@Override
+	public void run() {
+		chunk.call();
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void kill() {
+		stop(); //Seems to be the only way to kill a LuaValue....
+	}
+	
 }

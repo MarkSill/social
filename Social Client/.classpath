@@ -13,7 +13,6 @@
 			<attribute name="javadoc_location" value="http://slick.ninjacave.com/javadoc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/lib/luaj-3.0.1/lib/luaj-jse-3.0.1.jar" sourcepath="/lib/luaj-3.0.1/src/jse"/>
 	<classpathentry kind="lib" path="/lib/LWJGL/jar/jinput.jar"/>
 	<classpathentry kind="lib" path="/lib/LWJGL/jar/lwjgl_util.jar"/>
 	<classpathentry kind="lib" path="/lib/LWJGL/jar/lwjgl.jar">
@@ -22,5 +21,6 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="lib/LWJGL/native/winux"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/lib/luaj-3.0.1/lib/luaj-jse-3.0.1.jar" sourcepath="/lib/luaj-3.0.1/src/jse"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

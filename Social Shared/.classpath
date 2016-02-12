@@ -2,11 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="/lib/luaj-3.0.1/lib/luaj-jse-3.0.1.jar" sourcepath="/lib/luaj-3.0.1/src/jse">
-		<attributes>
-			<attribute name="javadoc_location" value="http://luaj.org/luaj/3.0/api/"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/lib/dyn4j-3.2.0.jar">
 		<attributes>
 			<attribute name="javadoc_location" value="http://docs.dyn4j.org/v3.2.0/"/>
@@ -25,5 +20,6 @@
 			<attribute name="javadoc_location" value="http://slick.ninjacave.com/javadoc/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/lib/luaj-3.0.1/lib/luaj-jse-3.0.1.jar" sourcepath="/lib/luaj-3.0.1/src/jse"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
