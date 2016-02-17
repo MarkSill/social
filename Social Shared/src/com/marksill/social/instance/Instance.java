@@ -277,7 +277,7 @@ public class Instance implements Cloneable {
 			instance = new InstanceScript(name, parent);
 			break;
 		case "block":
-			instance = new InstanceScript(name, parent);
+			instance = new InstanceBlock(name, parent);
 			break;
 		case "instance": default:
 			instance = new Instance(name, parent);

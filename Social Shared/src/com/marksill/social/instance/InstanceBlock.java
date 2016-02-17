@@ -86,35 +86,37 @@ public class InstanceBlock extends Instance implements Cloneable {
 	@Override
 	public void update(int delta) {
 		super.update(delta);
-		if (anchored) {
-			body.setMass(MassType.INFINITE);
-		} else {
-			body.setMass(MassType.NORMAL);
-		}
-		if (!position.difference(lastPosition).isZero()) {
-			body.translate(position.difference(body.getWorldCenter()));
-		}
-		lastPosition = position;
-		if (mass != lastMass) {
-			for (BodyFixture f : body.getFixtures()) {
-				f.getShape().createMass(mass);
-				f.createMass();
+		if (body != null) {
+			if (anchored) {
+				body.setMass(MassType.INFINITE);
+			} else {
+				body.setMass(MassType.NORMAL);
 			}
-		}
-		lastMass = mass;
-		if (density != lastDensity) {
-			for (BodyFixture f : body.getFixtures()) {
-				f.setDensity(density);
-				f.createMass();
+			if (!position.difference(lastPosition).isZero()) {
+				body.translate(position.difference(body.getWorldCenter()));
 			}
-		}
-		lastDensity = density;
-		if (elasticity != lastElasticity) {
-			for (BodyFixture f : body.getFixtures()) {
-				f.setRestitution(elasticity);
+			lastPosition = position;
+			if (mass != lastMass) {
+				for (BodyFixture f : body.getFixtures()) {
+					f.getShape().createMass(mass);
+					f.createMass();
+				}
 			}
+			lastMass = mass;
+			if (density != lastDensity) {
+				for (BodyFixture f : body.getFixtures()) {
+					f.setDensity(density);
+					f.createMass();
+				}
+			}
+			lastDensity = density;
+			if (elasticity != lastElasticity) {
+				for (BodyFixture f : body.getFixtures()) {
+					f.setRestitution(elasticity);
+				}
+			}
+			lastElasticity = elasticity;
 		}
-		lastElasticity = elasticity;
 	}
 	
 	/**

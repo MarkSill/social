@@ -60,10 +60,10 @@ public class InstanceScript extends Instance {
 	public void init() {
 		enabled = true;
 		running = false;
-		code = "while true do print('HI') end";
-		/*code = "local instance = Instance:create('block') print(instance)\n" +
+		//code = "while true do print('HI') end";
+		code = "local instance = Instance:create('block') print(instance)\n" +
 		"--instance:addShape(Rectangle.new(1, 1))\n" +
-		"instance:setParent(game:findChild('World'))";*/
+		"instance:setParent(game:findChild('World')) print(instance:getParent())";
 	}
 	
 	@Override
