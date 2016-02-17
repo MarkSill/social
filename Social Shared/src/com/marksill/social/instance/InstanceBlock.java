@@ -9,36 +9,68 @@ import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Color;
 
+/**
+ * Base class for physical objects. Contrary to its name, this class does not only have to be blocks.
+ */
 public class InstanceBlock extends Instance implements Cloneable {
 	
+	/** The block's class name. */
 	public static final String CLASS_NAME = "Block";
 	
+	/** The dynamic status of the block. */
 	public boolean anchored = false;
+	/** The position of the block. */
 	public Vector2 position = new Vector2();
+	/** The color of the block */
 	public Color color = Color.white;
+	/** The visibility status of the block. */
 	public boolean visible = true;
+	/** The mass of the block. */
 	public double mass = 1;
+	/** The density of the block. */
 	public double density = 1;
+	/** The elasticity of the block. */
 	public double elasticity = 0.2;
 	
+	/** The physical body of the block. */
 	private Body body;
+	/** The block's position last update. */
 	private Vector2 lastPosition = new Vector2();
+	/** The block's mass last update. */
 	private double lastMass = 1;
+	/** The block's density last update. */
 	private double lastDensity = 1;
+	/** The block's elasticity last update. */
 	private double lastElasticity = 0.2;
 
+	/**
+	 * Creates a new block.
+	 */
 	public InstanceBlock() {
 		super(CLASS_NAME);
 	}
 
+	/**
+	 * Creates a new block.
+	 * @param name The name of the block.
+	 */
 	public InstanceBlock(String name) {
 		super(name);
 	}
 
+	/**
+	 * Creates a new block.
+	 * @param parent The parent of the block.
+	 */
 	public InstanceBlock(Instance parent) {
 		super(CLASS_NAME, parent);
 	}
 
+	/**
+	 * Creates a new block.
+	 * @param name The name of the block.
+	 * @param parent The parent of the block.
+	 */
 	public InstanceBlock(String name, Instance parent) {
 		super(name, parent);
 	}
@@ -85,10 +117,18 @@ public class InstanceBlock extends Instance implements Cloneable {
 		lastElasticity = elasticity;
 	}
 	
+	/**
+	 * Gets the physical body of the block.
+	 * @return The body of the block.
+	 */
 	public Body getBody() {
 		return body;
 	}
 	
+	/**
+	 * Adds a shape to the block.
+	 * @param shape The shape to add to the block.
+	 */
 	public void addShape(Convex shape) {
 		shape.createMass(mass);
 		BodyFixture fixture = new BodyFixture(shape);

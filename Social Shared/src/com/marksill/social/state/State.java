@@ -8,11 +8,21 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import com.marksill.social.Social;
 
+/**
+ * Class for containing NotStates in a game with Slick running.
+ */
 public class State extends BasicGameState {
 	
+	/** The ID of the State. */
 	protected int id;
+	/** The State's NotState. */
 	protected NotState notState;
 	
+	/**
+	 * Creates a new State.
+	 * @param id The ID of the state.
+	 * @param notState The NotState of the State.
+	 */
 	public State(int id, NotState notState) {
 		this.id = id;
 		this.notState = notState;
@@ -38,6 +48,11 @@ public class State extends BasicGameState {
 		game.globalUpdate(container, delta);
 	}
 	
+	/**
+	 * Resets the State.
+	 * @param container The current container.
+	 * @param sbgame The StateBasedGame (instance of Social).
+	 */
 	public void reset(GameContainer container, StateBasedGame sbgame) {
 		Social game = (Social) sbgame;
 		notState.reset(game);

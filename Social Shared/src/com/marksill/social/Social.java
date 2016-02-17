@@ -13,8 +13,12 @@ import com.marksill.social.state.NotGameState;
 import com.marksill.social.state.NotState;
 import com.marksill.social.state.State;
 
+/**
+ * The main class for Social. Used by all types of the game (normal, editor, and server).
+ */
 public class Social extends StateBasedGame {
 	
+	/** The debug mode of Social. */
 	public static boolean debug = true;
 	/** The instance of Social. */
 	public static Social instance;
@@ -27,7 +31,9 @@ public class Social extends StateBasedGame {
 	private CanvasGameContainer canvas = null;
 	/** The AppGameContainer if not using Swing. */
 	private AppGameContainer appgc = null;
+	/** The current frame rate. */
 	private double fps = 0;
+	/** The last timestamp since the FPS was updated. */
 	private long lastTime = 0;
 	
 	/**
@@ -115,12 +121,21 @@ public class Social extends StateBasedGame {
 		return appgc;
 	}
 	
+	/**
+	 * Adds a NotState and creates a State out of it.
+	 * @param notState The NotState to add.
+	 */
 	public void addState(NotState notState) {
 		State s = new State(notState.getID(), notState);
 		addState(s);
 	}
 	
-	public void globalRender(GameContainer container, Graphics g) throws SlickException {
+	/**
+	 * A function that renders things from every State.
+	 * @param container The current container.
+	 * @param g The current graphics object.
+	 */
+	public void globalRender(GameContainer container, Graphics g) {
 		g.setColor(Color.white);
 		if (debug) {
 			String debugStr = Math.round(fps) + " FPS";
@@ -128,7 +143,12 @@ public class Social extends StateBasedGame {
 		}
 	}
 	
-	public void globalUpdate(GameContainer container, int delta) throws SlickException {
+	/**
+	 * A function that updates things from every NotState.
+	 * @param container The current container.
+	 * @param delta The time (in milliseconds) since the last update.
+	 */
+	public void globalUpdate(GameContainer container, int delta) {
 		fps = 1000000000 / (System.nanoTime() - lastTime);
 		lastTime = System.nanoTime();
 		Input input = container.getInput();
@@ -145,6 +165,9 @@ public class Social extends StateBasedGame {
 		return instance;
 	}
 	
+	/**
+	 * Stops the game.
+	 */
 	public void shutdown() {
 		if (graphics) {
 			getContainer().exit();

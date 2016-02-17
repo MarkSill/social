@@ -16,22 +16,29 @@ import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceGame;
 
+/**
+ * NotState for the game.
+ */
 public class NotGameState extends NotState {
 	
+	/** The NotState's ID. */
 	public static final int ID = 0;
-	public static final float PPM = 32; //Pixels Per Meter
+	/** The Pixels Per Meter ratio. */
+	public static final float PPM = 32;
 	
+	/** The list of instances. */
 	public static List<Instance> instances = new ArrayList<Instance>();
-	
-	private InstanceGame game;
 
+	/**
+	 * Creates a new NotGameState.
+	 */
 	public NotGameState() {
 		super(ID);
 	}
 
 	@Override
 	public void init(Social social) {
-		game = new InstanceGame();
+		Instance.game = new InstanceGame();
 	}
 
 	@Override
@@ -43,7 +50,7 @@ public class NotGameState extends NotState {
 	
 	@Override
 	public void render(Social social, Graphics g) {
-		renderInstances(game.findChild("World"), g, social);
+		renderInstances(Instance.game.findChild("World"), g, social);
 	}
 
 	@Override
@@ -51,6 +58,12 @@ public class NotGameState extends NotState {
 		
 	}
 	
+	/**
+	 * Renders all instances (that need to be rendered).
+	 * @param parent The parent to check.
+	 * @param g The current graphics object.
+	 * @param social The instance of Social.
+	 */
 	private void renderInstances(Instance parent, Graphics g, Social social) {
 		g.setAntiAlias(true);
 		if (parent == null) {
@@ -91,8 +104,9 @@ public class NotGameState extends NotState {
 			}
 		}
 		List<Instance> children = parent.getChildren();
-		for (int i = 0; i < children.size(); i++) 
+		for (int i = 0; i < children.size(); i++) {
 			renderInstances(children.get(i), g, social);
+		}
 	}
 
 }
