@@ -1,10 +1,14 @@
 package com.marksill.social.instance;
 
+import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Rectangle;
+import org.dyn4j.geometry.Vector2;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
+
+import com.marksill.social.lua.LuaWait;
 
 /**
  * The class for all server side scripts in the game.
@@ -60,10 +64,11 @@ public class InstanceScript extends Instance {
 	public void init() {
 		enabled = true;
 		running = false;
-		//code = "while true do print('HI') end";
-		code = "local instance = Instance:create('block') print(instance)\n" +
-		"--instance:addShape(Rectangle.new(1, 1))\n" +
-		"instance:setParent(game:findChild('World')) print(instance:getParent())";
+		code = "while true do\n" +
+		"local instance = Instance:create('block')\n" +
+		"instance:addShape(Rectangle.new(0.5, 0.5))\n" +
+		"instance:setParent(game:findChild('World'))\n" +
+		"instance.position = Vector2.new(10, 10)\nwait(25)\nend\n";
 	}
 	
 	@Override
@@ -108,6 +113,9 @@ class ScriptThread extends Thread {
 		g.set("game", CoerceJavaToLua.coerce(Instance.game));
 		g.set("Instance", CoerceJavaToLua.coerce(Instance.class));
 		g.set("Rectangle", CoerceJavaToLua.coerce(Rectangle.class));
+		g.set("Circle", CoerceJavaToLua.coerce(Circle.class));
+		g.set("Vector2", CoerceJavaToLua.coerce(Vector2.class));
+		g.set("wait", CoerceJavaToLua.coerce(new LuaWait()));
 		chunk = g.load(code);
 	}
 	

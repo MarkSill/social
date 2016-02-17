@@ -79,7 +79,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 	public void init() {
 		body = new Body();
 		if (getParent() instanceof InstanceWorld) {
-			((InstanceWorld) Instance.game.findChild("World")).getWorld().addBody(body);
+			((InstanceWorld) Instance.game.findChild("World")).addBody(body);
 		}
 	}
 	
@@ -152,7 +152,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 			block.addShape(shape);
 		}
 		if (getParent() instanceof InstanceWorld) {
-			((InstanceWorld) Instance.game.findChild("World")).getWorld().addBody(nBody);
+			((InstanceWorld) Instance.game.findChild("World")).addBody(nBody);
 		}
 		return block;
 	}
@@ -160,7 +160,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 	@Override
 	public void setParent(Instance parent) {
 		if (parent instanceof InstanceWorld && !(getParent() instanceof InstanceWorld) && body != null) {
-			((InstanceWorld) parent).getWorld().addBody(body);
+			((InstanceWorld) parent).addBody(body);
 		} else if (getParent() instanceof InstanceWorld) {
 			((InstanceWorld) getParent()).getWorld().removeBody(body);
 		}

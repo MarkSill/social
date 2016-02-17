@@ -1,5 +1,9 @@
 package com.marksill.social.instance;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
 
 /**
@@ -12,6 +16,8 @@ public class InstanceWorld extends Instance {
 	
 	/** The world's World. */
 	private World world;
+	/** A list of bodies to add next update. */
+	private List<Body> bodiesToAdd;
 	
 	//Temporary testing variables:
 	int i = 0;
@@ -54,6 +60,7 @@ public class InstanceWorld extends Instance {
 		world = new World();
 		world.setGravity(World.EARTH_GRAVITY);
 		script = new InstanceScript(this);
+		bodiesToAdd = new ArrayList<Body>();
 	}
 	
 	@Override
@@ -63,6 +70,11 @@ public class InstanceWorld extends Instance {
 		if (i++ > 100) {
 			script.enabled = false;
 		}
+		Object[] copy = bodiesToAdd.toArray();
+		bodiesToAdd.clear();
+		for (int i = 0; i < copy.length; i++) {
+			world.addBody((Body) copy[i]);
+		}
 	}
 	
 	/**
@@ -71,6 +83,10 @@ public class InstanceWorld extends Instance {
 	 */
 	public World getWorld() {
 		return world;
+	}
+	
+	public void addBody(Body body) {
+		bodiesToAdd.add(body);
 	}
 
 }
