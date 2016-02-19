@@ -19,10 +19,6 @@ public class InstanceWorld extends Instance {
 	/** A list of bodies to add next update. */
 	private List<Body> bodiesToAdd;
 	
-	//Temporary testing variables:
-	int i = 0;
-	InstanceScript script;
-
 	/**
 	 * Creates a new world.
 	 */
@@ -59,7 +55,6 @@ public class InstanceWorld extends Instance {
 	public void init() {
 		world = new World();
 		world.setGravity(World.EARTH_GRAVITY);
-		script = new InstanceScript(this);
 		bodiesToAdd = new ArrayList<Body>();
 	}
 	
@@ -67,9 +62,6 @@ public class InstanceWorld extends Instance {
 	public void update(int delta) {
 		super.update(delta);
 		world.update((double) delta / 1000);
-		if (i++ > 100) {
-			script.enabled = false;
-		}
 		Object[] copy = bodiesToAdd.toArray();
 		bodiesToAdd.clear();
 		for (int i = 0; i < copy.length; i++) {
