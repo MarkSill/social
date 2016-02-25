@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.MassType;
+import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Color;
 
@@ -78,9 +80,6 @@ public class InstanceBlock extends Instance implements Cloneable {
 	@Override
 	public void init() {
 		body = new Body();
-		if (getParent() instanceof InstanceWorld) {
-			((InstanceWorld) Instance.game.findChild("World")).addBody(body);
-		}
 	}
 	
 	@Override
@@ -116,6 +115,17 @@ public class InstanceBlock extends Instance implements Cloneable {
 				}
 			}
 			lastElasticity = elasticity;
+			if (getParent() instanceof InstanceWorld) {
+				InstanceWorld world = (InstanceWorld) getParent();
+				if (!world.getWorld().containsBody(body)) {
+					world.addBody(body);
+				}
+			} else {
+				InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
+				if (world.getWorld().containsBody(body)) {
+					world.removeBody(body);
+				}
+			}
 		}
 	}
 	
@@ -142,29 +152,25 @@ public class InstanceBlock extends Instance implements Cloneable {
 	@Override
 	public InstanceBlock clone() {
 		InstanceBlock block = (InstanceBlock) super.clone();
-		Body body = block.getBody();
-		Body nBody = new Body();
-		nBody.setTransform(body.getTransform());
-		List<BodyFixture> fixtures = body.getFixtures();
-		block.body = nBody;
+		block.body = new Body();
+		block.body.setTransform(body.getTransform().copy());
+		block.mass = mass;
+		block.elasticity = elasticity;
+		block.density = density;
+		List<BodyFixture> fixtures = this.body.getFixtures();
 		for (BodyFixture f : fixtures) {
 			Convex shape = f.getShape();
-			block.addShape(shape);
-		}
-		if (getParent() instanceof InstanceWorld) {
-			((InstanceWorld) Instance.game.findChild("World")).addBody(nBody);
+			Convex newShape = null;
+			if (shape instanceof Rectangle) {
+				Rectangle rect = (Rectangle) shape;
+				newShape = new Rectangle(rect.getWidth(), rect.getHeight());
+			} else if (shape instanceof Circle) {
+				Circle circ = (Circle) shape;
+				newShape = new Circle(circ.getRadius());
+			}
+			block.addShape(newShape);
 		}
 		return block;
-	}
-	
-	@Override
-	public void setParent(Instance parent) {
-		if (parent instanceof InstanceWorld && !(getParent() instanceof InstanceWorld) && body != null) {
-			((InstanceWorld) parent).addBody(body);
-		} else if (getParent() instanceof InstanceWorld) {
-			((InstanceWorld) getParent()).removeBody(body);
-		}
-		super.setParent(parent);
 	}
 
 }
