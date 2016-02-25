@@ -1,5 +1,7 @@
 package com.marksill.social;
 
+import javax.swing.JFrame;
+
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.Color;
@@ -31,6 +33,8 @@ public class Social extends StateBasedGame {
 	private CanvasGameContainer canvas = null;
 	/** The AppGameContainer if not using Swing. */
 	private AppGameContainer appgc = null;
+	/** The general container for this. */
+	private GameContainer generalContainer = null;
 	/** The current frame rate. */
 	private double fps = 0;
 	/** The last timestamp since the FPS was updated. */
@@ -55,18 +59,15 @@ public class Social extends StateBasedGame {
 		this.swing = swing;
 		if (graphics) {
 			try {
-				GameContainer container;
 				if (swing) {
-					container = (canvas = new CanvasGameContainer(this)).getContainer();
+					generalContainer = (canvas = new CanvasGameContainer(this)).getContainer();
 				} else {
-					container = appgc = new AppGameContainer(this, 800, 600, false);
+					generalContainer = appgc = new AppGameContainer(this, 800, 600, false);
 				}
-				container.setTargetFrameRate(60);
-				container.setShowFPS(false);
-				container.setForceExit(false);
+				generalContainer.setTargetFrameRate(60);
+				generalContainer.setShowFPS(false);
 				if (swing) {
-					//TODO: Implement canvas rendering.
-					throw new SocialException("Canvas rendering is not enabled yet.");
+					//Nothing?
 				} else {
 					appgc.start();
 				}
@@ -122,6 +123,14 @@ public class Social extends StateBasedGame {
 	}
 	
 	/**
+	 * Returns the general container.
+	 * @return The instance's container.
+	 */
+	public GameContainer getGeneralContainer() {
+		return generalContainer;
+	}
+	
+	/**
 	 * Adds a NotState and creates a State out of it.
 	 * @param notState The NotState to add.
 	 */
@@ -153,7 +162,11 @@ public class Social extends StateBasedGame {
 		lastTime = System.nanoTime();
 		Input input = container.getInput();
 		if (input.isKeyDown(Input.KEY_ESCAPE)) {
-			container.exit();
+			if (swing) {
+				((JFrame) canvas.getParent().getParent().getParent().getParent()).dispose(); //A lot of getParents()....
+			} else {
+				container.exit();
+			}
 		}
 	}
 	

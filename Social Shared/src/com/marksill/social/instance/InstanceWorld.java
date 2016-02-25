@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
+import org.dyn4j.geometry.Rectangle;
+import org.dyn4j.geometry.Vector2;
+import org.newdawn.slick.Color;
 
 /**
  * A container class for physical objects.
@@ -18,6 +21,7 @@ public class InstanceWorld extends Instance {
 	private World world;
 	/** A list of bodies to add next update. */
 	private List<Body> bodiesToAdd;
+	private List<Body> bodiesToRemove;
 	
 	/**
 	 * Creates a new world.
@@ -56,6 +60,13 @@ public class InstanceWorld extends Instance {
 		world = new World();
 		world.setGravity(World.EARTH_GRAVITY);
 		bodiesToAdd = new ArrayList<Body>();
+		bodiesToRemove = new ArrayList<Body>();
+		InstanceBlock block = new InstanceBlock(this);
+		block.anchored = true;
+		block.addShape(new Rectangle(30, 1));
+		block.position = new Vector2(10, 3);
+		block.color = new Color(1.0f, 0.0f, 0.0f);
+		new InstanceScript(this);
 	}
 	
 	@Override
@@ -66,6 +77,11 @@ public class InstanceWorld extends Instance {
 		bodiesToAdd.clear();
 		for (int i = 0; i < copy.length; i++) {
 			world.addBody((Body) copy[i]);
+		}
+		copy = bodiesToRemove.toArray();
+		bodiesToRemove.clear();
+		for (int i = 0; i < copy.length; i++) {
+			world.removeBody((Body) copy[i]);
 		}
 	}
 	
@@ -79,6 +95,10 @@ public class InstanceWorld extends Instance {
 	
 	public void addBody(Body body) {
 		bodiesToAdd.add(body);
+	}
+	
+	public void removeBody(Body body) {
+		bodiesToRemove.add(body);
 	}
 
 }

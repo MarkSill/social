@@ -56,7 +56,7 @@ public class Instance implements Cloneable {
 		this.name = name;
 		this.setParent(parent);
 		children = new ArrayList<Instance>();
-		NotGameState.instances.add(this);
+		NotGameState.addInstance(this);
 		init();
 	}
 	
@@ -80,7 +80,7 @@ public class Instance implements Cloneable {
 	 */
 	public void delete() {
 		setParent(null);
-		NotGameState.instances.remove(this);
+		NotGameState.removeInstance(this);
 	}
 	
 	/**
@@ -92,7 +92,7 @@ public class Instance implements Cloneable {
 			@Override
 			public void run() {
 				try {
-					wait(time);
+					Thread.sleep(time);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -127,7 +127,7 @@ public class Instance implements Cloneable {
 	public Instance clone() {
 		try {
 			Instance inst = (Instance) super.clone();
-			NotGameState.instances.add(inst);
+			NotGameState.addInstance(inst);
 			return inst;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();

@@ -162,7 +162,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 		if (parent instanceof InstanceWorld && !(getParent() instanceof InstanceWorld) && body != null) {
 			((InstanceWorld) parent).addBody(body);
 		} else if (getParent() instanceof InstanceWorld) {
-			((InstanceWorld) getParent()).getWorld().removeBody(body);
+			((InstanceWorld) getParent()).removeBody(body);
 		}
 		super.setParent(parent);
 	}

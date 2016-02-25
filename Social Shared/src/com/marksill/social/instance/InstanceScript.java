@@ -8,6 +8,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 
+import com.marksill.social.lua.LuaColor;
 import com.marksill.social.lua.LuaWait;
 
 /**
@@ -65,10 +66,10 @@ public class InstanceScript extends Instance {
 		enabled = true;
 		running = false;
 		code = "while true do\n" +
-		"local instance = Instance:create('block')\n" +
-		"instance:addShape(Rectangle.new(0.5, 0.5))\n" +
-		"instance:setParent(game:findChild('World'))\n" +
-		"instance.position = Vector2.new(10, 10)\nwait(25)\nend\n";
+		"local instance = Instance:create('block')\ninstance:delete(1500000)\n" +
+		"instance:addShape(Rectangle.new(math.random(5, 100) / 100, math.random(5, 100) / 100))\n" +
+		"instance:setParent(game:findChild('World'))\ninstance.color = Color(math.random(0, 255) / 255, math.random(0, 255) / 255, math.random(0, 255) / 255)\n" +
+		"instance.position = Vector2.new(10, 10)\nwait(300)\nend\n";
 	}
 	
 	@Override
@@ -116,6 +117,7 @@ class ScriptThread extends Thread {
 		g.set("Circle", CoerceJavaToLua.coerce(Circle.class));
 		g.set("Vector2", CoerceJavaToLua.coerce(Vector2.class));
 		g.set("wait", CoerceJavaToLua.coerce(new LuaWait()));
+		g.set("Color", CoerceJavaToLua.coerce(new LuaColor()));
 		chunk = g.load(code);
 	}
 	

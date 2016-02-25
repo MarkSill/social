@@ -15,6 +15,7 @@ import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstanceWorld;
 
 /**
  * NotState for the game.
@@ -27,7 +28,9 @@ public class NotGameState extends NotState {
 	public static final float PPM = 32;
 	
 	/** The list of instances. */
-	public static List<Instance> instances = new ArrayList<Instance>();
+	private static List<Instance> instances = new ArrayList<Instance>();
+	private static List<Instance> toRemove = new ArrayList<Instance>();
+	private static List<Instance> toAdd = new ArrayList<Instance>();
 
 	/**
 	 * Creates a new NotGameState.
@@ -43,9 +46,20 @@ public class NotGameState extends NotState {
 
 	@Override
 	public void update(Social social, int delta) {
-		for (int i = 0; i < instances.size(); i++) {
-			instances.get(i).update(delta);
+		Object[] copy = toRemove.toArray();
+		toRemove.clear();
+		for (int i = 0; i < copy.length; i++) {
+			instances.remove((Instance) copy[i]);
 		}
+		copy = toAdd.toArray();
+		toAdd.clear();
+		for (int i = 0; i < copy.length; i++) {
+			instances.add((Instance) copy[i]);
+		}
+		for (Instance i : instances) {
+			i.update(delta);
+		}
+		System.out.println(instances.size());
 	}
 	
 	@Override
@@ -73,40 +87,52 @@ public class NotGameState extends NotState {
 			InstanceBlock block = (InstanceBlock) parent;
 			if (block.visible) {
 				Body body = block.getBody();
-				Vector2 pos = body.getWorldCenter();//.difference(body.getLocalCenter());
-				List<BodyFixture> fixtures = body.getFixtures();
-				float rot = (float) (Math.toDegrees(body.getTransform().getRotation()));
-				g.pushTransform();
-				g.translate((float) pos.x * PPM, (float) -pos.y * PPM + social.getContainer().getHeight());
-				g.rotate(0, 0, rot);
-				for (BodyFixture f : fixtures) {
-					Convex shape = f.getShape();
-					g.setColor(block.color);
+				if (((InstanceWorld) Instance.game.findChild("World")).getWorld().containsBody(body)) {
+					Vector2 pos = body.getWorldCenter();//.difference(body.getLocalCenter());
+					List<BodyFixture> fixtures = body.getFixtures();
+					float rot = (float) (-Math.toDegrees(body.getTransform().getRotation()));
 					g.pushTransform();
-					g.translate((float) shape.getCenter().x * PPM, (float) shape.getCenter().y * PPM);
-					if (shape instanceof Rectangle) {
-						Rectangle rect = (Rectangle) shape;
-						float srot = (float) (-Math.toDegrees(rect.getRotation()));
+					g.translate((float) pos.x * PPM, (float) -pos.y * PPM + social.getContainer().getHeight());
+					g.rotate(0, 0, rot);
+					for (BodyFixture f : fixtures) {
+						Convex shape = f.getShape();
+						g.setColor(block.color);
 						g.pushTransform();
-						g.rotate(0, 0, srot);
-						float w = (float) (rect.getWidth()) * PPM;
-						float h = (float) (rect.getHeight()) * PPM;
-						g.fillRect(-w / 2, -h / 2, w, h);
+						g.translate((float) shape.getCenter().x * PPM, (float) shape.getCenter().y * PPM);
+						if (shape instanceof Rectangle) {
+							Rectangle rect = (Rectangle) shape;
+							float srot = (float) (-Math.toDegrees(rect.getRotation()));
+							g.pushTransform();
+							g.rotate(0, 0, srot);
+							float w = (float) (rect.getWidth()) * PPM;
+							float h = (float) (rect.getHeight()) * PPM;
+							g.fillRect(-w / 2, -h / 2, w, h);
+							g.popTransform();
+						} else if (shape instanceof Circle) {
+							Circle cir = (Circle) shape;
+							float rad = (float) (cir.getRadius() * 2) * PPM;
+							g.fillOval(-rad / 2, -rad / 2, rad, rad);
+						}
 						g.popTransform();
-					} else if (shape instanceof Circle) {
-						Circle cir = (Circle) shape;
-						float rad = (float) (cir.getRadius() * 2) * PPM;
-						g.fillOval(-rad / 2, -rad / 2, rad, rad);
 					}
 					g.popTransform();
+				} else {
+					block.delete();
 				}
-				g.popTransform();
 			}
 		}
 		List<Instance> children = parent.getChildren();
 		for (int i = 0; i < children.size(); i++) {
 			renderInstances(children.get(i), g, social);
 		}
+	}
+	
+	public static void addInstance(Instance instance) {
+		toAdd.add(instance);
+	}
+	
+	public static void removeInstance(Instance instance) {
+		toRemove.add(instance);
 	}
 
 }
