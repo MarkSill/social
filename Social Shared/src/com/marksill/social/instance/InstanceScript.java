@@ -1,16 +1,5 @@
 package com.marksill.social.instance;
 
-import org.dyn4j.geometry.Circle;
-import org.dyn4j.geometry.Rectangle;
-import org.dyn4j.geometry.Vector2;
-import org.luaj.vm2.Globals;
-import org.luaj.vm2.LuaValue;
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
-import org.luaj.vm2.lib.jse.JsePlatform;
-
-import com.marksill.social.lua.LuaColor;
-import com.marksill.social.lua.LuaWait;
-
 /**
  * The class for all server side scripts in the game.
  */
@@ -66,10 +55,10 @@ public class InstanceScript extends Instance {
 		enabled = true;
 		running = false;
 		code = "while true do\n" +
-		"local instance = Instance:create('block')\ninstance:delete(1500000)\n" +
-		"instance:addShape(Rectangle.new(math.random(5, 100) / 100, math.random(5, 100) / 100))\n" +
+		"local instance = Instance:create('block')\ninstance:delete(1500000)\nlocal n1, n2 = math.random(5, 100) / 100, math.random(5, 100) / 100\n" +
+		"instance:addShape(Rectangle.new(n1, n2))\ninstance.mass = (((n1 + n2) / 2) * 10)^4\n" +
 		"instance:setParent(game:findChild('World'))\ninstance.color = Color(math.random(0, 255) / 255, math.random(0, 255) / 255, math.random(0, 255) / 255)\n" +
-		"instance.position = Vector2.new(10, 10)\nwait(300)\nend\n";
+		"instance.position = Vector2.new(4, 20)\nwait(300)\nend\n";
 	}
 	
 	@Override

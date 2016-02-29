@@ -1,13 +1,18 @@
 package com.marksill.social;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JToolBar;
 
 import org.newdawn.slick.SlickException;
 
-public class SocialEditor extends JFrame {
+public class SocialEditor extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 2541131438666062756L;
 	
@@ -19,7 +24,15 @@ public class SocialEditor extends JFrame {
 			e.printStackTrace();
 		}
 		add(social.getCanvasContainer());
+		
+		//Toolbar
+		JToolBar toolbar = new JToolBar();
+		JButton fileButton = new JButton("File");
+		fileButton.addActionListener(this);
+		toolbar.add(fileButton);
+		add(toolbar, BorderLayout.PAGE_START);
 		pack();
+		
 		setSize(800, 600);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle("Social Editor");
@@ -37,6 +50,7 @@ public class SocialEditor extends JFrame {
 				System.exit(0);
 			}
 		});
+		
 		try {
 			social.getCanvasContainer().start();
 		} catch (SlickException e) {
@@ -46,6 +60,11 @@ public class SocialEditor extends JFrame {
 
 	public static void main(String[] args) {
 		new SocialEditor(args);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		System.out.println(e);
 	}
 
 }

@@ -59,7 +59,6 @@ public class NotGameState extends NotState {
 		for (Instance i : instances) {
 			i.update(delta);
 		}
-		System.out.println(instances.size());
 	}
 	
 	@Override

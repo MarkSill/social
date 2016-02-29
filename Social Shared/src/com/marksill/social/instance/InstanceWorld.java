@@ -63,8 +63,13 @@ public class InstanceWorld extends Instance {
 		bodiesToRemove = new ArrayList<Body>();
 		InstanceBlock block = new InstanceBlock(this);
 		block.anchored = true;
-		block.addShape(new Rectangle(30, 1));
+		block.addShape(new Rectangle(12, 1));
 		block.position = new Vector2(10, 3);
+		block.color = new Color(1.0f, 0.0f, 0.0f);
+		block = new InstanceBlock(this);
+		block.anchored = true;
+		block.addShape(new Rectangle(1, 10));
+		block.position = new Vector2(2.5, 8.5);
 		block.color = new Color(1.0f, 0.0f, 0.0f);
 		new InstanceScript(this);
 	}
