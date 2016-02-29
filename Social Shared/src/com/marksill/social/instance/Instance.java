@@ -123,15 +123,11 @@ public class Instance implements Cloneable {
 		return null;
 	}
 	
+	@Override
 	public Instance clone() {
 		try {
 			Instance inst = (Instance) super.clone();
-			List<Instance> list = new ArrayList<Instance>(children);
-			children.clear();
-			for (Instance i : list) {
-				Instance clone = i.clone();
-				clone.setParent(this);
-			}
+			NotGameState.addInstance(inst);
 			return inst;
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();

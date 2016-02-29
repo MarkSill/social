@@ -1,5 +1,16 @@
 package com.marksill.social.instance;
 
+import org.dyn4j.geometry.Circle;
+import org.dyn4j.geometry.Rectangle;
+import org.dyn4j.geometry.Vector2;
+import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+import org.luaj.vm2.lib.jse.JsePlatform;
+
+import com.marksill.social.lua.LuaColor;
+import com.marksill.social.lua.LuaWait;
+
 /**
  * The class for all server side scripts in the game.
  */
@@ -12,11 +23,11 @@ public class InstanceScript extends Instance {
 	public boolean enabled;
 	/** The script's source code. */
 	public String code;
-	/** The script's thread. */
-	public ScriptThread thread;
 	
 	/** The running status of the script. */
 	private boolean running;
+	/** The script's thread. */
+	private ScriptThread thread;
 
 	/**
 	 * Creates a new script.
@@ -70,18 +81,8 @@ public class InstanceScript extends Instance {
 			thread.start();
 		} else if (!enabled && running) {
 			running = false;
-			if (thread != null) {
-				thread.kill();
-			}
+			thread.kill();
 		}
 	}
 	
-	@Override
-	public InstanceScript clone() {
-		InstanceScript script = (InstanceScript) super.clone();
-		script.running = false;
-		script.thread = null;
-		return script;
-	}
-
 }

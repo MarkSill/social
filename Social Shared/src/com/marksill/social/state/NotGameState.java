@@ -15,7 +15,6 @@ import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceGame;
-import com.marksill.social.instance.InstanceScript;
 import com.marksill.social.instance.InstanceWorld;
 
 /**
@@ -28,15 +27,10 @@ public class NotGameState extends NotState {
 	/** The Pixels Per Meter ratio. */
 	public static final float PPM = 32;
 	
-	public static boolean running = true;
-	
 	/** The list of instances. */
+	private static List<Instance> instances = new ArrayList<Instance>();
 	private static List<Instance> toRemove = new ArrayList<Instance>();
 	private static List<Instance> toAdd = new ArrayList<Instance>();
-	private static boolean lastRunning = !running;
-	private static InstanceGame startGame;
-	
-	int n = 0;
 
 	/**
 	 * Creates a new NotGameState.
@@ -48,37 +42,29 @@ public class NotGameState extends NotState {
 	@Override
 	public void init(Social social) {
 		Instance.game = new InstanceGame();
-		startGame = Instance.game.clone();
 	}
 
 	@Override
 	public void update(Social social, int delta) {
-		if (n++ >= 100) {
-			running = true;
-			if (n >= 200) {
-				running = false;
-				n = 0;
-			}
+		Object[] copy = toRemove.toArray();
+		toRemove.clear();
+		for (int i = 0; i < copy.length; i++) {
+			instances.remove((Instance) copy[i]);
 		}
-		//FIXME: Figure out why blocks aren't being cloned.
-		if (lastRunning != running) {
-			if (running) {
-				startGame = Instance.game.clone();
-			} else {
-				killScripts(Instance.game);
-				startGame.clone(true);
-			}
+		copy = toAdd.toArray();
+		toAdd.clear();
+		for (int i = 0; i < copy.length; i++) {
+			instances.add((Instance) copy[i]);
 		}
-		lastRunning = running;
-		if (running) {
-			updateInstances(Instance.game, delta, social);
+		for (Instance i : instances) {
+			i.update(delta);
 		}
+		System.out.println(instances.size());
 	}
 	
 	@Override
 	public void render(Social social, Graphics g) {
 		renderInstances(Instance.game.findChild("World"), g, social);
-		g.drawString("Running: " + String.valueOf(running), 0, 20);
 	}
 
 	@Override
@@ -141,31 +127,12 @@ public class NotGameState extends NotState {
 		}
 	}
 	
-	private void updateInstances(Instance parent, int delta, Social social) {
-		parent.update(delta);
-		for (Instance i : parent.getChildren()) {
-			updateInstances(i, delta, social);
-		}
-	}
-	
 	public static void addInstance(Instance instance) {
 		toAdd.add(instance);
 	}
 	
 	public static void removeInstance(Instance instance) {
 		toRemove.add(instance);
-	}
-	
-	private static void killScripts(Instance parent) {
-		if (parent instanceof InstanceScript) {
-			InstanceScript script = (InstanceScript) parent;
-			if (script.thread != null) {
-				script.thread.kill();
-			}
-		}
-		for (Instance i : parent.getChildren()) {
-			killScripts(i);
-		}
 	}
 
 }

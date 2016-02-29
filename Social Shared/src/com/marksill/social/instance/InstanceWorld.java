@@ -76,16 +76,12 @@ public class InstanceWorld extends Instance {
 		Object[] copy = bodiesToAdd.toArray();
 		bodiesToAdd.clear();
 		for (int i = 0; i < copy.length; i++) {
-			if (!world.containsBody((Body) copy[i])) {
-				world.addBody((Body) copy[i]);
-			}
+			world.addBody((Body) copy[i]);
 		}
 		copy = bodiesToRemove.toArray();
 		bodiesToRemove.clear();
 		for (int i = 0; i < copy.length; i++) {
-			if (world.containsBody((Body) copy[i])) {
-				world.removeBody((Body) copy[i]);
-			}
+			world.removeBody((Body) copy[i]);
 		}
 	}
 	
@@ -103,16 +99,6 @@ public class InstanceWorld extends Instance {
 	
 	public void removeBody(Body body) {
 		bodiesToRemove.add(body);
-	}
-	
-	@Override
-	public InstanceWorld clone() {
-		InstanceWorld world = (InstanceWorld) super.clone();
-		world.world = new World();
-		world.world.setGravity(this.world.getGravity());
-		world.bodiesToAdd = new ArrayList<Body>();
-		world.bodiesToRemove = new ArrayList<Body>();
-		return world;
 	}
 
 }

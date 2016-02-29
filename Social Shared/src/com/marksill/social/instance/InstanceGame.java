@@ -91,18 +91,5 @@ public class InstanceGame extends Instance {
 			}
 		}.start();
 	}
-	
-	@Override
-	public InstanceGame clone() {
-		return clone(false);
-	}
-	
-	public InstanceGame clone(boolean isGame) {
-		InstanceGame game = (InstanceGame) super.clone();
-		if (isGame) {
-			Instance.game = game;
-		}
-		return game;
-	}
 
 }
