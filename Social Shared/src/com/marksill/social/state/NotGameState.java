@@ -46,6 +46,9 @@ public class NotGameState extends NotState {
 
 	@Override
 	public void update(Social social, int delta) {
+		if (Instance.game == null || social.getCanvasContainer() != null) {
+			return;
+		}
 		Object[] copy = toRemove.toArray();
 		toRemove.clear();
 		for (int i = 0; i < copy.length; i++) {
@@ -63,6 +66,9 @@ public class NotGameState extends NotState {
 	
 	@Override
 	public void render(Social social, Graphics g) {
+		if (Instance.game == null) {
+			return;
+		}
 		renderInstances(Instance.game.findChild("World"), g, social);
 	}
 

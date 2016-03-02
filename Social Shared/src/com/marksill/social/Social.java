@@ -30,7 +30,7 @@ public class Social extends StateBasedGame {
 	/** Does this instance use Swing backend? */
 	private boolean swing = false;
 	/** The CanvasGameContainer if using Swing. */
-	private CanvasGameContainer canvas = null;
+	private SocialCanvas canvas = null;
 	/** The AppGameContainer if not using Swing. */
 	private AppGameContainer appgc = null;
 	/** The general container for this. */
@@ -60,7 +60,7 @@ public class Social extends StateBasedGame {
 		if (graphics) {
 			try {
 				if (swing) {
-					generalContainer = (canvas = new CanvasGameContainer(this)).getContainer();
+					generalContainer = (canvas = new SocialCanvas(this)).getContainer();
 				} else {
 					generalContainer = appgc = new AppGameContainer(this, 800, 600, false);
 				}
@@ -163,9 +163,14 @@ public class Social extends StateBasedGame {
 		Input input = container.getInput();
 		if (input.isKeyDown(Input.KEY_ESCAPE)) {
 			if (swing) {
-				((JFrame) canvas.getParent().getParent().getParent().getParent()).dispose(); //A lot of getParents()....
+				//((JFrame) canvas.getParent().getParent().getParent().getParent()).dispose(); //A lot of getParents()....
 			} else {
 				container.exit();
+			}
+		}
+		if (swing) {
+			if (!canvas.added) {
+				container.getInput().addKeyListener(canvas);
 			}
 		}
 	}
