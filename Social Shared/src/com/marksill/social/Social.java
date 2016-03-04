@@ -66,6 +66,7 @@ public class Social extends StateBasedGame {
 				}
 				generalContainer.setTargetFrameRate(60);
 				generalContainer.setShowFPS(false);
+				generalContainer.setAlwaysRender(true);
 				if (swing) {
 					//Nothing?
 				} else {

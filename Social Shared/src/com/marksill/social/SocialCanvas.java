@@ -1,11 +1,12 @@
 package com.marksill.social;
 
 import java.awt.AWTEvent;
-import java.awt.EventQueue;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.Game;
@@ -20,6 +21,7 @@ public class SocialCanvas extends CanvasGameContainer implements KeyListener {
 	public boolean added;
 	
 	private boolean control, alt, shift;
+	private Input input;
 
 	public SocialCanvas(Game game) throws SlickException {
 		super(game);
@@ -31,7 +33,7 @@ public class SocialCanvas extends CanvasGameContainer implements KeyListener {
 
 	@Override
 	public void setInput(Input input) {
-		
+		this.input = input;
 	}
 
 	@Override
@@ -58,11 +60,23 @@ public class SocialCanvas extends CanvasGameContainer implements KeyListener {
 		} else if (key == Input.KEY_LSHIFT || key == Input.KEY_RSHIFT) {
 			shift = true;
 		}
-		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_PRESSED, System.nanoTime(), 0, KeyEvent.getExtendedKeyCodeForChar(c), c);
+		int mod = 0;
+		if (control) {
+			mod = mod | InputEvent.CTRL_DOWN_MASK;
+		} else if (alt) {
+			mod = mod | InputEvent.ALT_DOWN_MASK;
+		} else if (shift) {
+			mod = mod | InputEvent.SHIFT_DOWN_MASK;
+		}
+		KeyEvent event = new KeyEvent(this, KeyEvent.KEY_PRESSED, System.nanoTime(), mod, KeyTranslation.toSwing(key), c);
 		
-		JFrame frame = ((JFrame) SwingUtilities.getWindowAncestor(this));
-		for (java.awt.event.KeyListener l : frame.getKeyListeners()) {
-			l.keyPressed(event);
+		try {
+			Class<?> editorClass = Class.forName("com.marksill.social.SocialEditor");
+			Method method = editorClass.getDeclaredMethod("dispatchAnEvent", AWTEvent.class);
+			JFrame editor = (JFrame) editorClass.getDeclaredField("editor").get(null);
+			method.invoke(editor, event);
+		} catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+			e.printStackTrace();
 		}
 	}
 
