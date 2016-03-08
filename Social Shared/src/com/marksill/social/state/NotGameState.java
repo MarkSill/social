@@ -1,5 +1,7 @@
 package com.marksill.social.state;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +49,16 @@ public class NotGameState extends NotState {
 	@Override
 	public void update(Social social, int delta) {
 		if (Instance.game == null || social.getCanvasContainer() != null) {
-			return;
+			try {
+				Class<?> editorClass = Class.forName("com.marksill.social.SocialEditor");
+				Object editor = new Object();
+				editor = editorClass.getField("editor").get(editor);
+				Method method = editorClass.getMethod("buildTree", (Class<?>[]) null);
+				method.invoke(editor);
+			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
+				e.printStackTrace();
+			}
+			//return;
 		}
 		Object[] copy = toRemove.toArray();
 		toRemove.clear();

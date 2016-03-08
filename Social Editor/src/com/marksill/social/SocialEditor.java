@@ -2,6 +2,8 @@ package com.marksill.social;
 
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
@@ -17,20 +19,35 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTree;
 import javax.swing.KeyStroke;
+import javax.swing.ScrollPaneLayout;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeSelectionModel;
 
+import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.SlickException;
 
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstanceWorld;
 
-public class SocialEditor extends JFrame implements ActionListener, KeyListener {
+public class SocialEditor extends JFrame implements ActionListener, KeyListener, TreeSelectionListener, TreeModelListener {
 
 	private static final long serialVersionUID = 2541131438666062756L;
 	
 	public static SocialEditor editor;
+	
+	private JTree tree;
+	private DefaultMutableTreeNode rootNode;
+	private JPanel properties;
 	
 	/**
 	 * @param args
@@ -40,7 +57,6 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener 
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
 				| UnsupportedLookAndFeelException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		Social social = new Social();
@@ -50,15 +66,41 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener 
 			e.printStackTrace();
 		}
 		
-		JScrollPane browser = new JScrollPane();
-		JPanel gamePane = new JPanel();
-		//gamePane.set
-		gamePane.add(social.getCanvasContainer());
-		gamePane.setBorder(null);
-		social.getCanvasContainer().setSize(800, 600);
-		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, browser, social.getCanvasContainer());
+		//Instance tree:
+		rootNode = new DefaultMutableTreeNode("game");
+		tree = new JTree(rootNode);
+		tree.setRootVisible(true);
+		tree.getSelectionModel().setSelectionMode(TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+		tree.setEditable(true);
+		JScrollPane treePane = new JScrollPane(tree);
+		treePane.setLayout(new ScrollPaneLayout());
+		treePane.setWheelScrollingEnabled(true);
+		
+		//Properties:
+		properties = new JPanel(new BorderLayout());
+		properties.setBackground(Color.white);
+		
+		//Scroll panes for instances and properties
+		JScrollPane propertiesPane = new JScrollPane(properties);
+		propertiesPane.setLayout(new ScrollPaneLayout());
+		
+		//Split pane that separates the instances from properties
+		JSplitPane browser = new JSplitPane(JSplitPane.VERTICAL_SPLIT, treePane, propertiesPane);
+		
+		//Change some settings for the GameContainer
+		CanvasGameContainer container = social.getCanvasContainer();
+		container.setSize(800, 600);
+		container.getContainer().setUpdateOnlyWhenVisible(false);
+		
+		//Add the game to a panel
+		JPanel gamePane = new JPanel(new BorderLayout());
+		gamePane.add(container, BorderLayout.CENTER);
+		gamePane.setMinimumSize(new Dimension(10, 10));
+		
+		//Split pane that separates the game from instances and properties
+		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, browser, gamePane);
 		pane.setOneTouchExpandable(false);
-		pane.setDividerLocation(150);
+		pane.setDividerLocation(200);
 		add(pane);
 		
 		//Toolbar
@@ -86,7 +128,6 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener 
 		add(menubar, BorderLayout.PAGE_START);
 		pack();
 		
-		//setSize(800, 600);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle("Social Editor");
 		setLocationRelativeTo(null);
@@ -95,6 +136,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener 
 			@Override
 			public void windowClosing(WindowEvent event) {
 				social.getCanvasContainer().dispose();
+				dispose();
 			}
 			
 			@Override
@@ -103,12 +145,20 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener 
 			}
 		});
 		setVisible(true);
+		//setExtendedState(getExtendedState() | MAXIMIZED_BOTH);
+		browser.setDividerLocation(getHeight() / 2);
 		
+		boolean shouldStart = true;
 		try {
-			social.getCanvasContainer().start();
+			if (shouldStart) {
+				social.getCanvasContainer().start();
+			}
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
+		
+		while (Instance.game == null);
+		buildTree();
 	}
 
 	public static void main(String[] args) {
@@ -224,8 +274,55 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener 
 		
 	}
 	
-	public void dispatchAnEvent(AWTEvent event) {
-		processEvent(event);
+	public void dispatchAnEvent(AWTEvent e) {
+		processEvent(e);
+	}
+	
+	public void buildTree() {
+		DefaultTreeModel model = (DefaultTreeModel) tree.getModel();
+		rootNode.setUserObject(Instance.game.name);
+		buildTree(Instance.game, rootNode, model);
+	}
+	
+	private void buildTree(Instance parent, DefaultMutableTreeNode node, DefaultTreeModel model) {
+		for (Instance i : parent.getChildren()) {
+			DefaultMutableTreeNode newNode = i.node;
+			if (newNode == null) {
+				newNode = new DefaultMutableTreeNode();
+				i.node = newNode;
+				model.insertNodeInto(newNode, node, 0);
+			}
+			if (!i.name.equals(newNode.getUserObject())) {
+				newNode.setUserObject(i.name);
+				model.nodeChanged(newNode);
+			}
+			buildTree(i, newNode, model);
+		}
+	}
+
+	@Override
+	public void valueChanged(TreeSelectionEvent e) {
+		
+	}
+
+	@Override
+	public void treeNodesChanged(TreeModelEvent e) {
+		
+	}
+
+	@Override
+	public void treeNodesInserted(TreeModelEvent e) {
+		
+	}
+
+	@Override
+	public void treeNodesRemoved(TreeModelEvent e) {
+		
+	}
+
+	@Override
+	public void treeStructureChanged(TreeModelEvent e) {
+		
 	}
 
 }
