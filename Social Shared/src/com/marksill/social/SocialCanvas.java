@@ -21,7 +21,6 @@ public class SocialCanvas extends CanvasGameContainer implements KeyListener {
 	public boolean added;
 	
 	private boolean control, alt, shift;
-	private Input input;
 
 	public SocialCanvas(Game game) throws SlickException {
 		super(game);
@@ -33,7 +32,7 @@ public class SocialCanvas extends CanvasGameContainer implements KeyListener {
 
 	@Override
 	public void setInput(Input input) {
-		this.input = input;
+		
 	}
 
 	@Override
@@ -74,7 +73,9 @@ public class SocialCanvas extends CanvasGameContainer implements KeyListener {
 			Class<?> editorClass = Class.forName("com.marksill.social.SocialEditor");
 			Method method = editorClass.getDeclaredMethod("dispatchAnEvent", AWTEvent.class);
 			JFrame editor = (JFrame) editorClass.getDeclaredField("editor").get(null);
-			method.invoke(editor, event);
+			if (editor != null && method != null) {
+				method.invoke(editor, event);
+			}
 		} catch (ClassNotFoundException | NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
 			e.printStackTrace();
 		}

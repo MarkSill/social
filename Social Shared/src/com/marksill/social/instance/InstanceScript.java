@@ -12,11 +12,10 @@ public class InstanceScript extends Instance {
 	public boolean enabled;
 	/** The script's source code. */
 	public String code;
-	
 	/** The running status of the script. */
-	private boolean running;
+	public boolean running;
 	/** The script's thread. */
-	private ScriptThread thread;
+	public ScriptThread thread;
 
 	/**
 	 * Creates a new script.
@@ -72,6 +71,12 @@ public class InstanceScript extends Instance {
 			running = false;
 			thread.kill();
 		}
+	}
+	
+	@Override
+	public void delete() {
+		thread.kill();
+		super.delete();
 	}
 	
 }

@@ -3,7 +3,7 @@ package com.marksill.social.instance;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 
 import com.marksill.social.state.NotGameState;
 
@@ -22,10 +22,11 @@ public class Instance implements Cloneable {
 	private Instance parent;
 	/** The name of the instance. */
 	public String name;
-	public DefaultMutableTreeNode node;
 	
 	/** The instance's children. */
 	private List<Instance> children;
+	
+	public TreeNode node;
 
 	/**
 	 * Creates a new Instance.
@@ -84,6 +85,10 @@ public class Instance implements Cloneable {
 	public void delete() {
 		setParent(null);
 		NotGameState.removeInstance(this);
+		node = null;
+		for (Instance i : new ArrayList<Instance>(children)) {
+			i.delete();
+		}
 	}
 	
 	/**

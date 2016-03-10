@@ -71,7 +71,7 @@ public class InstanceGame extends Instance {
 	 * Shuts down the game.
 	 */
 	public void shutdown() {
-		Social.instance.shutdown();
+		Social.social.shutdown();
 	}
 	
 	/**

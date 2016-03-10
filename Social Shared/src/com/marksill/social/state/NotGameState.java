@@ -17,6 +17,7 @@ import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstanceScript;
 import com.marksill.social.instance.InstanceWorld;
 
 /**
@@ -48,7 +49,7 @@ public class NotGameState extends NotState {
 
 	@Override
 	public void update(Social social, int delta) {
-		if (Instance.game == null || social.getCanvasContainer() != null) {
+		if (social.getCanvasContainer() != null) {
 			try {
 				Class<?> editorClass = Class.forName("com.marksill.social.SocialEditor");
 				Object editor = new Object();
@@ -58,7 +59,15 @@ public class NotGameState extends NotState {
 			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
 				e.printStackTrace();
 			}
-			//return;
+		}
+		if (Instance.game == null || !Social.social.isRunning()) {
+			for (Instance i : instances) {
+				if (i instanceof InstanceScript) {
+					((InstanceScript) i).thread.kill();
+					((InstanceScript) i).running = false;
+				}
+			}
+			return;
 		}
 		Object[] copy = toRemove.toArray();
 		toRemove.clear();

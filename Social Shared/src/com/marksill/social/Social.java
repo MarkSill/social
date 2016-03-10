@@ -1,7 +1,5 @@
 package com.marksill.social;
 
-import javax.swing.JFrame;
-
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.Color;
@@ -23,7 +21,7 @@ public class Social extends StateBasedGame {
 	/** The debug mode of Social. */
 	public static boolean debug = true;
 	/** The instance of Social. */
-	public static Social instance;
+	public static Social social;
 	
 	/** Does this instance have graphics enabled (e.g. is it not a server?)? */
 	private boolean graphics = false;
@@ -39,13 +37,14 @@ public class Social extends StateBasedGame {
 	private double fps = 0;
 	/** The last timestamp since the FPS was updated. */
 	private long lastTime = 0;
+	private boolean running;
 	
 	/**
 	 * Creates a new instance of Social.
 	 */
 	public Social() {
 		super("Social");
-		instance = this;
+		social = this;
 	}
 	
 	/**
@@ -57,6 +56,7 @@ public class Social extends StateBasedGame {
 	public void start(boolean graphics, boolean swing, String[] args) throws SocialException {
 		this.graphics = graphics;
 		this.swing = swing;
+		running = true;
 		if (graphics) {
 			try {
 				if (swing) {
@@ -181,7 +181,7 @@ public class Social extends StateBasedGame {
 	 * @return The instance.
 	 */
 	public static Social getInstance() {
-		return instance;
+		return social;
 	}
 	
 	/**
@@ -191,6 +191,14 @@ public class Social extends StateBasedGame {
 		if (graphics) {
 			getContainer().exit();
 		}
+	}
+	
+	public boolean isRunning() {
+		return running;
+	}
+	
+	public void setRunning(boolean running) {
+		this.running = running;
 	}
 
 }
