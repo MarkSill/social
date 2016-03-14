@@ -89,12 +89,15 @@ public class InstanceBlock extends Instance implements Cloneable {
 		if (body != null) {
 			if (anchored) {
 				body.setMass(MassType.INFINITE);
+				body.setLinearVelocity(0, 0);
+				body.setAngularVelocity(0);
 			} else {
 				body.setMass(MassType.NORMAL);
 			}
 			if (!position.difference(lastPosition).isZero()) {
 				body.translate(position.difference(body.getWorldCenter()));
 			}
+			position = body.getWorldCenter();
 			lastPosition = position;
 			if (mass != lastMass) {
 				for (BodyFixture f : body.getFixtures()) {

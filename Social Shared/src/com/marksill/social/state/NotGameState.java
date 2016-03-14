@@ -11,6 +11,7 @@ import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
+import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import com.marksill.social.Social;
@@ -29,11 +30,14 @@ public class NotGameState extends NotState {
 	public static final int ID = 0;
 	/** The Pixels Per Meter ratio. */
 	public static final float PPM = 32;
+	public static final int SELECTION_SIZE = 6;
 	
 	/** The list of instances. */
 	private static List<Instance> instances = new ArrayList<Instance>();
 	private static List<Instance> toRemove = new ArrayList<Instance>();
 	private static List<Instance> toAdd = new ArrayList<Instance>();
+	private static int transparency = 255;
+	private static boolean transparencyDirection = false;
 
 	/**
 	 * Creates a new NotGameState.
@@ -90,6 +94,14 @@ public class NotGameState extends NotState {
 			return;
 		}
 		renderInstances(Instance.game.findChild("World"), g, social);
+		if (transparencyDirection) {
+			transparency += 15;
+		} else {
+			transparency -= 15;
+		}
+		if (transparency >= 255 || transparency <= 70) {
+			transparencyDirection = !transparencyDirection;
+		}
 	}
 
 	@Override
@@ -131,6 +143,12 @@ public class NotGameState extends NotState {
 							g.rotate(0, 0, srot);
 							float w = (float) (rect.getWidth()) * PPM;
 							float h = (float) (rect.getHeight()) * PPM;
+							if (Instance.selected.contains(block)) {
+								g.setColor(Color.cyan);
+								g.setColor(new Color(0, 128, 255, transparency));
+								g.fillRect(-(w + SELECTION_SIZE) / 2, -(h + SELECTION_SIZE) / 2, w + SELECTION_SIZE, h + SELECTION_SIZE);
+								g.setColor(block.color);
+							}
 							g.fillRect(-w / 2, -h / 2, w, h);
 							g.popTransform();
 						} else if (shape instanceof Circle) {

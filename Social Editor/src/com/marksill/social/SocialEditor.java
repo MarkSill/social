@@ -12,6 +12,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneLayout;
@@ -29,22 +31,30 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.table.TableModel;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.dyn4j.geometry.Convex;
+import org.dyn4j.geometry.Rectangle;
+import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.SlickException;
 
 import com.marksill.social.instance.Instance;
+import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstanceScript;
 
-public class SocialEditor extends JFrame implements ActionListener, KeyListener, TreeSelectionListener, TreeModelListener, CellEditorListener {
+public class SocialEditor extends JFrame implements ActionListener, KeyListener, TreeSelectionListener, TreeModelListener, CellEditorListener, TableModelListener {
 
 	private static final long serialVersionUID = 2541131438666062756L;
 	
@@ -52,7 +62,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 	
 	private JTree tree;
 	private SocialTreeNode rootNode;
-	private JPanel properties;
+	private JTable properties;
 	private Map<Instance, SocialTreeNode> map, lastMap;
 	
 	/**
@@ -86,7 +96,8 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		treePane.setWheelScrollingEnabled(true);
 		
 		//Properties:
-		properties = new JPanel(new BorderLayout());
+		properties = new JTable(new SocialTableModel());
+		properties.getModel().addTableModelListener(this);
 		properties.setBackground(Color.white);
 		
 		//Scroll panes for instances and properties
@@ -231,7 +242,10 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				for (TreePath path : paths) {
 					SocialTreeNode node = (SocialTreeNode) path.getLastPathComponent();
 					if (node != null && node.getInstance() != null) {
+						Instance.selected.remove(node.getInstance());
 						node.getInstance().delete();
+						SocialTableModel model = (SocialTableModel) properties.getModel();
+						model.removeAllRows();
 					}
 				}
 			}
@@ -399,14 +413,74 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
-		SocialTreeNode node = (SocialTreeNode) e.getPath().getLastPathComponent();
-		if (node.getInstance() != null) {
-			String className = node.getInstance().getClass().getSimpleName();
-			
-			switch (className) {
-			
+		Instance.selected.clear();
+		TreePath[] paths = tree.getSelectionPaths();
+		if (paths == null) return;
+		for (TreePath path : paths) {
+			SocialTreeNode node = (SocialTreeNode) path.getLastPathComponent();
+			properties.removeAll();
+			Instance inst = node.getInstance();
+			if (inst != null) {
+				Instance.selected.add(inst);
+				String className = inst.getClass().getSimpleName();
+				Object[][] values = new Object[][] {
+					{"Name", inst.name},
+					{"ClassName", className.substring(8)}
+				};
+				switch (className) {
+				case "InstanceBlock":
+					InstanceBlock block = (InstanceBlock) inst;
+					Object size = block.getBody().getFixture(0).getShape();
+					if (size instanceof Rectangle) {
+						size = new Vector2(((Rectangle) size).getWidth(), ((Rectangle) size).getHeight());
+					} else {
+						size = ((Convex) size).getRadius();
+					}
+					values = mergeValues(values, new Object[][] {
+						{"Position", block.position},
+						{"Anchored", block.anchored},
+						{"Color", block.color},
+						{"Visible", block.visible},
+						{"Mass", block.mass},
+						{"Density", block.density},
+						{"Elasticity", block.elasticity},
+						{"Size", size}
+					});
+					break;
+				case "InstanceGame":
+					InstanceGame game = (InstanceGame) inst;
+					values = mergeValues(values, new Object[][] {
+						{"Max Players", game.maxPlayers}
+					});
+					break;
+				case "InstanceScript":
+					InstanceScript script = (InstanceScript) inst;
+					values = mergeValues(values, new Object[][] {
+						{"Enabled", script.enabled},
+						{"Running", script.running},
+						{"Code", script.code}
+					});
+					break;
+				case "World":
+					break;
+				}
+				
+				TableModel tmodel = properties.getModel();
+				SocialTableModel model = (SocialTableModel) tmodel;
+				model.removeAllRows();
+				for (Object[] row : values) {
+					model.addRow(row);
+				}
 			}
 		}
+	}
+	
+	public Object[][] mergeValues(Object[][] values, Object[][] newValues) {
+		Object[][] copy = Arrays.copyOf(values, values.length + newValues.length);
+		for (int i = 0; i < newValues.length; i++) {
+			copy[values.length + i] = newValues[i];
+		}
+		return copy;
 	}
 
 	@Override
@@ -431,16 +505,49 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 
 	@Override
 	public void editingCanceled(ChangeEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void editingStopped(ChangeEvent e) {
-		TreeCellEditor edit = (TreeCellEditor) e.getSource();
-		SocialTreeNode node = (SocialTreeNode) tree.getSelectionPath().getLastPathComponent();
-		if (node.getInstance() != null) {
-			node.getInstance().name = (String) edit.getCellEditorValue();
+		Object src = e.getSource();
+		if (src instanceof TreeCellEditor) {
+			TreeCellEditor edit = (TreeCellEditor) src;
+			SocialTreeNode node = (SocialTreeNode) tree.getSelectionPath().getLastPathComponent();
+			if (node.getInstance() != null) {
+				node.getInstance().name = (String) edit.getCellEditorValue();
+			}
+		} else {
+			System.out.println(e);
+		}
+	}
+
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		if (e.getType() == TableModelEvent.UPDATE) {
+			int row = e.getFirstRow();
+			int col = e.getColumn();
+			SocialTableModel model = (SocialTableModel) properties.getModel();
+			Object newValue = model.getValueAt(row, col);
+			String key = (String) model.getValueAt(row, 0);
+			Instance inst = ((SocialTreeNode) tree.getSelectionPath().getLastPathComponent()).getInstance();
+			switch (key) {
+			case "Name":
+				inst.name = (String) newValue;
+				buildTree();
+				tree.startEditingAtPath(tree.getSelectionPath());
+				tree.stopEditing();
+				break;
+			case "Max Players":
+				((InstanceGame) inst).maxPlayers = Integer.parseInt((String) newValue);
+				break;
+			case "Anchored":
+				((InstanceBlock) inst).anchored = Boolean.parseBoolean((String) newValue);
+				break;
+			case "Visible":
+				((InstanceBlock) inst).visible = Boolean.parseBoolean((String) newValue);
+				break;
+			}
 		}
 	}
 

@@ -76,7 +76,7 @@ public class XML {
 				i = script;
 			case "InstanceGame":
 				InstanceGame game = new InstanceGame();
-				game.setMaxPlayers(Integer.parseInt(e.getChildText("maxplayers")));
+				game.maxPlayers = Integer.parseInt(e.getChildText("maxplayers"));
 				i = game;
 			default:
 				i = new Instance();
@@ -120,7 +120,7 @@ public class XML {
 				break;
 			case "InstanceGame":
 				InstanceGame game = (InstanceGame) i;
-				e.addContent(new Element("maxplayers").setText(String.valueOf(game.getMaxPlayers())));
+				e.addContent(new Element("maxplayers").setText(String.valueOf(game.maxPlayers)));
 				break;
 			case "InstanceScript":
 				InstanceScript script = (InstanceScript) i;

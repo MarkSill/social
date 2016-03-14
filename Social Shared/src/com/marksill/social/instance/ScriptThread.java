@@ -47,7 +47,9 @@ public class ScriptThread extends Thread {
 	
 	@Override
 	public void run() {
-		chunk.call();
+		if (chunk != null) {
+			chunk.call();
+		}
 	}
 	
 	/**

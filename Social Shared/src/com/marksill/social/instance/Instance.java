@@ -15,6 +15,8 @@ public class Instance implements Cloneable {
 	/** Instance's class name. */
 	public static final String CLASS_NAME = "Instance";
 	
+	public static List<Instance> selected = new ArrayList<Instance>();
+	
 	/** The instance of the game. */
 	public static InstanceGame game = null;
 	
