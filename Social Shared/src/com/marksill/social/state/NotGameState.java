@@ -90,10 +90,14 @@ public class NotGameState extends NotState {
 	
 	@Override
 	public void render(Social social, Graphics g) {
+		g.setAntiAlias(true);
 		if (Instance.game == null) {
 			return;
 		}
+		
+		renderSelection(Instance.game.findChild("World"), g, social);
 		renderInstances(Instance.game.findChild("World"), g, social);
+		
 		if (transparencyDirection) {
 			transparency += 15;
 		} else {
@@ -116,7 +120,6 @@ public class NotGameState extends NotState {
 	 * @param social The instance of Social.
 	 */
 	private void renderInstances(Instance parent, Graphics g, Social social) {
-		g.setAntiAlias(true);
 		if (parent == null) {
 			return;
 		}
@@ -143,12 +146,6 @@ public class NotGameState extends NotState {
 							g.rotate(0, 0, srot);
 							float w = (float) (rect.getWidth()) * PPM;
 							float h = (float) (rect.getHeight()) * PPM;
-							if (Instance.selected.contains(block)) {
-								g.setColor(Color.cyan);
-								g.setColor(new Color(0, 128, 255, transparency));
-								g.fillRect(-(w + SELECTION_SIZE) / 2, -(h + SELECTION_SIZE) / 2, w + SELECTION_SIZE, h + SELECTION_SIZE);
-								g.setColor(block.color);
-							}
 							g.fillRect(-w / 2, -h / 2, w, h);
 							g.popTransform();
 						} else if (shape instanceof Circle) {
@@ -167,6 +164,54 @@ public class NotGameState extends NotState {
 		List<Instance> children = parent.getChildren();
 		for (int i = 0; i < children.size(); i++) {
 			renderInstances(children.get(i), g, social);
+		}
+	}
+	
+	private void renderSelection(Instance parent, Graphics g, Social social) {
+		if (parent == null) {
+			return;
+		}
+		g.setLineWidth(SELECTION_SIZE+1);
+		if (parent instanceof InstanceBlock) {
+			InstanceBlock block = (InstanceBlock) parent;
+			if (block.visible) {
+				Body body = block.getBody();
+				if (((InstanceWorld) InstanceWorld.game.findChild("World")).getWorld().containsBody(body) && Instance.selected.contains(block)) {
+					Vector2 pos = body.getWorldCenter();
+					List<BodyFixture> fixtures = body.getFixtures();
+					float rot = (float) (-Math.toDegrees(body.getTransform().getRotation()));
+					g.pushTransform();
+					g.translate((float) pos.x * PPM, (float) -pos.y * PPM + social.getContainer().getHeight());
+					g.rotate(0, 0, rot);
+					for (BodyFixture f : fixtures) {
+						Convex shape = f.getShape();
+						g.setColor(new Color(0, 128, 255, transparency));
+						g.pushTransform();
+						g.translate((float) shape.getCenter().x * PPM, (float) shape.getCenter().y * PPM);
+						if (shape instanceof Rectangle) {
+							Rectangle rect = (Rectangle) shape;
+							float srot = (float) (-Math.toDegrees(rect.getRotation()));
+							g.pushTransform();
+							g.rotate(0, 0, srot);
+							float w = (float) (rect.getWidth()) * PPM + SELECTION_SIZE;
+							float h = (float) (rect.getHeight()) * PPM + SELECTION_SIZE;
+							g.fillRect(-w / 2, -h / 2, w, h);
+							g.popTransform();
+						} else if (shape instanceof Circle) {
+							Circle cir = (Circle) shape;
+							float rad = (float) (cir.getRadius() * 2) * PPM + SELECTION_SIZE;
+							g.fillOval(-rad / 2, -rad / 2, rad, rad);
+						}
+						g.popTransform();
+					}
+					g.popTransform();
+				}
+			}
+		}
+		g.setLineWidth(1);
+		List<Instance> children = parent.getChildren();
+		for (int i = 0; i < children.size(); i++) {
+			renderSelection(children.get(i), g, social);
 		}
 	}
 	

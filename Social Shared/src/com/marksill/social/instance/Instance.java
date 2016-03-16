@@ -5,6 +5,10 @@ import java.util.List;
 
 import javax.swing.tree.TreeNode;
 
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+
 import com.marksill.social.state.NotGameState;
 
 /**
@@ -117,6 +121,14 @@ public class Instance implements Cloneable {
 	 */
 	public List<Instance> getChildren() {
 		return children;
+	}
+	
+	public LuaTable children() {
+		LuaValue[] values = new LuaValue[children.size()];
+		for (int i = 0; i < children.size(); i++) {
+			values[i] = CoerceJavaToLua.coerce(children.get(i));
+		}
+		return LuaTable.listOf(values);
 	}
 	
 	/**

@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -23,6 +24,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
@@ -64,6 +66,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 	private SocialTreeNode rootNode;
 	private JTable properties;
 	private Map<Instance, SocialTreeNode> map, lastMap;
+	private JTabbedPane contentPane;
 	
 	/**
 	 * @param args
@@ -113,12 +116,14 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		container.getContainer().setUpdateOnlyWhenVisible(false);
 		
 		//Add the game to a panel
+		contentPane = new JTabbedPane();
 		JPanel gamePane = new JPanel(new BorderLayout());
 		gamePane.add(container, BorderLayout.CENTER);
-		gamePane.setMinimumSize(new Dimension(10, 10));
+		contentPane.setMinimumSize(new Dimension(10, 10));
+		contentPane.addTab("Game", gamePane);
 		
 		//Split pane that separates the game from instances and properties
-		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, browser, gamePane);
+		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, browser, contentPane);
 		pane.setOneTouchExpandable(false);
 		pane.setDividerLocation(200);
 		add(pane);
@@ -155,7 +160,8 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		});
 		menu.setMnemonic(KeyEvent.VK_I);
 		menu = createMenu(menubar, "Test", new MenuItem[] {
-				new MenuItem("Play/Pause", KeyEvent.VK_P, KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0))
+				new MenuItem("Play/Pause", KeyEvent.VK_P, KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0)),
+				//new MenuItem("Stop", KeyEvent.VK_S, KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0))
 		});
 		menu.setMnemonic(KeyEvent.VK_T);
 		add(menubar, BorderLayout.PAGE_START);
@@ -214,9 +220,13 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		case "Open...":
 			break;
 		case "Close":
-			if (Instance.game != null) {
-				Instance.game.delete();
-				Instance.game = null;
+			if (contentPane.getSelectedIndex() == 0) {
+				if (Instance.game != null) {
+					Instance.game.delete();
+					Instance.game = null;
+				}
+			} else {
+				contentPane.removeTabAt(contentPane.getSelectedIndex());
 			}
 			break;
 		case "Save":
@@ -241,9 +251,16 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			if (paths != null) {
 				for (TreePath path : paths) {
 					SocialTreeNode node = (SocialTreeNode) path.getLastPathComponent();
-					if (node != null && node.getInstance() != null) {
-						Instance.selected.remove(node.getInstance());
-						node.getInstance().delete();
+					Instance instance = node.getInstance();
+					if (node != null && instance != null) {
+						Instance.selected.remove(instance);
+						if (instance instanceof InstanceScript) {
+							InstanceScript script = (InstanceScript) instance;
+							if (script.tabIndex != -1) {
+								contentPane.removeTabAt(script.tabIndex);
+							}
+						}
+						instance.delete();
 						SocialTableModel model = (SocialTableModel) properties.getModel();
 						model.removeAllRows();
 					}
@@ -460,6 +477,18 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 						{"Running", script.running},
 						{"Code", script.code}
 					});
+					
+					if (paths.length == 1 && script.tabIndex == -1) {
+						JPanel scriptPanel = new JPanel(new BorderLayout());
+						JEditorPane scriptArea = new JEditorPane();
+						scriptArea.setContentType("text/lua");
+						scriptArea.setText(script.code);
+						scriptArea.getDocument().addDocumentListener(new SocialDocumentListener(scriptArea, script));
+						scriptPanel.add(scriptArea, BorderLayout.CENTER);
+						contentPane.addTab(inst.name, scriptPanel);
+						script.tabIndex = contentPane.getTabCount() - 1;
+						contentPane.setSelectedIndex(script.tabIndex);
+					}
 					break;
 				case "World":
 					break;
