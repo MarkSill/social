@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
-import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Color;
 
@@ -61,16 +60,18 @@ public class InstanceWorld extends Instance {
 		world.setGravity(World.EARTH_GRAVITY);
 		bodiesToAdd = new ArrayList<Body>();
 		bodiesToRemove = new ArrayList<Body>();
-		InstanceBlock block = new InstanceBlock(this);
+		InstanceRectangle block = new InstanceRectangle(this);
 		block.anchored = true;
-		block.addShape(new Rectangle(12, 1));
+		block.size = new Vector2(12, 1);
 		block.position = new Vector2(10, 3);
 		block.color = new Color(1.0f, 0.0f, 0.0f);
-		InstanceBlock block2 = new InstanceBlock(this);
+		block.elasticity = 1;
+		InstanceRectangle block2 = new InstanceRectangle(this);
 		block2.anchored = true;
-		block2.addShape(new Rectangle(1, 10));
+		block2.size = new Vector2(1, 10);
 		block2.position = new Vector2(2.5, 8.5);
 		block2.color = new Color(1.0f, 0.0f, 0.0f);
+		block2.elasticity = 1;
 		new InstanceScript(this);
 	}
 	

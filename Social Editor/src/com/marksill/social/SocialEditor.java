@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.JEditorPane;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -48,12 +47,16 @@ import javax.swing.tree.TreeSelectionModel;
 import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.SlickException;
 
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
+import com.marksill.social.instance.InstanceCircle;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstanceRectangle;
 import com.marksill.social.instance.InstanceScript;
 
 public class SocialEditor extends JFrame implements ActionListener, KeyListener, TreeSelectionListener, TreeModelListener, CellEditorListener, TableModelListener {
@@ -445,6 +448,8 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 					{"ClassName", className.substring(8)}
 				};
 				switch (className) {
+				case "InstanceCircle":
+				case "InstanceRectangle":
 				case "InstanceBlock":
 					InstanceBlock block = (InstanceBlock) inst;
 					Object size = block.getBody().getFixture(0).getShape();
@@ -461,8 +466,19 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 						{"Mass", block.mass},
 						{"Density", block.density},
 						{"Elasticity", block.elasticity},
-						{"Size", size}
+						{"Friction", block.friction}
 					});
+					if (block instanceof InstanceRectangle) {
+						InstanceRectangle rect = (InstanceRectangle) block;
+						values = mergeValues(values, new Object[][] {
+							{"Size", rect.size}
+						});
+					} else if (block instanceof InstanceCircle) {
+						InstanceCircle circ = (InstanceCircle) block;
+						values = mergeValues(values, new Object[][] {
+							{"Radius", circ.radius}
+						});
+					}
 					break;
 				case "InstanceGame":
 					InstanceGame game = (InstanceGame) inst;
@@ -479,13 +495,13 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 					});
 					
 					if (paths.length == 1 && script.tabIndex == -1) {
-						JPanel scriptPanel = new JPanel(new BorderLayout());
-						JEditorPane scriptArea = new JEditorPane();
-						scriptArea.setContentType("text/lua");
+						RSyntaxTextArea scriptArea = new RSyntaxTextArea();
+						scriptArea.setCodeFoldingEnabled(true);
+						JScrollPane scriptPane = new JScrollPane(scriptArea);
+						scriptArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LUA);
 						scriptArea.setText(script.code);
 						scriptArea.getDocument().addDocumentListener(new SocialDocumentListener(scriptArea, script));
-						scriptPanel.add(scriptArea, BorderLayout.CENTER);
-						contentPane.addTab(inst.name, scriptPanel);
+						contentPane.addTab(inst.name, scriptPane);
 						script.tabIndex = contentPane.getTabCount() - 1;
 						contentPane.setSelectedIndex(script.tabIndex);
 					}
@@ -575,6 +591,30 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				break;
 			case "Visible":
 				((InstanceBlock) inst).visible = Boolean.parseBoolean((String) newValue);
+				break;
+			case "Position":
+				//create new Vector2 from string
+				break;
+			case "Color":
+				//create new Color from string
+				break;
+			case "Mass":
+				((InstanceBlock) inst).mass = Double.parseDouble((String) newValue);
+				break;
+			case "Density":
+				((InstanceBlock) inst).density = Double.parseDouble((String) newValue);
+				break;
+			case "Elasticity":
+				((InstanceBlock) inst).elasticity = Double.parseDouble((String) newValue);
+				break;
+			case "Friction":
+				((InstanceBlock) inst).friction = Double.parseDouble((String) newValue);
+				break;
+			case "Radius":
+				((InstanceCircle) inst).radius = Double.parseDouble((String) newValue);
+				break;
+			case "Size":
+				//create new Vector2 from string
 				break;
 			}
 		}

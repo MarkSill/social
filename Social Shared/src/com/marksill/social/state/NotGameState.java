@@ -7,9 +7,11 @@ import java.util.List;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.geometry.AABB;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.Rectangle;
+import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -174,7 +176,7 @@ public class NotGameState extends NotState {
 		g.setLineWidth(SELECTION_SIZE+1);
 		if (parent instanceof InstanceBlock) {
 			InstanceBlock block = (InstanceBlock) parent;
-			if (block.visible) {
+			if (block.visible && canSee(block)) {
 				Body body = block.getBody();
 				if (((InstanceWorld) InstanceWorld.game.findChild("World")).getWorld().containsBody(body) && Instance.selected.contains(block)) {
 					Vector2 pos = body.getWorldCenter();
@@ -221,6 +223,18 @@ public class NotGameState extends NotState {
 	
 	public static void removeInstance(Instance instance) {
 		toRemove.add(instance);
+	}
+	
+	public static boolean canSee(InstanceBlock block) {
+		Rectangle window = new Rectangle(Social.getInstance().getContainer().getWidth() / PPM, Social.getInstance().getContainer().getHeight() / PPM);
+		AABB aabb = window.createAABB();
+		Transform transf = block.getBody().getTransform();
+		for (BodyFixture f : block.getBody().getFixtures()) {
+			if (aabb.overlaps(f.getShape().createAABB(transf))) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -22,7 +22,7 @@ public class SocialTreeRenderer extends DefaultTreeCellRenderer {
 		case "Instance":
 			loc = "tag";
 			break;
-		case "InstanceBlock":
+		case "InstanceBlock": case "InstanceCircle": case "InstanceRectangle": case "InstanceTriangle":
 			loc = "brick";
 			break;
 		case "InstanceGame":

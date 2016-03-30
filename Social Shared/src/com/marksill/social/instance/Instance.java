@@ -289,20 +289,26 @@ public class Instance implements Cloneable {
 		Instance instance = null;
 		className = className.toLowerCase();
 		switch (className) {
-		case "game":
-			instance = new InstanceGame(name, parent);
-			break;
-		case "world":
-			instance = new InstanceWorld(name, parent);
-			break;
-		case "script":
-			instance = new InstanceScript(name, parent);
+		case "instance": default:
+			instance = new Instance(name, parent);
 			break;
 		case "block":
 			instance = new InstanceBlock(name, parent);
 			break;
-		case "instance": default:
-			instance = new Instance(name, parent);
+		case "circle":
+			instance = new InstanceCircle(name, parent);
+			break;
+		case "game":
+			instance = new InstanceGame(name, parent);
+			break;
+		case "rectangle":
+			instance = new InstanceRectangle(name, parent);
+			break;
+		case "script":
+			instance = new InstanceScript(name, parent);
+			break;
+		case "world":
+			instance = new InstanceWorld(name, parent);
 			break;
 		}
 		return instance;

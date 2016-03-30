@@ -28,9 +28,10 @@ public class InstanceBlock extends Instance implements Cloneable {
 	/** The mass of the block. */
 	public double mass = 1;
 	/** The density of the block. */
-	public double density = 1;
+	public double density = BodyFixture.DEFAULT_DENSITY;
 	/** The elasticity of the block. */
-	public double elasticity = 0.2;
+	public double elasticity = BodyFixture.DEFAULT_RESTITUTION;
+	public double friction = BodyFixture.DEFAULT_FRICTION;
 	
 	/** The physical body of the block. */
 	private Body body;
@@ -42,6 +43,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 	private double lastDensity = 1;
 	/** The block's elasticity last update. */
 	private double lastElasticity = 0.2;
+	private double lastFriction = 0.2;
 
 	/**
 	 * Creates a new block.
@@ -77,6 +79,19 @@ public class InstanceBlock extends Instance implements Cloneable {
 	
 	@Override
 	public void init() {
+		anchored = false;
+		position = new Vector2();
+		color = Color.white;
+		visible = true;
+		mass = 1;
+		density = BodyFixture.DEFAULT_DENSITY;
+		elasticity = BodyFixture.DEFAULT_RESTITUTION;
+		friction = BodyFixture.DEFAULT_FRICTION;
+		lastPosition = new Vector2();
+		lastMass = mass;
+		lastDensity = density;
+		lastElasticity = elasticity;
+		lastFriction = friction;
 		body = new Body();
 		if (getParent() instanceof InstanceWorld) {
 			((InstanceWorld) Instance.game.findChild("World")).addBody(body);
@@ -119,6 +134,12 @@ public class InstanceBlock extends Instance implements Cloneable {
 				}
 			}
 			lastElasticity = elasticity;
+			if (friction != lastFriction) {
+				for (BodyFixture f : body.getFixtures()) {
+					f.setFriction(friction);
+				}
+			}
+			lastFriction = friction;
 		}
 	}
 	
@@ -138,6 +159,8 @@ public class InstanceBlock extends Instance implements Cloneable {
 		shape.createMass(mass);
 		BodyFixture fixture = new BodyFixture(shape);
 		fixture.setDensity(density);
+		fixture.setRestitution(elasticity);
+		fixture.setFriction(friction);
 		fixture.createMass();
 		body.addFixture(fixture);
 	}
