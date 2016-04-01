@@ -7,6 +7,7 @@ import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
+import org.lwjgl.input.Keyboard;
 
 import com.marksill.social.lua.LuaColor;
 import com.marksill.social.lua.LuaWait;
@@ -42,6 +43,7 @@ public class ScriptThread extends Thread {
 		g.set("Vector2", CoerceJavaToLua.coerce(Vector2.class));
 		g.set("wait", CoerceJavaToLua.coerce(new LuaWait()));
 		g.set("Color", CoerceJavaToLua.coerce(new LuaColor()));
+		g.set("Keyboard", CoerceJavaToLua.coerce(Keyboard.class));
 		chunk = g.load(code);
 	}
 	

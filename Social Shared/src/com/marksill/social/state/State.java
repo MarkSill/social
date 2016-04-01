@@ -7,6 +7,9 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import com.marksill.social.Social;
+import com.marksill.social.instance.Instance;
+import com.marksill.social.instance.InstancePlayer;
+import com.marksill.social.instance.InstancePlayers;
 
 /**
  * Class for containing NotStates in a game with Slick running.
@@ -61,6 +64,16 @@ public class State extends BasicGameState {
 	@Override
 	public int getID() {
 		return id;
+	}
+	
+	@Override
+	public void keyPressed(int key, char c) {
+		if (Social.getInstance().isRunning()) {
+			super.keyPressed(key, c);
+			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
+				pl.fireInputCallback(key, c);
+			}
+		}
 	}
 
 }

@@ -80,7 +80,9 @@ public class InstanceBlock extends Instance implements Cloneable {
 	@Override
 	public void init() {
 		anchored = false;
-		position = new Vector2();
+		if (position == null) {
+			position = new Vector2();
+		}
 		color = Color.white;
 		visible = true;
 		mass = 1;

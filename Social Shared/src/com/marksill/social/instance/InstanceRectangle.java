@@ -40,6 +40,9 @@ public class InstanceRectangle extends InstanceBlock {
 		super.update(delta);
 		if (!lastSize.equals(size)) {
 			getBody().removeAllFixtures();
+			if (size.x == 0 && size.y == 0) {
+				size = new Vector2(0.1, 0.1);
+			}
 			Rectangle rect = new Rectangle(size.x, size.y);
 			addShape(rect);
 			lastSize = size.copy();

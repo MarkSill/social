@@ -30,17 +30,22 @@ public class InstancePlayers extends Instance {
 	}
 	
 	public LuaTable getPlayers() {
-		List<InstancePlayer> playerList = new ArrayList<InstancePlayer>();
-		for (Instance i : getChildren()) {
-			if (i instanceof InstancePlayer) {
-				playerList.add((InstancePlayer) i);
-			}
-		}
+		List<InstancePlayer> playerList = getPlayersAsList();
 		LuaValue[] values = new LuaValue[playerList.size()];
 		for (int i = 0; i < playerList.size(); i++) {
 			values[i] = CoerceJavaToLua.coerce(playerList.get(i));
 		}
 		return LuaTable.listOf(values);
+	}
+	
+	public List<InstancePlayer> getPlayersAsList() {
+		List<InstancePlayer> list = new ArrayList<InstancePlayer>();
+		for (Instance i : getChildren()) {
+			if (i instanceof InstancePlayer) {
+				list.add((InstancePlayer) i);
+			}
+		}
+		return list;
 	}
 	
 	public void addPlayer(InstancePlayer player) {
