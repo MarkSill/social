@@ -459,9 +459,13 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 						size = ((Convex) size).getRadius();
 					}
 					values = mergeValues(values, new Object[][] {
-						{"Position", block.position},
+						{"Position X", block.position.x},
+						{"Position Y", block.position.y},
 						{"Anchored", block.anchored},
-						{"Color", block.color},
+						{"Color Red", block.color.r * 255},
+						{"Color Green", block.color.g * 255},
+						{"Color Blue", block.color.b * 255},
+						{"Color Alpha", block.color.a * 255},
 						{"Visible", block.visible},
 						{"Mass", block.mass},
 						{"Density", block.density},
@@ -471,7 +475,8 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 					if (block instanceof InstanceRectangle) {
 						InstanceRectangle rect = (InstanceRectangle) block;
 						values = mergeValues(values, new Object[][] {
-							{"Size", rect.size}
+							{"Size X", rect.size.x},
+							{"Size Y", rect.size.y}
 						});
 					} else if (block instanceof InstanceCircle) {
 						InstanceCircle circ = (InstanceCircle) block;
@@ -592,11 +597,23 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			case "Visible":
 				((InstanceBlock) inst).visible = Boolean.parseBoolean((String) newValue);
 				break;
-			case "Position":
-				//create new Vector2 from string
+			case "Position X":
+				((InstanceBlock) inst).position = new Vector2(Double.parseDouble((String) newValue), ((InstanceBlock) inst).position.y);
 				break;
-			case "Color":
-				//create new Color from string
+			case "Position Y":
+				((InstanceBlock) inst).position = new Vector2(((InstanceBlock) inst).position.x, Double.parseDouble((String) newValue));
+				break;
+			case "Color Red":
+				((InstanceBlock) inst).color.r = Float.parseFloat((String) newValue) / 255;
+				break;
+			case "Color Green":
+				((InstanceBlock) inst).color.g = Float.parseFloat((String) newValue) / 255;
+				break;
+			case "Color Blue":
+				((InstanceBlock) inst).color.b = Float.parseFloat((String) newValue) / 255;
+				break;
+			case "Color Alpha":
+				((InstanceBlock) inst).color.a = Float.parseFloat((String) newValue) / 255;
 				break;
 			case "Mass":
 				((InstanceBlock) inst).mass = Double.parseDouble((String) newValue);
@@ -613,8 +630,11 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			case "Radius":
 				((InstanceCircle) inst).radius = Double.parseDouble((String) newValue);
 				break;
-			case "Size":
-				//create new Vector2 from string
+			case "Size X":
+				((InstanceRectangle) inst).size.x = Double.parseDouble((String) newValue);
+				break;
+			case "Size Y":
+				((InstanceRectangle) inst).size.y = Double.parseDouble((String) newValue);
 				break;
 			}
 		}
