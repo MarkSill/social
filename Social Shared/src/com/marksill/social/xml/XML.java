@@ -14,7 +14,9 @@ import org.jdom2.output.XMLOutputter;
 
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
+import com.marksill.social.instance.InstanceContainer;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstancePlayers;
 import com.marksill.social.instance.InstanceScript;
 import com.marksill.social.instance.InstanceWorld;
 
@@ -67,6 +69,7 @@ public class XML {
 				block.mass = Double.parseDouble(e.getChildText("mass"));
 				block.density = Double.parseDouble(e.getChildText("density"));
 				block.elasticity = Double.parseDouble(e.getChildText("elasticity"));
+				block.friction = Double.parseDouble(e.getChildText("friction"));
 				i = block;
 				break;
 			case "InstanceScript":
@@ -76,8 +79,15 @@ public class XML {
 				i = script;
 			case "InstanceGame":
 				InstanceGame game = new InstanceGame();
-				game.maxPlayers = Integer.parseInt(e.getChildText("maxplayers"));
 				i = game;
+			case "InstancePlayers":
+				InstancePlayers players = new InstancePlayers();
+				players.maxPlayers = Integer.parseInt(e.getChildText("maxPlayers"));
+				i = players;
+			case "InstanceContainer":
+				InstanceContainer container = new InstanceContainer();
+				i = container;
+			case "InstancePlayer": break;
 			default:
 				i = new Instance();
 				break;
@@ -119,8 +129,7 @@ public class XML {
 				e.addContent(new Element("elasticity").setText(String.valueOf(block.elasticity)));
 				break;
 			case "InstanceGame":
-				InstanceGame game = (InstanceGame) i;
-				e.addContent(new Element("maxplayers").setText(String.valueOf(game.maxPlayers)));
+				//InstanceGame game = (InstanceGame) i;
 				break;
 			case "InstanceScript":
 				InstanceScript script = (InstanceScript) i;

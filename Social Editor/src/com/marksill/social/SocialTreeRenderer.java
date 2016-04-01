@@ -31,6 +31,12 @@ public class SocialTreeRenderer extends DefaultTreeCellRenderer {
 		case "InstanceGame":
 			loc = "package";
 			break;
+		case "InstancePlayer":
+			loc = "user";
+			break;
+		case "InstancePlayers":
+			loc = "folder_user";
+			break;
 		case "InstanceScript":
 			loc = "script";
 			break;

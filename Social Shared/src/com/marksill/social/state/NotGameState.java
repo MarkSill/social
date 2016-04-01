@@ -20,6 +20,8 @@ import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstancePlayer;
+import com.marksill.social.instance.InstancePlayers;
 import com.marksill.social.instance.InstanceScript;
 import com.marksill.social.instance.InstanceWorld;
 
@@ -51,6 +53,7 @@ public class NotGameState extends NotState {
 	@Override
 	public void init(Social social) {
 		Instance.game = new InstanceGame();
+		((InstancePlayers) Instance.game.findChild("Players")).addPlayer(new InstancePlayer("MarkSill"));
 	}
 
 	@Override

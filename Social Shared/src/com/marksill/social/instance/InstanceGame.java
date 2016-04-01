@@ -9,9 +9,6 @@ public class InstanceGame extends Instance {
 	
 	/** The game's class name. */
 	public static final String CLASS_NAME = "Game";
-	
-	/** The max number of players that can be connected at once. */
-	public int maxPlayers = 4;
 
 	/**
 	 * Creates a new game.
@@ -49,6 +46,7 @@ public class InstanceGame extends Instance {
 	public void init() {
 		Instance.game = this;
 		new InstanceWorld(this);
+		new InstancePlayers(this);
 	}
 	
 	/**

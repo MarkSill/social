@@ -56,6 +56,7 @@ import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceCircle;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstancePlayers;
 import com.marksill.social.instance.InstanceRectangle;
 import com.marksill.social.instance.InstanceScript;
 
@@ -494,9 +495,12 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 					}
 					break;
 				case "InstanceGame":
-					InstanceGame game = (InstanceGame) inst;
+					//InstanceGame game = (InstanceGame) inst;
+					break;
+				case "InstancePlayers":
+					InstancePlayers players = (InstancePlayers) inst;
 					values = mergeValues(values, new Object[][] {
-						{"Max Players", game.maxPlayers}
+						{"Max Players", players.maxPlayers}
 					});
 					break;
 				case "InstanceScript":
@@ -597,7 +601,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				tree.stopEditing();
 				break;
 			case "Max Players":
-				((InstanceGame) inst).maxPlayers = Integer.parseInt((String) newValue);
+				((InstancePlayers) inst).maxPlayers = Integer.parseInt((String) newValue);
 				break;
 			case "Anchored":
 				((InstanceBlock) inst).anchored = Boolean.parseBoolean((String) newValue);
