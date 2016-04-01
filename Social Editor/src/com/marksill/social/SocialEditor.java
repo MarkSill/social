@@ -156,7 +156,9 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		menu.setMnemonic(KeyEvent.VK_E);
 		menu = createMenu(menubar, "Insert", new MenuItem[] {
 				new MenuItem("Instance", KeyEvent.VK_I),
-				new MenuItem("Block", KeyEvent.VK_B),
+				new MenuItem("Container", KeyEvent.VK_O),
+				new MenuItem("Rectangle", KeyEvent.VK_R),
+				new MenuItem("Circle", KeyEvent.VK_C),
 				new MenuItem("Game", KeyEvent.VK_G),
 				new MenuItem("Script", KeyEvent.VK_S),
 				new MenuItem("World", KeyEvent.VK_W)
@@ -278,8 +280,14 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		case "Instance":
 			inst = "instance";
 			break;
-		case "Block":
-			inst = "block";
+		case "Container":
+			inst = "container";
+			break;
+		case "Rectangle":
+			inst = "rectangle";
+			break;
+		case "Circle":
+			inst = "circle";
 			break;
 		case "Game":
 			inst = "game";

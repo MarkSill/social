@@ -229,6 +229,15 @@ public class Instance implements Cloneable {
 			parent.addChild(this);
 		}
 	}
+	
+	public boolean childOf(Instance other) {
+		for (Instance i : other.children) {
+			if (i == this || childOf(i)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	@Override
 	protected void finalize() {}
@@ -297,6 +306,9 @@ public class Instance implements Cloneable {
 			break;
 		case "circle":
 			instance = new InstanceCircle(name, parent);
+			break;
+		case "container":
+			instance = new InstanceContainer(name, parent);
 			break;
 		case "game":
 			instance = new InstanceGame(name, parent);

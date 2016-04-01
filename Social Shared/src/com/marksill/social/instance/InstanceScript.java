@@ -54,10 +54,10 @@ public class InstanceScript extends Instance {
 	public void init() {
 		enabled = true;
 		running = false;
-		code = "while true do\n" +
+		code = "local container = Instance:create('container', 'BlockContainer') container:setParent(game:findChild('World')) while true do\n" +
 		"local instance\nlocal n1, n2 = math.random(5, 100) / 100, math.random(5, 100) / 100\n" +
 		"if math.random(2) == 1 then instance = Instance:create('rectangle') instance.size = Vector2.new(n1, n2) else instance = Instance:create('circle') instance.radius = (n1 + n2) / 4 end\ninstance.mass = (((n1 + n2) / 2) * 10)^4\n" +
-		"instance:delete(1500000)\ninstance:setParent(game:findChild('World'))\ninstance.color = Color(math.random(0, 255) / 255, math.random(0, 255) / 255, math.random(0, 255) / 255)\n" +
+		"instance:delete(1500000)\ninstance:setParent(container)\ninstance.color = Color(math.random(0, 255) / 255, math.random(0, 255) / 255, math.random(0, 255) / 255)\n" +
 		"instance.position = Vector2.new(4, 20) instance.elasticity = math.random(1, 100) / 100\nwait(300)\nend\n";
 		tabIndex = -1;
 	}

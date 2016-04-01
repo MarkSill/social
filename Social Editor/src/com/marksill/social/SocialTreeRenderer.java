@@ -25,6 +25,9 @@ public class SocialTreeRenderer extends DefaultTreeCellRenderer {
 		case "InstanceBlock": case "InstanceCircle": case "InstanceRectangle": case "InstanceTriangle":
 			loc = "brick";
 			break;
+		case "InstanceContainer":
+			loc = "folder";
+			break;
 		case "InstanceGame":
 			loc = "package";
 			break;

@@ -185,10 +185,11 @@ public class InstanceBlock extends Instance implements Cloneable {
 	
 	@Override
 	public void setParent(Instance parent) {
-		if (parent instanceof InstanceWorld && !(getParent() instanceof InstanceWorld) && body != null) {
-			((InstanceWorld) parent).addBody(body);
-		} else if (getParent() instanceof InstanceWorld) {
-			((InstanceWorld) getParent()).removeBody(body);
+		InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
+		if (parent != null && (parent instanceof InstanceWorld || parent.childOf(world)) && body != null) {
+			world.addBody(body);
+		} else if (getParent() != null && (getParent() instanceof InstanceWorld || getParent().childOf(world)) && body != null) {
+			world.removeBody(body);
 		}
 		super.setParent(parent);
 	}
