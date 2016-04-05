@@ -14,6 +14,7 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
@@ -232,7 +233,15 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 					Instance.game = null;
 				}
 			} else {
-				contentPane.removeTabAt(contentPane.getSelectedIndex());
+				int index = contentPane.getSelectedIndex();
+				List<Instance> scripts = Instance.findInstances(Instance.game, InstanceScript.class);
+				for (Instance instance : scripts) {
+					InstanceScript script = (InstanceScript) instance;
+					if (script.tabIndex == index) {
+						script.tabIndex = -1;
+					}
+				}
+				contentPane.removeTabAt(index);
 			}
 			break;
 		case "Save":

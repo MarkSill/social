@@ -325,5 +325,18 @@ public class Instance implements Cloneable {
 		}
 		return instance;
 	}
+	
+	public static List<Instance> findInstances(Instance parent, Class<? extends Instance> clazz) {
+		List<Instance> list = new ArrayList<Instance>();
+		if (parent.getClass().equals(clazz)) {
+			list.add(parent);
+		}
+		for (Instance i : parent.getChildren()) {
+			for (Instance inst : findInstances(i, clazz)) {
+				list.add(inst);
+			}
+		}
+		return list;
+	}
 
 }
