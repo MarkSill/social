@@ -16,11 +16,14 @@ public class InstanceWorld extends Instance {
 	/** The world's class name. */
 	public static final String CLASS_NAME = "World";
 	
+	public double gravX, gravY;
+	
 	/** The world's World. */
 	private World world;
 	/** A list of bodies to add next update. */
 	private List<Body> bodiesToAdd;
 	private List<Body> bodiesToRemove;
+	private double lastGravX, lastGravY;
 	
 	/**
 	 * Creates a new world.
@@ -58,6 +61,10 @@ public class InstanceWorld extends Instance {
 	public void init() {
 		world = new World();
 		world.setGravity(World.EARTH_GRAVITY);
+		gravX = world.getGravity().x;
+		gravY = world.getGravity().y;
+		lastGravX = gravX;
+		lastGravY = gravY;
 		bodiesToAdd = new ArrayList<Body>();
 		bodiesToRemove = new ArrayList<Body>();
 		InstanceRectangle block = new InstanceRectangle(this);
@@ -88,6 +95,11 @@ public class InstanceWorld extends Instance {
 		bodiesToRemove.clear();
 		for (int i = 0; i < copy.length; i++) {
 			world.removeBody((Body) copy[i]);
+		}
+		if (gravX != lastGravX || gravY != lastGravY) {
+			world.setGravity(new Vector2(gravX, gravY));
+			lastGravX = gravX;
+			lastGravY = gravY;
 		}
 	}
 	
