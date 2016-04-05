@@ -16,14 +16,16 @@ public class InstanceWorld extends Instance {
 	/** The world's class name. */
 	public static final String CLASS_NAME = "World";
 	
-	public double gravX, gravY;
+	public double gravX;
+	public double gravY;
 	
 	/** The world's World. */
 	private World world;
 	/** A list of bodies to add next update. */
 	private List<Body> bodiesToAdd;
 	private List<Body> bodiesToRemove;
-	private double lastGravX, lastGravY;
+	private double lastGravX;
+	private double lastGravY;
 	
 	/**
 	 * Creates a new world.
