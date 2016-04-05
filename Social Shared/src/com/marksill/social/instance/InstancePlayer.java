@@ -9,7 +9,8 @@ public class InstancePlayer extends Instance {
 	
 	public static final String CLASS_NAME = "Player";
 	
-	private List<LuaValue> inputCallbacks;
+	private List<LuaValue> keyboardDownCallbacks;
+	private List<LuaValue> keyboardUpCallbacks;
 
 	public InstancePlayer() {
 		super(CLASS_NAME);
@@ -29,17 +30,36 @@ public class InstancePlayer extends Instance {
 	
 	@Override
 	public void init() {
-		inputCallbacks = new ArrayList<LuaValue>();
+		keyboardDownCallbacks = new ArrayList<LuaValue>();
+		keyboardUpCallbacks = new ArrayList<LuaValue>();
 	}
 	
-	public void addInputCallback(LuaValue func) {
-		inputCallbacks.add(func);
+	public void addKeyboardDownCallback(LuaValue func) {
+		keyboardDownCallbacks.add(func);
 	}
 	
-	public void fireInputCallback(int key, char c) {
-		for (LuaValue v : inputCallbacks) {
+	public void fireKeyboardDownCallbacks(int key, char c) {
+		for (LuaValue v : keyboardDownCallbacks) {
 			v.call(LuaValue.valueOf(key), LuaValue.valueOf(c));
 		}
+	}
+	
+	public void clearKeyboardDownCallbacks() {
+		keyboardDownCallbacks.clear();
+	}
+	
+	public void addKeyboardUpCallback(LuaValue func) {
+		keyboardUpCallbacks.add(func);
+	}
+	
+	public void fireKeyboardUpCallbacks(int key, char c) {
+		for (LuaValue v : keyboardUpCallbacks) {
+			v.call(LuaValue.valueOf(key), LuaValue.valueOf(c));
+		}
+	}
+	
+	public void clearKeyboardUpCallbacks() {
+		keyboardUpCallbacks.clear();
 	}
 
 }

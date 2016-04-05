@@ -71,7 +71,17 @@ public class State extends BasicGameState {
 		if (Social.getInstance().isRunning()) {
 			super.keyPressed(key, c);
 			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
-				pl.fireInputCallback(key, c);
+				pl.fireKeyboardDownCallbacks(key, c);
+			}
+		}
+	}
+	
+	@Override
+	public void keyReleased(int key, char c) {
+		if (Social.getInstance().isRunning()) {
+			super.keyReleased(key, c);
+			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
+				pl.fireKeyboardUpCallbacks(key, c);
 			}
 		}
 	}
