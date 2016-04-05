@@ -60,6 +60,7 @@ import com.marksill.social.instance.InstanceGame;
 import com.marksill.social.instance.InstancePlayers;
 import com.marksill.social.instance.InstanceRectangle;
 import com.marksill.social.instance.InstanceScript;
+import com.marksill.social.instance.InstanceWorld;
 
 public class SocialEditor extends JFrame implements ActionListener, KeyListener, TreeSelectionListener, TreeModelListener, CellEditorListener, TableModelListener {
 
@@ -532,7 +533,12 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 						contentPane.setSelectedIndex(script.tabIndex);
 					}
 					break;
-				case "World":
+				case "InstanceWorld":
+					InstanceWorld world = (InstanceWorld) inst;
+					values = mergeValues(values, new Object[][] {
+						{"Gravity X", world.gravX},
+						{"Gravity Y", world.gravY}
+					});
 					break;
 				}
 				
@@ -656,6 +662,12 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				break;
 			case "Size Y":
 				((InstanceRectangle) inst).size.y = Double.parseDouble((String) newValue);
+				break;
+			case "Gravity X":
+				((InstanceWorld) inst).gravX = Double.parseDouble((String) newValue);
+				break;
+			case "Gravity Y":
+				((InstanceWorld) inst).gravY = Double.parseDouble((String) newValue);
 				break;
 			}
 		}
