@@ -81,7 +81,6 @@ public class InstanceWorld extends Instance {
 		block2.position = new Vector2(2.5, 8.5);
 		block2.color = new Color(1.0f, 0.0f, 0.0f);
 		block2.elasticity = 1;
-		new InstanceScript(this);
 	}
 	
 	@Override

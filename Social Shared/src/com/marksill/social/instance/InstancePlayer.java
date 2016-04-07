@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+
+import net.java.games.input.Controller;
 
 public class InstancePlayer extends Instance {
 	
@@ -11,6 +14,7 @@ public class InstancePlayer extends Instance {
 	
 	private List<LuaValue> keyboardDownCallbacks;
 	private List<LuaValue> keyboardUpCallbacks;
+	private List<LuaValue> controllerCallbacks;
 
 	public InstancePlayer() {
 		super(CLASS_NAME);
@@ -32,6 +36,7 @@ public class InstancePlayer extends Instance {
 	public void init() {
 		keyboardDownCallbacks = new ArrayList<LuaValue>();
 		keyboardUpCallbacks = new ArrayList<LuaValue>();
+		controllerCallbacks = new ArrayList<LuaValue>();
 	}
 	
 	public void addKeyboardDownCallback(LuaValue func) {
@@ -60,6 +65,26 @@ public class InstancePlayer extends Instance {
 	
 	public void clearKeyboardUpCallbacks() {
 		keyboardUpCallbacks.clear();
+	}
+	
+	public void addControllerCallback(LuaValue func) {
+		controllerCallbacks.add(func);
+	}
+	
+	public void fireControllerCallbacks(Controller controller, String name, Object data) {
+		for (LuaValue v : controllerCallbacks) {
+			v.call(CoerceJavaToLua.coerce(controller), LuaValue.valueOf(name), CoerceJavaToLua.coerce(data));
+		}
+	}
+	
+	public void clearControllerCallbacks() {
+		controllerCallbacks.clear();
+	}
+	
+	public void clearCallbacks() {
+		clearKeyboardDownCallbacks();
+		clearKeyboardUpCallbacks();
+		clearControllerCallbacks();
 	}
 
 }

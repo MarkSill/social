@@ -32,6 +32,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 	/** The elasticity of the block. */
 	public double elasticity = BodyFixture.DEFAULT_RESTITUTION;
 	public double friction = BodyFixture.DEFAULT_FRICTION;
+	public boolean rotationLocked = false;
 	
 	/** The physical body of the block. */
 	private Body body;
@@ -142,6 +143,9 @@ public class InstanceBlock extends Instance implements Cloneable {
 				}
 			}
 			lastFriction = friction;
+			if (rotationLocked) {
+				body.getTransform().setRotation(0);
+			}
 		}
 	}
 	

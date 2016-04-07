@@ -1,5 +1,6 @@
 package com.marksill.social;
 
+
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.Color;
@@ -67,6 +68,7 @@ public class Social extends StateBasedGame {
 				generalContainer.setTargetFrameRate(60);
 				generalContainer.setShowFPS(false);
 				generalContainer.setAlwaysRender(true);
+				Controllers.setup();
 				if (swing) {
 					//Nothing?
 				} else {
@@ -174,6 +176,7 @@ public class Social extends StateBasedGame {
 				container.getInput().addKeyListener(canvas);
 			}
 		}
+		Controllers.pollControllers();
 	}
 	
 	/**

@@ -75,8 +75,7 @@ public class NotGameState extends NotState {
 					((InstanceScript) i).thread.kill();
 					((InstanceScript) i).running = false;
 				} else if (i instanceof InstancePlayer) {
-					((InstancePlayer) i).clearKeyboardDownCallbacks();
-					((InstancePlayer) i).clearKeyboardUpCallbacks();
+					((InstancePlayer) i).clearCallbacks();
 				}
 			}
 			return;
