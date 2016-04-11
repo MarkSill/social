@@ -27,7 +27,10 @@ public abstract class NetworkInterface {
 			InstancePlayers.class,
 			InstanceRectangle.class,
 			InstanceScript.class,
-			InstanceWorld.class
+			InstanceWorld.class,
+			Request.class,
+			RequestConnect.class,
+			RequestReadyForUsername.class
 	};
 	
 	public void init(Kryo kryo) {

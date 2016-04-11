@@ -12,6 +12,7 @@ public class NetworkClient extends NetworkInterface {
 	
 	public NetworkClient(String host, int tcp, int udp) {
 		client = new Client();
+		init(client.getKryo());
 		client.start();
 		try {
 			client.connect(5000, host, tcp, udp);
@@ -19,26 +20,31 @@ public class NetworkClient extends NetworkInterface {
 			e.printStackTrace();
 		}
 		client.addListener(new Listener() {
+			@Override
 			public void received(Connection connection, Object data) {
 				receive(connection, data);
 			}
 		});
-		init(client.getKryo());
 	}
 
 	@Override
 	public void sendTCP(Object data) {
-		
+		client.sendTCP(data);
 	}
 
 	@Override
 	public void sendUDP(Object data) {
-		
+		client.sendUDP(data);
 	}
 
 	@Override
 	public void receive(Connection connection, Object data) {
-		
+		if (data instanceof Request) {
+			Request r = (Request) data;
+			if (r instanceof RequestReadyForUsername) {
+				connection.sendTCP(new RequestConnect("MarkSill"));
+			}
+		}
 	}
 
 }

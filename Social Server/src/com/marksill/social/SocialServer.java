@@ -1,5 +1,6 @@
 package com.marksill.social;
 
+import com.marksill.social.networking.NetworkServer;
 import com.marksill.social.state.NotGameState;
 import com.marksill.social.state.NotState;
 
@@ -13,6 +14,7 @@ public class SocialServer {
 	
 	public static void main(String[] args) {
 		Social social = new Social();
+		social.setNetworkInterface(new NetworkServer(55555, 55556));
 		try {
 			social.start(false, false, args);
 		} catch (SocialException e) {
@@ -20,6 +22,7 @@ public class SocialServer {
 		}
 		state = new NotGameState();
 		lastTime = System.nanoTime();
+		state.init(Social.getInstance());
 		loop();
 	}
 	

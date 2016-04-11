@@ -12,6 +12,8 @@ public class InstancePlayer extends Instance {
 	
 	public static final String CLASS_NAME = "Player";
 	
+	public int cid;
+	
 	private List<LuaValue> keyboardDownCallbacks;
 	private List<LuaValue> keyboardUpCallbacks;
 	private List<LuaValue> controllerCallbacks;
