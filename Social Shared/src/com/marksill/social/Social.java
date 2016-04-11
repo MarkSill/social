@@ -10,6 +10,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import com.marksill.social.networking.NetworkInterface;
 import com.marksill.social.state.NotGameState;
 import com.marksill.social.state.NotState;
 import com.marksill.social.state.State;
@@ -39,6 +40,7 @@ public class Social extends StateBasedGame {
 	/** The last timestamp since the FPS was updated. */
 	private long lastTime = 0;
 	private boolean running;
+	private NetworkInterface network = null;
 	
 	/**
 	 * Creates a new instance of Social.
@@ -78,19 +80,21 @@ public class Social extends StateBasedGame {
 				e.printStackTrace();
 			}
 		} else {
-			if (swing) {
-				
-			} else {
-				
-			}
-			//TODO: Implement server-based code.
-			throw new SocialException("Server games are not enabled yet.");
+			
 		}
 	}
 
 	@Override
 	public void initStatesList(GameContainer container) throws SlickException {
 		addState(new NotGameState());
+	}
+	
+	public void setNetworkInterface(NetworkInterface network) {
+		this.network = network;
+	}
+	
+	public NetworkInterface getNetworkInterface() {
+		return network;
 	}
 	
 	/**
@@ -202,6 +206,14 @@ public class Social extends StateBasedGame {
 	
 	public void setRunning(boolean running) {
 		this.running = running;
+	}
+	
+	public boolean isServer() {
+		return !graphics;
+	}
+	
+	public boolean isNetworked() {
+		return network != null;
 	}
 
 }

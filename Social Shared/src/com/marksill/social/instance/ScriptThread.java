@@ -44,8 +44,10 @@ public class ScriptThread extends Thread {
 		g.set("Vector2", CoerceJavaToLua.coerce(Vector2.class));
 		g.set("wait", CoerceJavaToLua.coerce(new LuaWait()));
 		g.set("Color", CoerceJavaToLua.coerce(new LuaColor()));
-		g.set("Keyboard", CoerceJavaToLua.coerce(Keyboard.class));
-		g.set("Controllers", CoerceJavaToLua.coerce(LuaControllers.class));
+		if (script instanceof InstanceClientScript) {
+			g.set("Keyboard", CoerceJavaToLua.coerce(Keyboard.class));
+			g.set("Controllers", CoerceJavaToLua.coerce(LuaControllers.class));
+		}
 		chunk = g.load(code);
 	}
 	

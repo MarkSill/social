@@ -26,5 +26,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/lib/jdom/jdom-2.0.6-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="/lib/kryonet-2.21/jars/production/onejar/kryonet-2.21-all.jar" sourcepath="/lib/kryonet-2.21/java/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

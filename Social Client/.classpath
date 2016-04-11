@@ -22,5 +22,6 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="/lib/luaj-3.0.1/lib/luaj-jse-3.0.1.jar" sourcepath="/lib/luaj-3.0.1/src/jse"/>
+	<classpathentry kind="lib" path="/lib/kryonet-2.21/jars/production/onejar/kryonet-2.21-all.jar" sourcepath="/lib/kryonet-2.21/java/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

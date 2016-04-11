@@ -53,12 +53,11 @@ public class NotGameState extends NotState {
 	@Override
 	public void init(Social social) {
 		Instance.game = new InstanceGame();
-		((InstancePlayers) Instance.game.findChild("Players")).addPlayer(new InstancePlayer("MarkSill"));
 	}
 
 	@Override
 	public void update(Social social, int delta) {
-		if (social.getCanvasContainer() != null) {
+		if (social.getCanvasContainer() != null && social.graphicsEnabled()) {
 			try {
 				Class<?> editorClass = Class.forName("com.marksill.social.SocialEditor");
 				Object editor = new Object();
