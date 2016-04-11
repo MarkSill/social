@@ -85,5 +85,55 @@ public class State extends BasicGameState {
 			}
 		}
 	}
+	
+	@Override
+	public void mousePressed(int button, int x, int y) {
+		if (Social.getInstance().isRunning()) {
+			super.mousePressed(button, x, y);
+			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
+				pl.fireMousePressCallbacks(button, x, y);
+			}
+		}
+	}
+	
+	@Override
+	public void mouseReleased(int button, int x, int y) {
+		if (Social.getInstance().isRunning()) {
+			super.mouseReleased(button, x, y);
+			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
+				pl.fireMouseReleaseCallbacks(button, x, y);
+			}
+		}
+	}
+	
+	@Override
+	public void mouseClicked(int button, int x, int y, int clickCount) {
+		if (Social.getInstance().isRunning()) {
+			super.mouseClicked(button, x, y, clickCount);
+			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
+				pl.fireMouseClickCallbacks(button, x, y, clickCount);
+			}
+		}
+	}
+	
+	@Override
+	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
+		if (Social.getInstance().isRunning()) {
+			super.mouseMoved(oldx, oldy, newx, newy);
+			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
+				pl.fireMouseMovedCallbacks(oldx, oldy, newx, newy);
+			}
+		}
+	}
+	
+	@Override
+	public void mouseWheelMoved(int newValue) {
+		if (Social.getInstance().isRunning()) {
+			super.mouseWheelMoved(newValue);
+			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
+				pl.fireMouseWheelCallbacks(newValue);
+			}
+		}
+	}
 
 }
