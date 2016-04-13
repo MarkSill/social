@@ -2,6 +2,7 @@ package com.marksill.social.instance;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
@@ -54,6 +55,13 @@ public class InstancePlayers extends Instance {
 		} else {
 			player.delete();
 		}
+	}
+	
+	@Override
+	public Map<String, Object> createMap() {
+		Map<String, Object> map = super.createMap();
+		map.put("maxPlayers", maxPlayers);
+		return map;
 	}
 
 }

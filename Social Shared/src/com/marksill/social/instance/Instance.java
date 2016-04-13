@@ -1,7 +1,9 @@
 package com.marksill.social.instance;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.tree.TreeNode;
 
@@ -24,13 +26,16 @@ public class Instance implements Cloneable {
 	/** The instance of the game. */
 	public static InstanceGame game = null;
 	
+	private static long nextID = 0;
+	
 	/** The instance's parent. */
 	private Instance parent;
 	/** The name of the instance. */
 	public String name;
+	public long id;
 	
 	/** The instance's children. */
-	private List<Instance> children;
+	protected List<Instance> children;
 	
 	public TreeNode node;
 
@@ -65,8 +70,9 @@ public class Instance implements Cloneable {
 	public Instance(String name, Instance parent) {
 		this.name = name;
 		this.setParent(parent);
-		children = new ArrayList<Instance>();
+		children = new ArrayList<>();
 		NotGameState.addInstance(this);
+		id = nextID++;
 		init();
 	}
 	
@@ -92,7 +98,7 @@ public class Instance implements Cloneable {
 		setParent(null);
 		NotGameState.removeInstance(this);
 		node = null;
-		for (Instance i : new ArrayList<Instance>(children)) {
+		for (Instance i : new ArrayList<>(children)) {
 			i.delete();
 		}
 	}
@@ -177,7 +183,7 @@ public class Instance implements Cloneable {
 	 * Removes all children from this instance.
 	 */
 	public void clearChildren() {
-		clearChildren(new ArrayList<Object>());
+		clearChildren(new ArrayList<>());
 	}
 	
 	/**
@@ -237,6 +243,25 @@ public class Instance implements Cloneable {
 			}
 		}
 		return false;
+	}
+	
+	public Map<String, Object> createMap() {
+		Map<String, Object> map = new HashMap<>();
+		map.put("cname", getClass().getName());
+		map.put("name", name);
+		List<Map<String, Object>> list = new ArrayList<>();
+		for (Instance i : children) {
+			list.add(i.createMap());
+		}
+		map.put("children", list);
+		map.put("id", id);
+		return map;
+	}
+	
+	public void loadFromMap(Map<String, Object> map) {
+		id = (long) map.get("id");
+		name = (String) map.get("name");
+		children = new ArrayList<>();
 	}
 
 	@Override
@@ -307,6 +332,9 @@ public class Instance implements Cloneable {
 		case "circle":
 			instance = new InstanceCircle(name, parent);
 			break;
+		case "clientscript":
+			instance = new InstanceClientScript(name, parent);
+			break;
 		case "container":
 			instance = new InstanceContainer(name, parent);
 			break;
@@ -327,7 +355,7 @@ public class Instance implements Cloneable {
 	}
 	
 	public static List<Instance> findInstances(Instance parent, Class<? extends Instance> clazz) {
-		List<Instance> list = new ArrayList<Instance>();
+		List<Instance> list = new ArrayList<>();
 		if (parent.getClass().equals(clazz)) {
 			list.add(parent);
 		}
@@ -337,6 +365,44 @@ public class Instance implements Cloneable {
 			}
 		}
 		return list;
+	}
+	
+	public static Instance getByID(long id) {
+		return getByID(id, Instance.game);
+	}
+	
+	public static Instance getByID(long id, Instance parent) {
+		if (parent == null) {
+			return null;
+		}
+		if (parent.id == id) {
+			return parent;
+		}
+		for (Instance i : parent.children) {
+			Instance inst = getByID(id, i);
+			if (inst != null) {
+				return inst;
+			}
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static void fromMap(Map<String, Object> map) {
+		long id = (long) map.get("id");
+		Instance inst = getByID(id);
+		if (inst == null) {
+			try {
+				inst = (Instance) Class.forName((String) map.get("cname")).newInstance();
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
+		inst.loadFromMap(map);
+		List<Map<String, Object>> list = (List<Map<String, Object>>) map.get("children");
+		for (Map<String, Object> m : list) {
+			fromMap(m);
+		}
 	}
 
 }

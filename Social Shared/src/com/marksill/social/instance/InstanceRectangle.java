@@ -1,5 +1,7 @@
 package com.marksill.social.instance;
 
+import java.util.Map;
+
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
 
@@ -47,6 +49,13 @@ public class InstanceRectangle extends InstanceBlock {
 			addShape(rect);
 			lastSize = size.copy();
 		}
+	}
+	
+	@Override
+	public Map<String, Object> createMap() {
+		Map<String, Object> map = super.createMap();
+		map.put("size", size);
+		return map;
 	}
 
 }

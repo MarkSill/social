@@ -1,5 +1,7 @@
 package com.marksill.social.instance;
 
+import java.util.Map;
+
 public class InstanceClientScript extends InstanceScript {
 	
 	public static final String CLASS_NAME = "ClientScript";
@@ -18,6 +20,13 @@ public class InstanceClientScript extends InstanceScript {
 	
 	public InstanceClientScript(String name, Instance parent) {
 		super(name, parent);
+	}
+	
+	@Override
+	public Map<String, Object> createMap() {
+		Map<String, Object> map = super.createMap();
+		map.put("code", code);
+		return map;
 	}
 
 }

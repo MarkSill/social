@@ -1,5 +1,7 @@
 package com.marksill.social.instance;
 
+import java.util.Map;
+
 import org.dyn4j.geometry.Circle;
 
 public class InstanceCircle extends InstanceBlock {
@@ -43,6 +45,13 @@ public class InstanceCircle extends InstanceBlock {
 			addShape(circ);
 			lastRadius = radius;
 		}
+	}
+	
+	@Override
+	public Map<String, Object> createMap() {
+		Map<String, Object> map = super.createMap();
+		map.put("radius", radius);
+		return map;
 	}
 
 }

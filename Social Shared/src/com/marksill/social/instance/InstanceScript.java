@@ -1,5 +1,7 @@
 package com.marksill.social.instance;
 
+import java.util.Map;
+
 /**
  * The class for all server side scripts in the game.
  */
@@ -75,6 +77,13 @@ public class InstanceScript extends Instance {
 	public void delete() {
 		thread.kill();
 		super.delete();
+	}
+	
+	@Override
+	public Map<String, Object> createMap() {
+		Map<String, Object> map = super.createMap();
+		map.put("enabled", enabled);
+		return map;
 	}
 	
 }

@@ -11,6 +11,7 @@ public class SocialServer {
 	public static NotState state;
 	
 	private static long lastTime;
+	private static int framesSinceNetwork = 0;
 	
 	public static void main(String[] args) {
 		Social social = new Social();
@@ -37,6 +38,10 @@ public class SocialServer {
 			}
 			int delta = (int) (1000 / time);
 			state.update(Social.getInstance(), delta);
+			if (framesSinceNetwork++ >= 6) {
+				((NetworkServer) Social.getInstance().getNetworkInterface()).sendUpdate();
+				framesSinceNetwork = 0;
+			}
 		}
 	}
 

@@ -1,6 +1,7 @@
 package com.marksill.social.instance;
 
 import java.util.List;
+import java.util.Map;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
@@ -198,6 +199,21 @@ public class InstanceBlock extends Instance implements Cloneable {
 			world.removeBody(body);
 		}
 		super.setParent(parent);
+	}
+	
+	@Override
+	public Map<String, Object> createMap() {
+		Map<String, Object> map = super.createMap();
+		map.put("anchored", anchored);
+		map.put("position", position);
+		map.put("color", color);
+		map.put("visible", visible);
+		map.put("mass", mass);
+		map.put("density", density);
+		map.put("elasticity", elasticity);
+		map.put("friction", friction);
+		map.put("rotationLocked", rotationLocked);
+		return map;
 	}
 
 }

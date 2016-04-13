@@ -1,10 +1,12 @@
 package com.marksill.social.networking;
 
 import java.io.IOException;
+import java.util.Map;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.marksill.social.instance.Instance;
 
 public class NetworkClient extends NetworkInterface {
 	
@@ -37,12 +39,16 @@ public class NetworkClient extends NetworkInterface {
 		client.sendUDP(data);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void receive(Connection connection, Object data) {
 		if (data instanceof Request) {
 			Request r = (Request) data;
 			if (r instanceof RequestReadyForUsername) {
 				connection.sendTCP(new RequestConnect("MarkSill"));
+			} else if (r instanceof RequestUpdate) {
+				Map<String, Object> map = (Map<String, Object>) r.data;
+				Instance.fromMap(map);
 			}
 		}
 	}

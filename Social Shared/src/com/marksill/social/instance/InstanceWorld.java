@@ -2,6 +2,7 @@ package com.marksill.social.instance;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
@@ -118,6 +119,13 @@ public class InstanceWorld extends Instance {
 	
 	public void removeBody(Body body) {
 		bodiesToRemove.add(body);
+	}
+	
+	public Map<String, Object> createMap() {
+		Map<String, Object> map = super.createMap();
+		map.put("gravX", gravX);
+		map.put("gravY", gravY);
+		return map;
 	}
 
 }

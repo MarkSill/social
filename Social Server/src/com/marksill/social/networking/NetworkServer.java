@@ -1,6 +1,7 @@
 package com.marksill.social.networking;
 
 import java.io.IOException;
+import java.util.Map;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -71,6 +72,12 @@ public class NetworkServer extends NetworkInterface {
 				((InstancePlayers) Instance.game.findChild("Players")).addPlayer(player);
 			}
 		}
+	}
+	
+	public void sendUpdate() {
+		Map<String, Object> map = Instance.game.createMap();
+		//System.out.println(map);
+		sendTCP(new RequestUpdate(map));
 	}
 
 }
