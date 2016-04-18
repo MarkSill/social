@@ -61,6 +61,7 @@ import com.marksill.social.instance.InstancePlayers;
 import com.marksill.social.instance.InstanceRectangle;
 import com.marksill.social.instance.InstanceScript;
 import com.marksill.social.instance.InstanceWorld;
+import com.marksill.social.networking.NetworkServer;
 
 public class SocialEditor extends JFrame implements ActionListener, KeyListener, TreeSelectionListener, TreeModelListener, CellEditorListener, TableModelListener {
 
@@ -197,6 +198,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		boolean shouldStart = true;
 		try {
 			if (shouldStart) {
+				social.setNetworkInterface(new NetworkServer(55555, 55556));
 				social.getCanvasContainer().start();
 			}
 		} catch (SlickException e) {
@@ -509,7 +511,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 						{"Max Players", players.maxPlayers}
 					});
 					break;
-				case "InstanceScript":
+				case "InstanceScript": case "InstanceClientScript":
 					InstanceScript script = (InstanceScript) inst;
 					values = mergeValues(values, new Object[][] {
 						{"Enabled", script.enabled},

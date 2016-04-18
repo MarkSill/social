@@ -126,7 +126,7 @@ public class Instance implements Cloneable {
 	 * @return The instance's children.
 	 */
 	public List<Instance> getChildren() {
-		return children;
+		return new ArrayList<Instance>(children);
 	}
 	
 	public LuaTable children() {
@@ -143,9 +143,9 @@ public class Instance implements Cloneable {
 	 * @return The child with the given name (or null).
 	 */
 	public Instance findChild(String name) {
-		for (int i = 0; i < children.size(); i++) {
-			if (children.get(i).name.equals(name)) {
-				return children.get(i);
+		for (Instance child : getChildren()) {
+			if (child.name.equals(name)) {
+				return child;
 			}
 		}
 		return null;
@@ -237,6 +237,9 @@ public class Instance implements Cloneable {
 	}
 	
 	public boolean childOf(Instance other) {
+		if (other == null) {
+			return false;
+		}
 		for (Instance i : other.children) {
 			if (i == this || childOf(i)) {
 				return true;
@@ -388,7 +391,7 @@ public class Instance implements Cloneable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static void fromMap(Map<String, Object> map) {
+	public static Instance fromMap(Map<String, Object> map) {
 		long id = (long) map.get("id");
 		Instance inst = getByID(id);
 		if (inst == null) {
@@ -400,9 +403,12 @@ public class Instance implements Cloneable {
 		}
 		inst.loadFromMap(map);
 		List<Map<String, Object>> list = (List<Map<String, Object>>) map.get("children");
+		List<Instance> children = new ArrayList<>();
 		for (Map<String, Object> m : list) {
-			fromMap(m);
+			children.add(fromMap(m));
 		}
+		inst.children = children;
+		return inst;
 	}
 
 }

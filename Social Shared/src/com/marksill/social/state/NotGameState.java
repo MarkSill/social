@@ -23,6 +23,7 @@ import com.marksill.social.instance.InstanceGame;
 import com.marksill.social.instance.InstancePlayer;
 import com.marksill.social.instance.InstanceScript;
 import com.marksill.social.instance.InstanceWorld;
+import com.marksill.social.networking.NetworkServer;
 
 /**
  * NotState for the game.
@@ -41,7 +42,7 @@ public class NotGameState extends NotState {
 	private static List<Instance> toAdd = new ArrayList<Instance>();
 	private static int transparency = 255;
 	private static boolean transparencyDirection = false;
-
+	
 	/**
 	 * Creates a new NotGameState.
 	 */
@@ -67,7 +68,7 @@ public class NotGameState extends NotState {
 				e.printStackTrace();
 			}
 		}
-		if (Instance.game == null || !social.isRunning() || (social.isNetworked() && !social.isServer())) {
+		if (Instance.game == null || !social.isRunning()) {
 			for (Instance i : instances) {
 				if (i instanceof InstanceScript) {
 					((InstanceScript) i).thread.kill();
@@ -77,6 +78,9 @@ public class NotGameState extends NotState {
 				}
 			}
 			return;
+		}
+		if (social.isNetworked() && !social.isServer()) {
+			//return;
 		}
 		Object[] copy = toRemove.toArray();
 		toRemove.clear();
@@ -90,6 +94,9 @@ public class NotGameState extends NotState {
 		}
 		for (Instance i : instances) {
 			i.update(delta);
+		}
+		if (social.isNetworked() && social.isServer()) {
+			((NetworkServer) social.getNetworkInterface()).sendUpdate();
 		}
 	}
 	
@@ -132,7 +139,7 @@ public class NotGameState extends NotState {
 			InstanceBlock block = (InstanceBlock) parent;
 			if (block.visible) {
 				Body body = block.getBody();
-				if (((InstanceWorld) Instance.game.findChild("World")).getWorld().containsBody(body)) {
+				if (block.childOf(Instance.game.findChild("World"))) {
 					Vector2 pos = body.getWorldCenter();//.difference(body.getLocalCenter());
 					List<BodyFixture> fixtures = body.getFixtures();
 					float rot = (float) (-Math.toDegrees(body.getTransform().getRotation()));

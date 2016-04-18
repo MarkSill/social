@@ -13,9 +13,10 @@ import com.marksill.social.instance.InstancePlayers;
 public class NetworkServer extends NetworkInterface {
 	
 	public Server server;
+	public Map<Integer, Object> lastMap = null;
 	
 	public NetworkServer(int tcp, int udp) {
-		server = new Server();
+		server = new Server(BUFFER_SIZE, BUFFER_SIZE);
 		init(server.getKryo());
 		server.start();
 		try {
@@ -75,9 +76,9 @@ public class NetworkServer extends NetworkInterface {
 	}
 	
 	public void sendUpdate() {
+		//TODO: WORK ON ONLY SENDING CHANGES RATHER THAN EVERYTHING EVERYTIME
 		Map<String, Object> map = Instance.game.createMap();
-		//System.out.println(map);
-		sendTCP(new RequestUpdate(map));
+		sendUDP(new RequestUpdate(map));
 	}
 
 }

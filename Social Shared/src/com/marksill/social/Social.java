@@ -11,6 +11,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
 import com.marksill.social.networking.NetworkInterface;
+import com.marksill.social.networking.NetworkServer;
 import com.marksill.social.state.NotGameState;
 import com.marksill.social.state.NotState;
 import com.marksill.social.state.State;
@@ -209,7 +210,7 @@ public class Social extends StateBasedGame {
 	}
 	
 	public boolean isServer() {
-		return !graphics;
+		return getNetworkInterface() instanceof NetworkServer;
 	}
 	
 	public boolean isNetworked() {

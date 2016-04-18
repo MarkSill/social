@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Color;
 
@@ -12,6 +13,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 
 public abstract class NetworkInterface {
+	
+	public static final int BUFFER_SIZE = 65536;
 	
 	public static final Class<?>[] CLASSES = {
 			Request.class,
@@ -24,7 +27,8 @@ public abstract class NetworkInterface {
 			Vector2.class,
 			Map.class,
 			HashMap.class,
-			Color.class
+			Color.class,
+			Transform.class
 	};
 	
 	public void init(Kryo kryo) {

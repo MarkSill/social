@@ -13,7 +13,7 @@ public class NetworkClient extends NetworkInterface {
 	public Client client;
 	
 	public NetworkClient(String host, int tcp, int udp) {
-		client = new Client();
+		client = new Client(BUFFER_SIZE, BUFFER_SIZE);
 		init(client.getKryo());
 		client.start();
 		try {

@@ -7,6 +7,7 @@ import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.MassType;
+import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Color;
 
@@ -97,9 +98,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 		lastElasticity = elasticity;
 		lastFriction = friction;
 		body = new Body();
-		if (getParent() instanceof InstanceWorld) {
-			((InstanceWorld) Instance.game.findChild("World")).addBody(body);
-		}
+		setParent(getParent());
 	}
 	
 	@Override
@@ -213,7 +212,25 @@ public class InstanceBlock extends Instance implements Cloneable {
 		map.put("elasticity", elasticity);
 		map.put("friction", friction);
 		map.put("rotationLocked", rotationLocked);
+		map.put("transform", body.getTransform());
 		return map;
+	}
+	
+	@Override
+	public void loadFromMap(Map<String, Object> map) {
+		super.loadFromMap(map);
+		anchored = (boolean) map.get("anchored");
+		position = (Vector2) map.get("position");
+		color = (Color) map.get("color");
+		visible = (boolean) map.get("visible");
+		mass = (double) map.get("mass");
+		density = (double) map.get("density");
+		elasticity = (double) map.get("elasticity");
+		friction = (double) map.get("friction");
+		rotationLocked = (boolean) map.get("rotationLocked");
+		lastPosition = position.copy();
+		body.translate(position);
+		body.setTransform((Transform) map.get("transform"));
 	}
 
 }

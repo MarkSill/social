@@ -40,14 +40,18 @@ public class InstanceRectangle extends InstanceBlock {
 	@Override
 	public void update(int delta) {
 		super.update(delta);
-		if (!lastSize.equals(size)) {
-			getBody().removeAllFixtures();
-			if (size.x == 0 && size.y == 0) {
-				size = new Vector2(0.1, 0.1);
+		if (lastSize != null) {
+			if (!lastSize.equals(size)) {
+				getBody().removeAllFixtures();
+				if (size.x == 0 && size.y == 0) {
+					size = new Vector2(0.1, 0.1);
+				}
+				Rectangle rect = new Rectangle(size.x, size.y);
+				addShape(rect);
+				lastSize = size.copy();
 			}
-			Rectangle rect = new Rectangle(size.x, size.y);
-			addShape(rect);
-			lastSize = size.copy();
+		} else {
+			lastSize = new Vector2(1, 1);
 		}
 	}
 	
@@ -56,6 +60,15 @@ public class InstanceRectangle extends InstanceBlock {
 		Map<String, Object> map = super.createMap();
 		map.put("size", size);
 		return map;
+	}
+	
+	@Override
+	public void loadFromMap(Map<String, Object> map) {
+		super.loadFromMap(map);
+		size = (Vector2) map.get("size");
+		lastSize = size.copy();
+		getBody().removeAllFixtures();
+		addShape(new Rectangle(size.x, size.y));
 	}
 
 }

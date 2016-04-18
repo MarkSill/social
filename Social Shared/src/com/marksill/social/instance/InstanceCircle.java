@@ -53,5 +53,11 @@ public class InstanceCircle extends InstanceBlock {
 		map.put("radius", radius);
 		return map;
 	}
+	
+	@Override
+	public void loadFromMap(Map<String, Object> map) {
+		super.loadFromMap(map);
+		radius = (double) map.get("radius");
+	}
 
 }

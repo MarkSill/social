@@ -56,7 +56,7 @@ public class InstanceScript extends Instance {
 	public void init() {
 		enabled = true;
 		running = false;
-		code = "";
+		code = "local block = Instance:create('rectangle', game:findChild('World'))\nblock.position = Vector2.new(20, 20)";
 		tabIndex = -1;
 	}
 	
@@ -84,6 +84,13 @@ public class InstanceScript extends Instance {
 		Map<String, Object> map = super.createMap();
 		map.put("enabled", enabled);
 		return map;
+	}
+	
+	@Override
+	public void loadFromMap(Map<String, Object> map) {
+		super.loadFromMap(map);
+		code = "";
+		enabled = (boolean) map.get("enabled");
 	}
 	
 }

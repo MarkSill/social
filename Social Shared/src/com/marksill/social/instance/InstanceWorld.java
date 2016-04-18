@@ -7,7 +7,8 @@ import java.util.Map;
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
 import org.dyn4j.geometry.Vector2;
-import org.newdawn.slick.Color;
+
+import com.marksill.social.Social;
 
 /**
  * A container class for physical objects.
@@ -70,18 +71,9 @@ public class InstanceWorld extends Instance {
 		lastGravY = gravY;
 		bodiesToAdd = new ArrayList<Body>();
 		bodiesToRemove = new ArrayList<Body>();
-		InstanceRectangle block = new InstanceRectangle(this);
-		block.anchored = true;
-		block.size = new Vector2(12, 1);
-		block.position = new Vector2(10, 3);
-		block.color = new Color(1.0f, 0.0f, 0.0f);
-		block.elasticity = 1;
-		InstanceRectangle block2 = new InstanceRectangle(this);
-		block2.anchored = true;
-		block2.size = new Vector2(1, 10);
-		block2.position = new Vector2(2.5, 8.5);
-		block2.color = new Color(1.0f, 0.0f, 0.0f);
-		block2.elasticity = 1;
+		if (Social.getInstance().isServer()) {
+			new InstanceScript(this);
+		}
 	}
 	
 	@Override
@@ -126,6 +118,12 @@ public class InstanceWorld extends Instance {
 		map.put("gravX", gravX);
 		map.put("gravY", gravY);
 		return map;
+	}
+	
+	public void loadFromMap(Map<String, Object> map) {
+		super.loadFromMap(map);
+		gravX = (double) map.get("gravX");
+		gravY = (double) map.get("gravY");
 	}
 
 }
