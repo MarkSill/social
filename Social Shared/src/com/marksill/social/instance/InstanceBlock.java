@@ -219,15 +219,33 @@ public class InstanceBlock extends Instance implements Cloneable {
 	@Override
 	public void loadFromMap(Map<String, Object> map) {
 		super.loadFromMap(map);
-		anchored = (boolean) map.get("anchored");
-		position = (Vector2) map.get("position");
-		color = (Color) map.get("color");
-		visible = (boolean) map.get("visible");
-		mass = (double) map.get("mass");
-		density = (double) map.get("density");
-		elasticity = (double) map.get("elasticity");
-		friction = (double) map.get("friction");
-		rotationLocked = (boolean) map.get("rotationLocked");
+		if (map.get("anchored") != null) {
+			anchored = (boolean) map.get("anchored");
+		}
+		if (map.get("position") != null) {
+			position = (Vector2) map.get("position");
+		}
+		if (map.get("color") != null) {
+			color = (Color) map.get("color");
+		}
+		if (map.get("visible") != null) {
+			visible = (boolean) map.get("visible");
+		}
+		if (map.get("mass") != null) {
+			mass = (double) map.get("mass");
+		}
+		if (map.get("density") != null) {
+			density = (double) map.get("density");
+		}
+		if (map.get("elasticity") != null) {
+			elasticity = (double) map.get("elasticity");
+		}
+		if (map.get("friction") != null) {
+			friction = (double) map.get("friction");
+		}
+		if (map.get("rotationLocked") != null) {
+			rotationLocked = (boolean) map.get("rotationLocked");
+		}
 		lastPosition = position.copy();
 		body.translate(position);
 		body.setTransform((Transform) map.get("transform"));

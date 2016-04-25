@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.tree.TreeNode;
 
@@ -11,6 +12,7 @@ import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
+import com.marksill.social.Social;
 import com.marksill.social.state.NotGameState;
 
 /**
@@ -72,7 +74,9 @@ public class Instance implements Cloneable {
 		this.setParent(parent);
 		children = new ArrayList<>();
 		NotGameState.addInstance(this);
-		id = nextID++;
+		if (Social.getInstance().isNetworked() && Social.getInstance().isServer()) {
+			id = nextID++;
+		}
 		init();
 	}
 	
@@ -252,9 +256,9 @@ public class Instance implements Cloneable {
 		Map<String, Object> map = new HashMap<>();
 		map.put("cname", getClass().getName());
 		map.put("name", name);
-		List<Map<String, Object>> list = new ArrayList<>();
+		List<Long> list = new ArrayList<>();
 		for (Instance i : children) {
-			list.add(i.createMap());
+			list.add(i.id);
 		}
 		map.put("children", list);
 		map.put("id", id);
@@ -262,9 +266,12 @@ public class Instance implements Cloneable {
 	}
 	
 	public void loadFromMap(Map<String, Object> map) {
-		id = (long) map.get("id");
-		name = (String) map.get("name");
-		children = new ArrayList<>();
+		if (map.get("id") != null) {
+			id = (long) map.get("id");
+		}
+		if (map.get("name") != null) {
+			name = (String) map.get("name");
+		}
 	}
 
 	@Override
@@ -391,24 +398,46 @@ public class Instance implements Cloneable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Instance fromMap(Map<String, Object> map) {
-		long id = (long) map.get("id");
-		Instance inst = getByID(id);
-		if (inst == null) {
-			try {
-				inst = (Instance) Class.forName((String) map.get("cname")).newInstance();
-			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-				e.printStackTrace();
+	public static void fromMap(Map<Long, Map<String, Object>> map) {
+		Set<Long> ids = map.keySet();
+		for (Long id : ids) {
+			Map<String, Object> obj = map.get(id);
+			Instance inst = getByID(id);
+			if (inst == null) {
+				try {
+					inst = (Instance) Class.forName((String) obj.get("cname")).newInstance();
+				} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+					e.printStackTrace();
+				}
+			}
+			inst.loadFromMap(obj);
+		}
+		for (Long id : ids) {
+			Map<String, Object> obj = map.get(id);
+			List<Long> cids = (List<Long>) obj.get("children");
+			if (cids != null) {
+				for (Long nid : cids) {
+					Instance inst = getByID(nid);
+					Instance parent = getByID(id);
+					if (inst != null && parent != null && inst.parent != parent) {
+						inst.setParent(parent);
+					}
+				}
 			}
 		}
-		inst.loadFromMap(map);
-		List<Map<String, Object>> list = (List<Map<String, Object>>) map.get("children");
-		List<Instance> children = new ArrayList<>();
-		for (Map<String, Object> m : list) {
-			children.add(fromMap(m));
+	}
+	
+	public static Map<Long, Map<String, Object>> toMap() {
+		Map<Long, Map<String, Object>> map = new HashMap<>();
+		toMap(map, Instance.game);
+		return map;
+	}
+	
+	public static void toMap(Map<Long, Map<String, Object>> map, Instance parent) {
+		map.put(parent.id, parent.createMap());
+		for (Instance inst : parent.children) {
+			toMap(map, inst);
 		}
-		inst.children = children;
-		return inst;
 	}
 
 }

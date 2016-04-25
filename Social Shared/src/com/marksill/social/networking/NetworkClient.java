@@ -47,7 +47,7 @@ public class NetworkClient extends NetworkInterface {
 			if (r instanceof RequestReadyForUsername) {
 				connection.sendTCP(new RequestConnect("MarkSill"));
 			} else if (r instanceof RequestUpdate) {
-				Map<String, Object> map = (Map<String, Object>) r.data;
+				Map<Long, Map<String, Object>> map = (Map<Long, Map<String, Object>>) r.data;
 				Instance.fromMap(map);
 			}
 		}

@@ -122,8 +122,12 @@ public class InstanceWorld extends Instance {
 	
 	public void loadFromMap(Map<String, Object> map) {
 		super.loadFromMap(map);
-		gravX = (double) map.get("gravX");
-		gravY = (double) map.get("gravY");
+		if (map.get("gravX") != null) {
+			gravX = (double) map.get("gravX");
+		}
+		if (map.get("gravY") != null) {
+			gravY = (double) map.get("gravY");
+		}
 	}
 
 }

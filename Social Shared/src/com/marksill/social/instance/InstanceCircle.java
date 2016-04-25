@@ -57,7 +57,9 @@ public class InstanceCircle extends InstanceBlock {
 	@Override
 	public void loadFromMap(Map<String, Object> map) {
 		super.loadFromMap(map);
-		radius = (double) map.get("radius");
+		if (map.get("radius") != null) {
+			radius = (double) map.get("radius");
+		}
 	}
 
 }

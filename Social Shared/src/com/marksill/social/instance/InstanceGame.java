@@ -1,5 +1,7 @@
 package com.marksill.social.instance;
 
+import java.util.Map;
+
 import com.marksill.social.Social;
 
 /**
@@ -72,6 +74,11 @@ public class InstanceGame extends Instance {
 				shutdown();
 			}
 		}.start();
+	}
+	
+	public void loadFromMap(Map<String, Object> map) {
+		super.loadFromMap(map);
+		Instance.game = this;
 	}
 
 }

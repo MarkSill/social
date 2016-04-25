@@ -8,7 +8,7 @@ public class RequestUpdate extends Request {
 		this(null);
 	}
 	
-	public RequestUpdate(Map<String, Object> map) {
+	public RequestUpdate(Map<Long, Map<String, Object>> map) {
 		super("update", map);
 	}
 

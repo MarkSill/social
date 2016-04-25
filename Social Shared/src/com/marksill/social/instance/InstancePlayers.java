@@ -67,7 +67,9 @@ public class InstancePlayers extends Instance {
 	@Override
 	public void loadFromMap(Map<String, Object> map) {
 		super.loadFromMap(map);
-		maxPlayers = (int) map.get("maxPlayers");
+		if (map.get("maxPlayers") != null) {
+			maxPlayers = (int) map.get("maxPlayers");
+		}
 	}
 
 }

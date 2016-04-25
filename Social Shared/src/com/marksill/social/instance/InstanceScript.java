@@ -90,7 +90,9 @@ public class InstanceScript extends Instance {
 	public void loadFromMap(Map<String, Object> map) {
 		super.loadFromMap(map);
 		code = "";
-		enabled = (boolean) map.get("enabled");
+		if (map.get("enabled") != null) {
+			enabled = (boolean) map.get("enabled");
+		}
 	}
 	
 }

@@ -72,16 +72,12 @@ public class Social extends StateBasedGame {
 				generalContainer.setShowFPS(false);
 				generalContainer.setAlwaysRender(true);
 				Controllers.setup();
-				if (swing) {
-					//Nothing?
-				} else {
+				if (!swing) {
 					appgc.start();
 				}
 			} catch (SlickException e) {
 				e.printStackTrace();
 			}
-		} else {
-			
 		}
 	}
 

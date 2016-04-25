@@ -32,7 +32,9 @@ public class InstanceClientScript extends InstanceScript {
 	@Override
 	public void loadFromMap(Map<String, Object> map) {
 		super.loadFromMap(map);
-		code = (String) map.get("code");
+		if (map.get("code") != null) {
+			code = (String) map.get("code");
+		}
 	}
 
 }

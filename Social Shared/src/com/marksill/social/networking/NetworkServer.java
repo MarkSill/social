@@ -1,6 +1,7 @@
 package com.marksill.social.networking;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.esotericsoftware.kryonet.Connection;
@@ -13,7 +14,7 @@ import com.marksill.social.instance.InstancePlayers;
 public class NetworkServer extends NetworkInterface {
 	
 	public Server server;
-	public Map<Integer, Object> lastMap = null;
+	public Map<Long, Map<String, Object>> lastMap = null;
 	
 	public NetworkServer(int tcp, int udp) {
 		server = new Server(BUFFER_SIZE, BUFFER_SIZE);
@@ -71,14 +72,45 @@ public class NetworkServer extends NetworkInterface {
 				InstancePlayer player = new InstancePlayer((String) connect.data);
 				player.cid = connection.getID();
 				((InstancePlayers) Instance.game.findChild("Players")).addPlayer(player);
+				connection.sendUDP(new RequestUpdate(lastMap));
 			}
 		}
 	}
 	
 	public void sendUpdate() {
-		//TODO: WORK ON ONLY SENDING CHANGES RATHER THAN EVERYTHING EVERYTIME
-		Map<String, Object> map = Instance.game.createMap();
-		sendUDP(new RequestUpdate(map));
+		Map<Long, Map<String, Object>> map = Instance.toMap();
+		Map<Long, Map<String, Object>> newMap = new HashMap<>();
+		if (lastMap != null) {
+			for (Long id : map.keySet()) {
+				Map<String, Object> obj = map.get(id);
+				Map<String, Object> lastObj = lastMap.get(id);
+				Map<String, Object> newObj = new HashMap<>();
+				if (obj != null && lastObj != null) {
+					for (String key : obj.keySet()) {
+						Object last = lastObj.get(key);
+						Object current = obj.get(key);
+						if (key.equals("cname")) {
+							newObj.put(key, obj.get(key));
+						} else if (last != null && current != null && !last.equals(current)) {
+							newObj.put(key, obj.get(key));
+						} else {
+							if ((last == null || current == null) && !(last == null && current == null)) {
+								newObj.put(key, obj.get(key));
+							}
+						}
+					}
+				} else if (obj != null && lastObj == null) {
+					newObj = obj;
+				} else if (obj == null && lastObj != null) {
+					newObj = null;
+				}
+				newMap.put(id, newObj);
+			}
+		} else {
+			newMap = map;
+		}
+		lastMap = map;
+		sendUDP(new RequestUpdate(newMap));
 	}
 
 }

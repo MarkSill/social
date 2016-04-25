@@ -65,10 +65,12 @@ public class InstanceRectangle extends InstanceBlock {
 	@Override
 	public void loadFromMap(Map<String, Object> map) {
 		super.loadFromMap(map);
-		size = (Vector2) map.get("size");
-		lastSize = size.copy();
-		getBody().removeAllFixtures();
-		addShape(new Rectangle(size.x, size.y));
+		if (map.get("size") != null) {
+			size = (Vector2) map.get("size");
+			lastSize = size.copy();
+			getBody().removeAllFixtures();
+			addShape(new Rectangle(size.x, size.y));
+		}
 	}
 
 }
