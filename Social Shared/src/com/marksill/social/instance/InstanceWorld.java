@@ -20,6 +20,7 @@ public class InstanceWorld extends Instance {
 	
 	public double gravX;
 	public double gravY;
+	public boolean physicsEnabled;
 	
 	/** The world's World. */
 	private World world;
@@ -69,6 +70,7 @@ public class InstanceWorld extends Instance {
 		gravY = world.getGravity().y;
 		lastGravX = gravX;
 		lastGravY = gravY;
+		physicsEnabled = true;
 		bodiesToAdd = new ArrayList<Body>();
 		bodiesToRemove = new ArrayList<Body>();
 		if (Social.getInstance().isServer()) {
@@ -79,21 +81,23 @@ public class InstanceWorld extends Instance {
 	@Override
 	public void update(int delta) {
 		super.update(delta);
-		world.update((double) delta / 1000);
-		Object[] copy = bodiesToAdd.toArray();
-		bodiesToAdd.clear();
-		for (int i = 0; i < copy.length; i++) {
-			world.addBody((Body) copy[i]);
-		}
-		copy = bodiesToRemove.toArray();
-		bodiesToRemove.clear();
-		for (int i = 0; i < copy.length; i++) {
-			world.removeBody((Body) copy[i]);
-		}
-		if (gravX != lastGravX || gravY != lastGravY) {
-			world.setGravity(new Vector2(gravX, gravY));
-			lastGravX = gravX;
-			lastGravY = gravY;
+		if (physicsEnabled) {
+			world.update((double) delta / 1000);
+			Object[] copy = bodiesToAdd.toArray();
+			bodiesToAdd.clear();
+			for (int i = 0; i < copy.length; i++) {
+				world.addBody((Body) copy[i]);
+			}
+			copy = bodiesToRemove.toArray();
+			bodiesToRemove.clear();
+			for (int i = 0; i < copy.length; i++) {
+				world.removeBody((Body) copy[i]);
+			}
+			if (gravX != lastGravX || gravY != lastGravY) {
+				world.setGravity(new Vector2(gravX, gravY));
+				lastGravX = gravX;
+				lastGravY = gravY;
+			}
 		}
 	}
 	
