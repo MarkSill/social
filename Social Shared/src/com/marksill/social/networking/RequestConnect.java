@@ -1,13 +1,16 @@
 package com.marksill.social.networking;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class RequestConnect extends Request {
 	
 	public RequestConnect() {
-		this("");
+		this(new HashMap<String, Object>());
 	}
 	
-	public RequestConnect(String username) {
-		super("connect", username);
+	public RequestConnect(Map<String, Object> data) {
+		super("connect", data);
 	}
 
 }

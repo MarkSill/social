@@ -37,7 +37,7 @@ public class NotGameState extends NotState {
 	public static final int SELECTION_SIZE = 6;
 	
 	/** The list of instances. */
-	private static List<Instance> instances = new ArrayList<Instance>();
+	public static List<Instance> instances = new ArrayList<Instance>();
 	private static List<Instance> toRemove = new ArrayList<Instance>();
 	private static List<Instance> toAdd = new ArrayList<Instance>();
 	private static int transparency = 255;
@@ -68,6 +68,9 @@ public class NotGameState extends NotState {
 				e.printStackTrace();
 			}
 		}
+		if (social.isNetworked() && social.isServer()) {
+			((NetworkServer) social.getNetworkInterface()).sendUpdate();
+		}
 		if (Instance.game == null || !social.isRunning()) {
 			for (Instance i : instances) {
 				if (i instanceof InstanceScript) {
@@ -79,9 +82,6 @@ public class NotGameState extends NotState {
 			}
 			return;
 		}
-		if (social.isNetworked() && !social.isServer()) {
-			//return;
-		}
 		Object[] copy = toRemove.toArray();
 		toRemove.clear();
 		for (int i = 0; i < copy.length; i++) {
@@ -92,11 +92,11 @@ public class NotGameState extends NotState {
 		for (int i = 0; i < copy.length; i++) {
 			instances.add((Instance) copy[i]);
 		}
+		if (social.isNetworked() && !social.isServer()) {
+			return;
+		}
 		for (Instance i : instances) {
 			i.update(delta);
-		}
-		if (social.isNetworked() && social.isServer()) {
-			((NetworkServer) social.getNetworkInterface()).sendUpdate();
 		}
 	}
 	
@@ -137,10 +137,10 @@ public class NotGameState extends NotState {
 		}
 		if (parent instanceof InstanceBlock) {
 			InstanceBlock block = (InstanceBlock) parent;
-			if (block.visible) {
+			if (block.visible && canSee(block)) {
 				Body body = block.getBody();
 				if (block.childOf(Instance.game.findChild("World"))) {
-					Vector2 pos = body.getWorldCenter();//.difference(body.getLocalCenter());
+					Vector2 pos = block.position;
 					List<BodyFixture> fixtures = body.getFixtures();
 					float rot = (float) (-Math.toDegrees(body.getTransform().getRotation()));
 					g.pushTransform();
@@ -189,7 +189,7 @@ public class NotGameState extends NotState {
 			if (block.visible && canSee(block)) {
 				Body body = block.getBody();
 				if (((InstanceWorld) InstanceWorld.game.findChild("World")).getWorld().containsBody(body) && Instance.selected.contains(block)) {
-					Vector2 pos = body.getWorldCenter();
+					Vector2 pos = block.position;
 					List<BodyFixture> fixtures = body.getFixtures();
 					float rot = (float) (-Math.toDegrees(body.getTransform().getRotation()));
 					g.pushTransform();
@@ -236,12 +236,17 @@ public class NotGameState extends NotState {
 	}
 	
 	public static boolean canSee(InstanceBlock block) {
-		Rectangle window = new Rectangle(Social.getInstance().getContainer().getWidth() / PPM, Social.getInstance().getContainer().getHeight() / PPM);
+		double w = Social.getInstance().getContainer().getWidth() / PPM;
+		double h = Social.getInstance().getContainer().getHeight() / PPM;
+		Rectangle window = new Rectangle(w, h);
+		window.translate(w / 2, h / 2);
 		AABB aabb = window.createAABB();
-		Transform transf = block.getBody().getTransform();
-		for (BodyFixture f : block.getBody().getFixtures()) {
-			if (aabb.overlaps(f.getShape().createAABB(transf))) {
-				return true;
+		if (block.getBody() != null) {
+			Transform transf = block.getBody().getTransform();
+			for (BodyFixture f : block.getBody().getFixtures()) {
+				if (aabb.overlaps(f.getShape().createAABB(transf))) {
+					return true;
+				}
 			}
 		}
 		return false;

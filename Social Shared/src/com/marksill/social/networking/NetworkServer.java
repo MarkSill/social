@@ -61,6 +61,7 @@ public class NetworkServer extends NetworkInterface {
 		server.sendToAllUDP(data);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void receive(Connection connection, Object data) {
 		System.out.println("Received data: " + data);
@@ -68,11 +69,13 @@ public class NetworkServer extends NetworkInterface {
 			Request r = (Request) data;
 			if (data instanceof RequestConnect) {
 				RequestConnect connect = (RequestConnect) r;
-				System.out.println("Player " + connect.data + " joining...");
-				InstancePlayer player = new InstancePlayer((String) connect.data);
+				Map<String, Object> userinfo = (HashMap<String, Object>) connect.data;
+				System.out.println("Player " + userinfo.get("name") + " joining...");
+				InstancePlayer player = new InstancePlayer((String) userinfo.get("name"));
 				player.cid = connection.getID();
 				((InstancePlayers) Instance.game.findChild("Players")).addPlayer(player);
 				connection.sendUDP(new RequestUpdate(lastMap));
+				System.out.println("Sent instance information to player \"" + userinfo.get("name") + "\".");
 			}
 		}
 	}

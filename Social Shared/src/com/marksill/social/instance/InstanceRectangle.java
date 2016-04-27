@@ -67,7 +67,7 @@ public class InstanceRectangle extends InstanceBlock {
 		super.loadFromMap(map);
 		if (map.get("size") != null) {
 			size = (Vector2) map.get("size");
-			lastSize = size.copy();
+			lastSize = size.getNegative();
 			getBody().removeAllFixtures();
 			addShape(new Rectangle(size.x, size.y));
 		}

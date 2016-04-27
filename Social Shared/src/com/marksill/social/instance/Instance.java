@@ -24,6 +24,7 @@ public class Instance implements Cloneable {
 	public static final String CLASS_NAME = "Instance";
 	
 	public static List<Instance> selected = new ArrayList<Instance>();
+	private static List<Instance> instances = new ArrayList<Instance>();
 	
 	/** The instance of the game. */
 	public static InstanceGame game = null;
@@ -70,6 +71,7 @@ public class Instance implements Cloneable {
 	 * @param parent The parent of the instance.
 	 */
 	public Instance(String name, Instance parent) {
+		instances.add(this);
 		this.name = name;
 		this.setParent(parent);
 		children = new ArrayList<>();
@@ -101,6 +103,7 @@ public class Instance implements Cloneable {
 	public void delete() {
 		setParent(null);
 		NotGameState.removeInstance(this);
+		instances.remove(this);
 		node = null;
 		for (Instance i : new ArrayList<>(children)) {
 			i.delete();
@@ -244,7 +247,7 @@ public class Instance implements Cloneable {
 		if (other == null) {
 			return false;
 		}
-		for (Instance i : other.children) {
+		for (Instance i : new ArrayList<Instance>(other.children)) {
 			if (i == this || childOf(i)) {
 				return true;
 			}
@@ -257,7 +260,7 @@ public class Instance implements Cloneable {
 		map.put("cname", getClass().getName());
 		map.put("name", name);
 		List<Long> list = new ArrayList<>();
-		for (Instance i : children) {
+		for (Instance i : new ArrayList<Instance>(children)) {
 			list.add(i.id);
 		}
 		map.put("children", list);
@@ -378,7 +381,12 @@ public class Instance implements Cloneable {
 	}
 	
 	public static Instance getByID(long id) {
-		return getByID(id, Instance.game);
+		for (Instance i : instances) {
+			if (i.id == id) {
+				return i;
+			}
+		}
+		return null;
 	}
 	
 	public static Instance getByID(long id, Instance parent) {
@@ -411,6 +419,7 @@ public class Instance implements Cloneable {
 				}
 			}
 			inst.loadFromMap(obj);
+			inst.id = id;
 		}
 		for (Long id : ids) {
 			Map<String, Object> obj = map.get(id);
@@ -425,6 +434,7 @@ public class Instance implements Cloneable {
 				}
 			}
 		}
+		deleteIfNoLongerExists(ids);
 	}
 	
 	public static Map<Long, Map<String, Object>> toMap() {
@@ -435,8 +445,21 @@ public class Instance implements Cloneable {
 	
 	public static void toMap(Map<Long, Map<String, Object>> map, Instance parent) {
 		map.put(parent.id, parent.createMap());
-		for (Instance inst : parent.children) {
+		for (Instance inst : new ArrayList<Instance>(parent.children)) {
 			toMap(map, inst);
+		}
+	}
+	
+	public static void deleteIfNoLongerExists(Set<Long> ids) {
+		List<Instance> list = new ArrayList<>(instances);
+		for (Instance i : list) {
+			if (!ids.contains(i.id)) {
+				if (i instanceof InstanceRectangle) {
+					System.out.println(((InstanceRectangle) i).getParent());
+				}
+				System.out.println("Deleting object " + i + " (ID " + i.id + ")");
+				i.delete();
+			}
 		}
 	}
 

@@ -2,6 +2,8 @@ package com.marksill.social.instance;
 
 import java.util.Map;
 
+import com.marksill.social.Social;
+
 /**
  * The class for all server side scripts in the game.
  */
@@ -56,13 +58,24 @@ public class InstanceScript extends Instance {
 	public void init() {
 		enabled = true;
 		running = false;
-		code = "local block = Instance:create('rectangle', game:findChild('World'))\nblock.position = Vector2.new(20, 20)";
+		code = "while true do\n	wait(100)\n	local block = Instance:create('rectangle', game:findChild('World'))\n	block.position = Vector2.new(15, 20)\nend";
 		tabIndex = -1;
+		if (Social.getInstance().isNetworked() && Social.getInstance().isServer() && !(this instanceof InstanceClientScript)) {
+			InstanceClientScript script = new InstanceClientScript();
+			script.code = "print(\"test\")";
+			script.setParent(this);
+		}
 	}
 	
 	@Override
 	public void update(int delta) {
 		super.update(delta);
+		if (!(this instanceof InstanceClientScript) && Social.getInstance().isServer()) {
+			startStop();
+		}
+	}
+	
+	public void startStop() {
 		if (enabled && !running) {
 			running = true;
 			thread = new ScriptThread(this, code);
@@ -75,7 +88,9 @@ public class InstanceScript extends Instance {
 	
 	@Override
 	public void delete() {
-		thread.kill();
+		if (thread != null) {
+			thread.kill();
+		}
 		super.delete();
 	}
 	

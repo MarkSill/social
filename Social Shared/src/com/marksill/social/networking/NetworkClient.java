@@ -1,6 +1,7 @@
 package com.marksill.social.networking;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.esotericsoftware.kryonet.Client;
@@ -45,7 +46,10 @@ public class NetworkClient extends NetworkInterface {
 		if (data instanceof Request) {
 			Request r = (Request) data;
 			if (r instanceof RequestReadyForUsername) {
-				connection.sendTCP(new RequestConnect("MarkSill"));
+				Map<String, Object> userinfo = new HashMap<>();
+				userinfo.put("name", "MarkSill");
+				userinfo.put("id", 0);
+				connection.sendTCP(new RequestConnect(userinfo));
 			} else if (r instanceof RequestUpdate) {
 				Map<Long, Map<String, Object>> map = (Map<Long, Map<String, Object>>) r.data;
 				Instance.fromMap(map);

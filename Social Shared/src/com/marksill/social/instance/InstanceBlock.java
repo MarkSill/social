@@ -192,7 +192,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 	@Override
 	public void setParent(Instance parent) {
 		InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
-		if (parent != null && (parent instanceof InstanceWorld || parent.childOf(world)) && body != null) {
+		if (parent != null && childOf(world) && body != null) {
 			world.addBody(body);
 		} else if (getParent() != null && (getParent() instanceof InstanceWorld || getParent().childOf(world)) && body != null) {
 			world.removeBody(body);
@@ -212,7 +212,12 @@ public class InstanceBlock extends Instance implements Cloneable {
 		map.put("elasticity", elasticity);
 		map.put("friction", friction);
 		map.put("rotationLocked", rotationLocked);
-		map.put("transform", body.getTransform());
+		if (body != null) {
+			map.put("transform", body.getTransform());
+			map.put("rotation", body.getTransform().getRotation());
+		} else {
+			map.put("transform", null);
+		}
 		return map;
 	}
 	
@@ -223,7 +228,10 @@ public class InstanceBlock extends Instance implements Cloneable {
 			anchored = (boolean) map.get("anchored");
 		}
 		if (map.get("position") != null) {
+			body.getTransform().translate(body.getTransform().getTranslation().negate());
 			position = (Vector2) map.get("position");
+			body.getTransform().translate(position);
+			lastPosition = position.copy();
 		}
 		if (map.get("color") != null) {
 			color = (Color) map.get("color");
@@ -246,9 +254,12 @@ public class InstanceBlock extends Instance implements Cloneable {
 		if (map.get("rotationLocked") != null) {
 			rotationLocked = (boolean) map.get("rotationLocked");
 		}
-		lastPosition = position.copy();
-		body.translate(position);
-		body.setTransform((Transform) map.get("transform"));
+		if (map.get("transform") != null) {
+			body.setTransform((Transform) map.get("transform"));
+		}
+		if (map.get("rotation") != null) {
+			body.getTransform().setRotation((double) map.get("rotation"));
+		}
 	}
 
 }

@@ -177,6 +177,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setTitle("Social Editor");
+		setResizable(false);
 		setLocationRelativeTo(null);
 		addKeyListener(this);
 		addWindowListener(new WindowAdapter() {
