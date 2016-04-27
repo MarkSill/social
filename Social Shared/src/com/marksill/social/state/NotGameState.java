@@ -19,6 +19,7 @@ import org.newdawn.slick.Graphics;
 import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
+import com.marksill.social.instance.InstanceClientScript;
 import com.marksill.social.instance.InstanceGame;
 import com.marksill.social.instance.InstancePlayer;
 import com.marksill.social.instance.InstanceScript;
@@ -73,7 +74,7 @@ public class NotGameState extends NotState {
 		}
 		if (Instance.game == null || !social.isRunning()) {
 			for (Instance i : instances) {
-				if (i instanceof InstanceScript) {
+				if (i instanceof InstanceScript && !(i instanceof InstanceClientScript)) {
 					((InstanceScript) i).thread.kill();
 					((InstanceScript) i).running = false;
 				} else if (i instanceof InstancePlayer) {
