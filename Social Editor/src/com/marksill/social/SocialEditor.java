@@ -11,12 +11,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -62,6 +64,7 @@ import com.marksill.social.instance.InstanceRectangle;
 import com.marksill.social.instance.InstanceScript;
 import com.marksill.social.instance.InstanceWorld;
 import com.marksill.social.networking.NetworkServer;
+import com.marksill.social.xml.XML;
 
 public class SocialEditor extends JFrame implements ActionListener, KeyListener, TreeSelectionListener, TreeModelListener, CellEditorListener, TableModelListener {
 
@@ -74,11 +77,13 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 	private JTable properties;
 	private Map<Instance, SocialTreeNode> map, lastMap;
 	private JTabbedPane contentPane;
+	private File openFile;
 	
 	/**
 	 * @param args
 	 */
 	public SocialEditor(String[] args) {
+		openFile = null;
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
@@ -228,6 +233,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			Instance.game = new InstanceGame();
 			break;
 		case "Open...":
+			open();
 			break;
 		case "Close":
 			if (contentPane.getSelectedIndex() == 0) {
@@ -248,8 +254,14 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			}
 			break;
 		case "Save":
+			if (openFile != null) {
+				save();
+			} else {
+				saveAs();
+			}
 			break;
 		case "Save As...":
+			saveAs();
 			break;
 		case "Exit":
 			dispose();
@@ -274,7 +286,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 						Instance.selected.remove(instance);
 						if (instance instanceof InstanceScript) {
 							InstanceScript script = (InstanceScript) instance;
-							if (script.tabIndex != -1) {
+							if (script.tabIndex != -1 && script.tabIndex < contentPane.getTabCount()) {
 								contentPane.removeTabAt(script.tabIndex);
 							}
 						}
@@ -488,7 +500,9 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 						{"Mass", block.mass},
 						{"Density", block.density},
 						{"Elasticity", block.elasticity},
-						{"Friction", block.friction}
+						{"Friction", block.friction},
+						{"Rotation", block.rotation},
+						{"Rotation Locked", block.rotationLocked}
 					});
 					if (block instanceof InstanceRectangle) {
 						InstanceRectangle rect = (InstanceRectangle) block;
@@ -662,13 +676,44 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			case "Size Y":
 				((InstanceRectangle) inst).size.y = Double.parseDouble((String) newValue);
 				break;
+			case "Rotation":
+				((InstanceBlock) inst).rotation = Double.parseDouble((String) newValue);
+				break;
+			case "Rotation Locked":
+				((InstanceBlock) inst).rotationLocked = Boolean.parseBoolean((String) newValue);
+				break;
 			case "Gravity X":
 				((InstanceWorld) inst).gravX = Double.parseDouble((String) newValue);
 				break;
 			case "Gravity Y":
 				((InstanceWorld) inst).gravY = Double.parseDouble((String) newValue);
 				break;
+			case "Enabled":
+				((InstanceScript) inst).enabled = Boolean.parseBoolean((String) newValue);
+				break;
 			}
+		}
+	}
+	
+	public void save() {
+		new XML().saveGame(Instance.game, openFile.getPath());
+	}
+	
+	public void saveAs() {
+		JFileChooser fc = new JFileChooser();
+		int val = fc.showSaveDialog(this);
+		if (val == JFileChooser.APPROVE_OPTION) {
+			openFile = fc.getSelectedFile();
+			save();
+		}
+	}
+	
+	public void open() {
+		JFileChooser fc = new JFileChooser();
+		int val = fc.showOpenDialog(this);
+		if (val == JFileChooser.APPROVE_OPTION) {
+			openFile = fc.getSelectedFile();
+			new XML(openFile.getAbsolutePath()).createGame();
 		}
 	}
 

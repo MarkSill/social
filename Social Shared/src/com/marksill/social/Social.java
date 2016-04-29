@@ -10,6 +10,7 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
+import com.marksill.social.instance.Instance;
 import com.marksill.social.networking.NetworkInterface;
 import com.marksill.social.networking.NetworkServer;
 import com.marksill.social.state.NotGameState;
@@ -198,7 +199,7 @@ public class Social extends StateBasedGame {
 	}
 	
 	public boolean isRunning() {
-		return running;
+		return running && Instance.game != null;
 	}
 	
 	public void setRunning(boolean running) {

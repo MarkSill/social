@@ -47,10 +47,6 @@ public class InstanceGame extends Instance {
 	@Override
 	public void init() {
 		Instance.game = this;
-		if (Social.getInstance().isServer() || !Social.getInstance().isNetworked()) {
-			new InstanceWorld(this);
-			new InstancePlayers(this);
-		}
 	}
 	
 	/**

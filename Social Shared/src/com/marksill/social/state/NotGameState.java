@@ -20,7 +20,6 @@ import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceClientScript;
-import com.marksill.social.instance.InstanceGame;
 import com.marksill.social.instance.InstancePlayer;
 import com.marksill.social.instance.InstanceScript;
 import com.marksill.social.instance.InstanceWorld;
@@ -53,12 +52,12 @@ public class NotGameState extends NotState {
 
 	@Override
 	public void init(Social social) {
-		Instance.game = new InstanceGame();
+		
 	}
 
 	@Override
 	public void update(Social social, int delta) {
-		if (social.getCanvasContainer() != null && social.graphicsEnabled()) {
+		if (social.getCanvasContainer() != null && social.graphicsEnabled() && Instance.game != null) {
 			try {
 				Class<?> editorClass = Class.forName("com.marksill.social.SocialEditor");
 				Object editor = new Object();
@@ -72,9 +71,12 @@ public class NotGameState extends NotState {
 		if (social.isNetworked() && social.isServer()) {
 			((NetworkServer) social.getNetworkInterface()).sendUpdate();
 		}
+		for (Instance i : instances) {
+			i.updateVars();
+		}
 		if (Instance.game == null || !social.isRunning()) {
 			for (Instance i : instances) {
-				if (i instanceof InstanceScript && !(i instanceof InstanceClientScript)) {
+				if (i instanceof InstanceScript && !(i instanceof InstanceClientScript) && ((InstanceScript) i).thread != null) {
 					((InstanceScript) i).thread.kill();
 					((InstanceScript) i).running = false;
 				} else if (i instanceof InstancePlayer) {
@@ -143,7 +145,7 @@ public class NotGameState extends NotState {
 				if (block.childOf(Instance.game.findChild("World"))) {
 					Vector2 pos = block.position;
 					List<BodyFixture> fixtures = body.getFixtures();
-					float rot = (float) (-Math.toDegrees(body.getTransform().getRotation()));
+					float rot = (float) (-Math.toDegrees(block.rotation));
 					g.pushTransform();
 					g.translate((float) pos.x * PPM, (float) -pos.y * PPM + social.getContainer().getHeight());
 					g.rotate(0, 0, rot);
@@ -192,7 +194,7 @@ public class NotGameState extends NotState {
 				if (((InstanceWorld) InstanceWorld.game.findChild("World")).getWorld().containsBody(body) && Instance.selected.contains(block)) {
 					Vector2 pos = block.position;
 					List<BodyFixture> fixtures = body.getFixtures();
-					float rot = (float) (-Math.toDegrees(body.getTransform().getRotation()));
+					float rot = (float) (-Math.toDegrees(block.rotation));
 					g.pushTransform();
 					g.translate((float) pos.x * PPM, (float) -pos.y * PPM + social.getContainer().getHeight());
 					g.rotate(0, 0, rot);

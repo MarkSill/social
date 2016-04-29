@@ -52,6 +52,9 @@ public class Controllers {
 	}
 	
 	public static void pollControllers() {
+		if (!Social.getInstance().isRunning()) {
+			return;
+		}
 		InstancePlayers players = ((InstancePlayers) Instance.game.findChild("Players"));
 		List<Controller> controllers = getControllers();
 		for (Controller c : controllers) {

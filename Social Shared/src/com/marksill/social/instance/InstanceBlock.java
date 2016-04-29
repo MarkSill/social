@@ -35,6 +35,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 	public double elasticity = BodyFixture.DEFAULT_RESTITUTION;
 	public double friction = BodyFixture.DEFAULT_FRICTION;
 	public boolean rotationLocked = false;
+	public double rotation;
 	
 	/** The physical body of the block. */
 	private Body body;
@@ -47,6 +48,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 	/** The block's elasticity last update. */
 	private double lastElasticity = 0.2;
 	private double lastFriction = 0.2;
+	private double lastRotation;
 
 	/**
 	 * Creates a new block.
@@ -92,18 +94,20 @@ public class InstanceBlock extends Instance implements Cloneable {
 		density = BodyFixture.DEFAULT_DENSITY;
 		elasticity = BodyFixture.DEFAULT_RESTITUTION;
 		friction = BodyFixture.DEFAULT_FRICTION;
+		rotationLocked = false;
+		rotation = 0;
 		lastPosition = new Vector2();
 		lastMass = mass;
 		lastDensity = density;
 		lastElasticity = elasticity;
 		lastFriction = friction;
+		lastRotation = 0;
 		body = new Body();
 		setParent(getParent());
 	}
 	
 	@Override
-	public void update(int delta) {
-		super.update(delta);
+	public void updateVars() {
 		if (body != null) {
 			if (anchored) {
 				body.setMass(MassType.INFINITE);
@@ -143,8 +147,15 @@ public class InstanceBlock extends Instance implements Cloneable {
 				}
 			}
 			lastFriction = friction;
+			if (rotation != lastRotation) {
+				body.getTransform().setRotation(Math.toRadians(rotation));
+				lastRotation = rotation;
+			} else {
+				rotation = body.getTransform().getRotation();
+				lastRotation = rotation;
+			}
 			if (rotationLocked) {
-				body.getTransform().setRotation(0);
+				body.getTransform().setRotation(rotation);
 			}
 		}
 	}
@@ -194,7 +205,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 		InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
 		if (parent != null && childOf(world) && body != null) {
 			world.addBody(body);
-		} else if (getParent() != null && (getParent() instanceof InstanceWorld || getParent().childOf(world)) && body != null) {
+		} else if (getParent() != null && (getParent() instanceof InstanceWorld || getParent().childOf(world)) && body != null && world != null) {
 			world.removeBody(body);
 		}
 		super.setParent(parent);

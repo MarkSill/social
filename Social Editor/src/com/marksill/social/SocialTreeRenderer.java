@@ -22,7 +22,7 @@ public class SocialTreeRenderer extends DefaultTreeCellRenderer {
 		case "Instance":
 			loc = "tag";
 			break;
-		case "InstanceBlock": case "InstanceCircle": case "InstanceRectangle": case "InstanceTriangle":
+		case "InstanceBlock": case "InstanceCircle": case "InstanceRectangle":
 			loc = "brick";
 			break;
 		case "InstanceContainer":
@@ -37,7 +37,7 @@ public class SocialTreeRenderer extends DefaultTreeCellRenderer {
 		case "InstancePlayers":
 			loc = "folder_user";
 			break;
-		case "InstanceScript":
+		case "InstanceScript": case "InstanceClientScript":
 			loc = "script";
 			break;
 		case "InstanceWorld":

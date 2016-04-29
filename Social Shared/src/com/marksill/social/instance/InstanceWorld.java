@@ -73,9 +73,6 @@ public class InstanceWorld extends Instance {
 		physicsEnabled = true;
 		bodiesToAdd = new ArrayList<Body>();
 		bodiesToRemove = new ArrayList<Body>();
-		if (Social.getInstance().isServer()) {
-			new InstanceScript(this);
-		}
 	}
 	
 	@Override
@@ -93,11 +90,15 @@ public class InstanceWorld extends Instance {
 			for (int i = 0; i < copy.length; i++) {
 				world.removeBody((Body) copy[i]);
 			}
-			if (gravX != lastGravX || gravY != lastGravY) {
-				world.setGravity(new Vector2(gravX, gravY));
-				lastGravX = gravX;
-				lastGravY = gravY;
-			}
+		}
+	}
+	
+	@Override
+	public void updateVars() {
+		if (gravX != lastGravX || gravY != lastGravY) {
+			world.setGravity(new Vector2(gravX, gravY));
+			lastGravX = gravX;
+			lastGravY = gravY;
 		}
 	}
 	

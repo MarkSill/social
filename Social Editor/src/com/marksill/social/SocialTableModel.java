@@ -20,6 +20,7 @@ public class SocialTableModel extends DefaultTableModel {
 		case "ClassName":
 		case "Running":
 		case "Code":
+		case "ID":
 			return false;
 		}
 		return true;

@@ -97,6 +97,10 @@ public class Instance implements Cloneable {
 		
 	}
 	
+	public void updateVars() {
+		
+	}
+	
 	/**
 	 * Deletes the instance.
 	 */

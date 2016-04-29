@@ -7,6 +7,7 @@ import java.util.Map;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstancePlayer;
 import com.marksill.social.instance.InstancePlayers;
@@ -81,6 +82,10 @@ public class NetworkServer extends NetworkInterface {
 	}
 	
 	public void sendUpdate() {
+		if (!Social.getInstance().isRunning()) {
+			lastMap = null;
+			return;
+		}
 		Map<Long, Map<String, Object>> map = Instance.toMap();
 		Map<Long, Map<String, Object>> newMap = new HashMap<>();
 		if (lastMap != null) {
