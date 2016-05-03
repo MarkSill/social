@@ -58,13 +58,8 @@ public class InstanceScript extends Instance {
 	public void init() {
 		enabled = true;
 		running = false;
-		code = "while true do\n	wait(100)\n	local block = Instance:create('rectangle', game:findChild('World'))\n	block.position = Vector2.new(15, 20)\nend";
+		code = "print(\"Hello World!\")\n";
 		tabIndex = -1;
-		if (Social.getInstance().isNetworked() && Social.getInstance().isServer() && !(this instanceof InstanceClientScript)) {
-			InstanceClientScript script = new InstanceClientScript();
-			script.code = "print(\"test\")";
-			script.setParent(this);
-		}
 	}
 	
 	@Override

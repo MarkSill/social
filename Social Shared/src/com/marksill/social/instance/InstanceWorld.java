@@ -8,8 +8,6 @@ import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.World;
 import org.dyn4j.geometry.Vector2;
 
-import com.marksill.social.Social;
-
 /**
  * A container class for physical objects.
  */
@@ -79,17 +77,21 @@ public class InstanceWorld extends Instance {
 	public void update(int delta) {
 		super.update(delta);
 		if (physicsEnabled) {
-			world.update((double) delta / 1000);
 			Object[] copy = bodiesToAdd.toArray();
 			bodiesToAdd.clear();
 			for (int i = 0; i < copy.length; i++) {
-				world.addBody((Body) copy[i]);
+				if (copy[i] != null) {
+					if (!world.containsBody((Body) copy[i])) {
+						world.addBody((Body) copy[i]);
+					}
+				}
 			}
 			copy = bodiesToRemove.toArray();
 			bodiesToRemove.clear();
 			for (int i = 0; i < copy.length; i++) {
 				world.removeBody((Body) copy[i]);
 			}
+			world.update((double) delta / 1000);
 		}
 	}
 	

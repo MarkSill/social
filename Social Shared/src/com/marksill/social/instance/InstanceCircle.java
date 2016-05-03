@@ -38,6 +38,7 @@ public class InstanceCircle extends InstanceBlock {
 	
 	@Override
 	public void updateVars() {
+		super.updateVars();
 		if (lastRadius != radius) {
 			getBody().removeAllFixtures();
 			Circle circ = new Circle(radius);

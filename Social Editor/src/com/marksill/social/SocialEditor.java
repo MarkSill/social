@@ -230,7 +230,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			if (Instance.game != null) {
 				actionPerformed(new ActionEvent(this, 0, "Close"));
 			}
-			Instance.game = new InstanceGame();
+			createNewGame();
 			break;
 		case "Open...":
 			open();
@@ -501,8 +501,10 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 						{"Density", block.density},
 						{"Elasticity", block.elasticity},
 						{"Friction", block.friction},
-						{"Rotation", block.rotation},
-						{"Rotation Locked", block.rotationLocked}
+						{"Rotation", Math.toDegrees(block.rotation)},
+						{"Rotation Locked", block.rotationLocked},
+						{"Velocity X", block.velocity.x},
+						{"Velocity Y", block.velocity.y}
 					});
 					if (block instanceof InstanceRectangle) {
 						InstanceRectangle rect = (InstanceRectangle) block;
@@ -550,7 +552,8 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 					InstanceWorld world = (InstanceWorld) inst;
 					values = mergeValues(values, new Object[][] {
 						{"Gravity X", world.gravX},
-						{"Gravity Y", world.gravY}
+						{"Gravity Y", world.gravY},
+						{"Physics Enabled", world.physicsEnabled}
 					});
 					break;
 				}
@@ -607,8 +610,6 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			if (node.getInstance() != null) {
 				node.getInstance().name = (String) edit.getCellEditorValue();
 			}
-		} else {
-			System.out.println(e);
 		}
 	}
 
@@ -677,10 +678,16 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				((InstanceRectangle) inst).size.y = Double.parseDouble((String) newValue);
 				break;
 			case "Rotation":
-				((InstanceBlock) inst).rotation = Double.parseDouble((String) newValue);
+				((InstanceBlock) inst).rotation = Math.toRadians(Double.parseDouble((String) newValue));
 				break;
 			case "Rotation Locked":
 				((InstanceBlock) inst).rotationLocked = Boolean.parseBoolean((String) newValue);
+				break;
+			case "Velocity X":
+				((InstanceBlock) inst).velocity.x = Double.parseDouble((String) newValue);
+				break;
+			case "Velocity Y":
+				((InstanceBlock) inst).velocity.y = Double.parseDouble((String) newValue);
 				break;
 			case "Gravity X":
 				((InstanceWorld) inst).gravX = Double.parseDouble((String) newValue);
@@ -690,6 +697,9 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				break;
 			case "Enabled":
 				((InstanceScript) inst).enabled = Boolean.parseBoolean((String) newValue);
+				break;
+			case "Physics Enabled":
+				((InstanceWorld) inst).physicsEnabled = Boolean.parseBoolean((String) newValue);
 				break;
 			}
 		}
@@ -715,6 +725,12 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			openFile = fc.getSelectedFile();
 			new XML(openFile.getAbsolutePath()).createGame();
 		}
+	}
+	
+	public void createNewGame() {
+		InstanceGame game = new InstanceGame();
+		new InstanceWorld(game);
+		new InstancePlayers(game);
 	}
 
 }

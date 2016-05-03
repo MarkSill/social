@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.geometry.Vector2;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -62,8 +63,8 @@ public class XML {
 		switch(type) {
 		case "InstanceWorld":
 			InstanceWorld world = new InstanceWorld();
-			world.gravX = Double.parseDouble(e.getChildText("gravX"));
-			world.gravY = Double.parseDouble(e.getChildText("gravY"));
+			world.gravX = (double) get(e, "gravX", 0.0, Double.class);
+			world.gravY = (double) get(e, "gravY", -9.81, Double.class);
 			i = world;
 			break;
 		case "InstanceBlock": case "InstanceRectangle": case "InstanceCircle":
@@ -71,31 +72,39 @@ public class XML {
 			if (type.equals("InstanceRectangle")) {
 				InstanceRectangle rect = new InstanceRectangle();
 				Vector2 size = new Vector2();
-				size.x = Double.parseDouble(e.getChildText("sizeX"));
-				size.y = Double.parseDouble(e.getChildText("sizeY"));
+				size.x = (double) get(e, "sizeX", 1.0, Double.class);
+				size.y = (double) get(e, "sizeY", 1.0, Double.class);
 				rect.size = size;
 				block = rect;
 			} else if (type.equals("InstanceCircle")) {
 				InstanceCircle circ = new InstanceCircle();
-				circ.radius = Double.parseDouble(e.getChildText("radius"));
+				circ.radius = (double) get(e, "radius", 0.5, Double.class);
 				block = circ;
 			} else {
 				block = new InstanceBlock();
 			}
-			block.anchored = Boolean.parseBoolean(e.getChildText("anchored"));
-			block.visible = Boolean.parseBoolean(e.getChildText("visible"));
-			block.mass = Double.parseDouble(e.getChildText("mass"));
-			block.density = Double.parseDouble(e.getChildText("density"));
-			block.elasticity = Double.parseDouble(e.getChildText("elasticity"));
-			block.friction = Double.parseDouble(e.getChildText("friction"));
+			Vector2 pos = new Vector2();
+			pos.x = (double) get(e, "posX", 0.0, Double.class);
+			pos.y = (double) get(e, "posY", 0.0, Double.class);
+			block.position = pos;
+			Vector2 vel = new Vector2();
+			vel.x = (double) get(e, "velX", 0.0, Double.class);
+			vel.y = (double) get(e, "velY", 0.0, Double.class);
+			block.velocity = vel;
+			block.anchored = (boolean) get(e, "anchored", false, Boolean.class);
+			block.visible = (boolean) get(e, "visible", true, Boolean.class);
+			block.mass = (double) get(e, "mass", 1.0, Double.class);
+			block.density = (double) get(e, "density", BodyFixture.DEFAULT_DENSITY, Double.class);
+			block.elasticity = (double) get(e, "elasticity", BodyFixture.DEFAULT_RESTITUTION, Double.class);
+			block.friction = (double) get(e, "friction", BodyFixture.DEFAULT_FRICTION, Double.class);
 			Color color = new Color(0, 0, 0);
-			color.r = Float.parseFloat(e.getChildText("colorR"));
-			color.g = Float.parseFloat(e.getChildText("colorG"));
-			color.b = Float.parseFloat(e.getChildText("colorB"));
-			color.a = Float.parseFloat(e.getChildText("colorA"));
+			color.r = (float) get(e, "colorR", 1f, Float.class);
+			color.g = (float) get(e, "colorG", 1f, Float.class);
+			color.b = (float) get(e, "colorB", 1f, Float.class);
+			color.a = (float) get(e, "colorA", 1f, Float.class);
 			block.color = color;
-			block.rotationLocked = Boolean.parseBoolean(e.getChildText("rotationLocked"));
-			block.rotation = Double.parseDouble(e.getChildText("rotation"));
+			block.rotationLocked = (boolean) get(e, "rotationLocked", false, Boolean.class);
+			block.rotation = (double) get(e, "rotation", 0.0, Double.class);
 			i = block;
 			break;
 		case "InstanceScript": case "InstanceClientScript":
@@ -105,8 +114,8 @@ public class XML {
 			} else {
 				script = new InstanceClientScript();
 			}
-			script.code = e.getChildText("code");
-			script.enabled = Boolean.parseBoolean(e.getChildText("enabled"));
+			script.code = (String) get(e, "code", "", null);
+			script.enabled = (boolean) get(e, "enabled", true, Boolean.class);
 			i = script;
 			break;
 		case "InstanceGame":
@@ -115,7 +124,7 @@ public class XML {
 			break;
 		case "InstancePlayers":
 			InstancePlayers players = new InstancePlayers();
-			players.maxPlayers = Integer.parseInt(e.getChildText("maxPlayers"));
+			players.maxPlayers = (int) get(e, "maxPlayers", 4, Integer.class);
 			i = players;
 			break;
 		case "InstanceContainer":
@@ -128,9 +137,9 @@ public class XML {
 			break;
 		}
 		if (i != null) {
-			i.name = e.getChildText("name");
+			i.name = (String) get(e, "name", "Instance", null);
 			if (parent != null) {
-				parent.addChild(i);
+				i.setParent(parent);
 			}
 		}
 		
@@ -138,6 +147,27 @@ public class XML {
 		for (Element element : elements) {
 			create(i, element);
 		}
+	}
+	
+	private Object get(Element e, String name, Object def, Class<?> clazz) {
+		String text = e.getChildText(name);
+		if (text == null) {
+			return def;
+		}
+		if (clazz != null) {
+			if (clazz == Double.class) {
+				return Double.parseDouble(text);
+			} else if (clazz == Float.class) {
+				return Float.parseFloat(text);
+			} else if (clazz == Integer.class) {
+				return Integer.parseInt(text);
+			} else if (clazz == Long.class) {
+				return Long.parseLong(text);
+			} else if (clazz == Boolean.class) {
+				return Boolean.parseBoolean(text);
+			}
+		}
+		return text;
 	}
 	
 	public void saveGame(InstanceGame gamei, String filename) {
@@ -171,6 +201,8 @@ public class XML {
 			} else {
 				block = (InstanceBlock) i;
 			}
+			e.addContent(new Element("posX").setText(String.valueOf(block.position.x)));
+			e.addContent(new Element("posY").setText(String.valueOf(block.position.y)));
 			e.addContent(new Element("anchored").setText(String.valueOf(block.anchored)));
 			e.addContent(new Element("visible").setText(String.valueOf(block.visible)));
 			e.addContent(new Element("mass").setText(String.valueOf(block.mass)));

@@ -39,6 +39,7 @@ public class InstanceRectangle extends InstanceBlock {
 	
 	@Override
 	public void updateVars() {
+		super.updateVars();
 		if (lastSize != null) {
 			if (!lastSize.equals(size)) {
 				getBody().removeAllFixtures();

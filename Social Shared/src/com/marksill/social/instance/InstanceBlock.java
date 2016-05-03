@@ -36,6 +36,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 	public double friction = BodyFixture.DEFAULT_FRICTION;
 	public boolean rotationLocked = false;
 	public double rotation;
+	public Vector2 velocity;
 	
 	/** The physical body of the block. */
 	private Body body;
@@ -49,6 +50,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 	private double lastElasticity = 0.2;
 	private double lastFriction = 0.2;
 	private double lastRotation;
+	private Vector2 lastVelocity;
 
 	/**
 	 * Creates a new block.
@@ -96,12 +98,14 @@ public class InstanceBlock extends Instance implements Cloneable {
 		friction = BodyFixture.DEFAULT_FRICTION;
 		rotationLocked = false;
 		rotation = 0;
+		velocity = new Vector2();
 		lastPosition = new Vector2();
 		lastMass = mass;
 		lastDensity = density;
 		lastElasticity = elasticity;
 		lastFriction = friction;
 		lastRotation = 0;
+		lastVelocity = velocity.copy();
 		body = new Body();
 		setParent(getParent());
 	}
@@ -157,6 +161,12 @@ public class InstanceBlock extends Instance implements Cloneable {
 			if (rotationLocked) {
 				body.getTransform().setRotation(rotation);
 			}
+			if (!velocity.difference(lastVelocity).isZero()) {
+				body.setLinearVelocity(velocity);
+			} else {
+				velocity = body.getLinearVelocity();
+			}
+			lastVelocity = velocity.copy();
 		}
 	}
 	
@@ -203,12 +213,25 @@ public class InstanceBlock extends Instance implements Cloneable {
 	@Override
 	public void setParent(Instance parent) {
 		InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
-		if (parent != null && childOf(world) && body != null) {
+		int mode = 0; //0 = do nothing; 1 = add; 2 = remove
+		if (childOf(world) && (parent == null || (!parent.childOf(world) && parent != world))) {
+			mode = 2;
+		} else if (parent != null && (parent.childOf(world) || parent == world)) {
+			mode = 1;
+		}
+		if (mode == 1) {
 			world.addBody(body);
-		} else if (getParent() != null && (getParent() instanceof InstanceWorld || getParent().childOf(world)) && body != null && world != null) {
+		} else if (mode == 2) {
 			world.removeBody(body);
 		}
 		super.setParent(parent);
+	}
+	
+	@Override
+	public void delete() {
+		InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
+		world.removeBody(body);
+		super.delete();
 	}
 	
 	@Override
