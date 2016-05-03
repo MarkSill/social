@@ -10,6 +10,7 @@ import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstancePlayer;
 import com.marksill.social.instance.InstancePlayers;
+import com.marksill.social.lua.InputType;
 
 /**
  * Class for containing NotStates in a game with Slick running.
@@ -73,6 +74,7 @@ public class State extends BasicGameState {
 			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
 				pl.fireKeyboardDownCallbacks(key, c);
 			}
+			com.marksill.social.lua.Input.fire(InputType.KEYBOARD, key, true);
 		}
 	}
 	
@@ -83,6 +85,7 @@ public class State extends BasicGameState {
 			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
 				pl.fireKeyboardUpCallbacks(key, c);
 			}
+			com.marksill.social.lua.Input.fire(InputType.KEYBOARD, key, false);
 		}
 	}
 	
