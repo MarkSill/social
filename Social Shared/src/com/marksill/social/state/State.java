@@ -1,5 +1,6 @@
 package com.marksill.social.state;
 
+import org.luaj.vm2.LuaTable;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -74,7 +75,6 @@ public class State extends BasicGameState {
 			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
 				pl.fireKeyboardDownCallbacks(key, c);
 			}
-			com.marksill.social.lua.Input.fire(InputType.KEYBOARD, key, true);
 		}
 	}
 	
@@ -85,7 +85,6 @@ public class State extends BasicGameState {
 			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
 				pl.fireKeyboardUpCallbacks(key, c);
 			}
-			com.marksill.social.lua.Input.fire(InputType.KEYBOARD, key, false);
 		}
 	}
 	
@@ -136,6 +135,7 @@ public class State extends BasicGameState {
 			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
 				pl.fireMouseWheelCallbacks(newValue);
 			}
+			
 		}
 	}
 
