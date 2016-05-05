@@ -1,6 +1,5 @@
 package com.marksill.social.state;
 
-import org.luaj.vm2.LuaTable;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
@@ -11,7 +10,6 @@ import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstancePlayer;
 import com.marksill.social.instance.InstancePlayers;
-import com.marksill.social.lua.InputType;
 
 /**
  * Class for containing NotStates in a game with Slick running.
