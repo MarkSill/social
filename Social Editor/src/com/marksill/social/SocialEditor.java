@@ -170,7 +170,8 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				new MenuItem("Rectangle", KeyEvent.VK_R),
 				new MenuItem("Circle", KeyEvent.VK_C),
 				new MenuItem("Script", KeyEvent.VK_S),
-				new MenuItem("ClientScript")
+				new MenuItem("ClientScript"),
+				new MenuItem("Event", KeyEvent.VK_E)
 		});
 		menu.setMnemonic(KeyEvent.VK_I);
 		menu = createMenu(menubar, "Test", new MenuItem[] {
@@ -232,6 +233,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				actionPerformed(new ActionEvent(this, 0, "Close"));
 			}
 			createNewGame();
+			Social.getInstance().setRunning(false);
 			break;
 		case "Open...":
 			open();
@@ -322,6 +324,9 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			break;
 		case "ClientScript":
 			inst = "clientscript";
+			break;
+		case "Event":
+			inst = "event";
 			break;
 		}
 		if (inst != null) {

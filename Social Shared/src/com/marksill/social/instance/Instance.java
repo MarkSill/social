@@ -354,6 +354,9 @@ public class Instance implements Cloneable {
 		case "container":
 			instance = new InstanceContainer(name, parent);
 			break;
+		case "event":
+			instance = new InstanceEvent(name, parent);
+			break;
 		case "game":
 			instance = new InstanceGame(name, parent);
 			break;

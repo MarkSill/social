@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
+
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
+import com.marksill.social.instance.InstanceEvent;
 import com.marksill.social.instance.InstancePlayer;
 import com.marksill.social.instance.InstancePlayers;
 
@@ -65,7 +68,7 @@ public class NetworkServer extends NetworkInterface {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void receive(Connection connection, Object data) {
-		System.out.println("Received data: " + data);
+		//System.out.println("Received data: " + data);
 		if (data instanceof Request) {
 			Request r = (Request) data;
 			if (data instanceof RequestConnect) {
@@ -77,6 +80,11 @@ public class NetworkServer extends NetworkInterface {
 				((InstancePlayers) Instance.game.findChild("Players")).addPlayer(player);
 				connection.sendUDP(new RequestUpdate(lastMap));
 				System.out.println("Sent instance information to player \"" + userinfo.get("name") + "\".");
+			} else if (data instanceof RequestClient) {
+				RequestClient client = (RequestClient) r;
+				Map<String, Object> info = (HashMap<String, Object>) client.data;
+				InstanceEvent event = (InstanceEvent) Instance.getByID((long) info.get("id"));
+				event.fire(CoerceJavaToLua.coerce(info.get("arg")));
 			}
 		}
 	}

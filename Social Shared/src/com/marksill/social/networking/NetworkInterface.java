@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
+import org.luaj.vm2.LuaValue;
 import org.newdawn.slick.Color;
 
 import com.esotericsoftware.kryo.Kryo;
@@ -22,13 +23,16 @@ public abstract class NetworkInterface {
 			RequestReadyForUsername.class,
 			RequestKick.class,
 			RequestUpdate.class,
+			RequestClient.class,
 			ArrayList.class,
 			List.class,
 			Vector2.class,
 			Map.class,
 			HashMap.class,
 			Color.class,
-			Transform.class
+			Transform.class,
+			LuaValue.class,
+			Object.class
 	};
 	
 	public void init(Kryo kryo) {

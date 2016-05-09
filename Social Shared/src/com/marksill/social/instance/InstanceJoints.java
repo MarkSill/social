@@ -75,7 +75,10 @@ public class InstanceJoints extends Instance {
 	}
 	
 	public static void removeAllJoints() {
-		((InstanceWorld) Instance.game.findChild("World")).getWorld().removeAllJoints();
+		InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
+		if (world != null) {
+			world.getWorld().removeAllJoints();
+		}
 		joints.clear();
 	}
 

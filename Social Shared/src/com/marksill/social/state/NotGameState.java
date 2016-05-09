@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.joint.DistanceJoint;
 import org.dyn4j.dynamics.joint.Joint;
@@ -13,8 +12,6 @@ import org.dyn4j.dynamics.joint.RevoluteJoint;
 import org.dyn4j.dynamics.joint.RopeJoint;
 import org.dyn4j.dynamics.joint.WeldJoint;
 import org.dyn4j.geometry.AABB;
-import org.dyn4j.geometry.Circle;
-import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
@@ -26,11 +23,11 @@ import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceCircle;
 import com.marksill.social.instance.InstanceClientScript;
+import com.marksill.social.instance.InstanceEvent;
 import com.marksill.social.instance.InstanceJoints;
 import com.marksill.social.instance.InstancePlayer;
 import com.marksill.social.instance.InstanceRectangle;
 import com.marksill.social.instance.InstanceScript;
-import com.marksill.social.instance.InstanceWorld;
 import com.marksill.social.networking.NetworkServer;
 
 /**
@@ -93,6 +90,8 @@ public class NotGameState extends NotState {
 					((InstanceScript) i).running = false;
 				} else if (i instanceof InstancePlayer) {
 					((InstancePlayer) i).clearCallbacks();
+				} else if (i instanceof InstanceEvent) {
+					((InstanceEvent) i).clearCallbacks();
 				}
 			}
 			return;
@@ -154,14 +153,13 @@ public class NotGameState extends NotState {
 		if (parent instanceof InstanceBlock) {
 			InstanceBlock block = (InstanceBlock) parent;
 			if (block.visible && canSee(block)) {
-				Body body = block.getBody();
 				if (block.childOf(Instance.game.findChild("World"))) {
 					Vector2 pos = block.position;
-					List<BodyFixture> fixtures = body.getFixtures();
 					float rot = (float) (-Math.toDegrees(block.rotation));
 					g.pushTransform();
 					g.translate((float) pos.x * PPM, (float) -pos.y * PPM + social.getContainer().getHeight());
 					g.rotate(0, 0, rot);
+					g.setColor(block.color);
 					if (block instanceof InstanceRectangle) {
 						InstanceRectangle rect = (InstanceRectangle) block;
 						Vector2 size = rect.size;
@@ -186,6 +184,40 @@ public class NotGameState extends NotState {
 	
 	private void renderSelection(Instance parent, Graphics g, Social social) {
 		if (parent == null) {
+			return;
+		}
+		g.setLineWidth(SELECTION_SIZE+1);
+		if (parent instanceof InstanceBlock) {
+			InstanceBlock block = (InstanceBlock) parent;
+			if (block.visible && canSee(block) && Instance.selected.contains(block)) {
+				if (block.childOf(Instance.game.findChild("World"))) {
+					Vector2 pos = block.position;
+					float rot = (float) (-Math.toDegrees(block.rotation));
+					g.pushTransform();
+					g.translate((float) pos.x * PPM, (float) -pos.y * PPM + social.getContainer().getHeight());
+					g.rotate(0, 0, rot);
+					g.setColor(new Color(0, 128, 255, transparency));
+					if (block instanceof InstanceRectangle) {
+						InstanceRectangle rect = (InstanceRectangle) block;
+						Vector2 size = rect.size;
+						float w = (float) (size.x * PPM) + SELECTION_SIZE, h = (float) (size.y * PPM) + SELECTION_SIZE;
+						g.fillRect(-w / 2, -h / 2, w, h);
+					} else if (block instanceof InstanceCircle) {
+						InstanceCircle circ = (InstanceCircle) block;
+						float rad = (float) (circ.radius * PPM * 2) + SELECTION_SIZE;
+						g.fillOval(-rad / 2, -rad / 2, rad, rad);
+					}
+					g.popTransform();
+				} else {
+					block.delete();
+				}
+			}
+		}
+		List<Instance> children = parent.getChildren();
+		for (int i = 0; i < children.size(); i++) {
+			renderSelection(children.get(i), g, social);
+		}
+		/*if (parent == null) {
 			return;
 		}
 		g.setLineWidth(SELECTION_SIZE+1);
@@ -229,7 +261,7 @@ public class NotGameState extends NotState {
 		List<Instance> children = parent.getChildren();
 		for (int i = 0; i < children.size(); i++) {
 			renderSelection(children.get(i), g, social);
-		}
+		}*/
 	}
 	
 	public static void renderJoints(Graphics g, Social social) {

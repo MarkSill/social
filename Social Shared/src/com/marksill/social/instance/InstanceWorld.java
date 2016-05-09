@@ -64,7 +64,7 @@ public class InstanceWorld extends Instance {
 	@Override
 	public void init() {
 		world = new World();
-		world.setGravity(World.EARTH_GRAVITY);
+		world.setGravity(new Vector2(0, -9.81));
 		gravX = world.getGravity().x;
 		gravY = world.getGravity().y;
 		speed = 1;

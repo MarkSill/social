@@ -20,6 +20,7 @@ import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceCircle;
 import com.marksill.social.instance.InstanceClientScript;
 import com.marksill.social.instance.InstanceContainer;
+import com.marksill.social.instance.InstanceEvent;
 import com.marksill.social.instance.InstanceGame;
 import com.marksill.social.instance.InstanceJoints;
 import com.marksill.social.instance.InstancePlayers;
@@ -137,6 +138,10 @@ public class XML {
 			InstanceJoints joints = new InstanceJoints();
 			i = joints;
 		case "InstancePlayer": break;
+		case "InstanceEvent":
+			InstanceEvent event = new InstanceEvent();
+			i = event;
+			break;
 		default:
 			i = new Instance();
 			break;
