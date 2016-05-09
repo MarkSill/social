@@ -28,8 +28,7 @@ public class Instance implements Cloneable {
 	
 	/** The instance of the game. */
 	public static InstanceGame game = null;
-	
-	private static long nextID = 0;
+	public static long nextID = 0;
 	
 	/** The instance's parent. */
 	private Instance parent;

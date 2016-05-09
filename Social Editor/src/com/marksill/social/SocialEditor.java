@@ -59,6 +59,7 @@ import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceCircle;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstanceJoints;
 import com.marksill.social.instance.InstancePlayers;
 import com.marksill.social.instance.InstanceRectangle;
 import com.marksill.social.instance.InstanceScript;
@@ -234,12 +235,14 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			break;
 		case "Open...":
 			open();
+			Social.getInstance().setRunning(false);
 			break;
 		case "Close":
 			if (contentPane.getSelectedIndex() == 0) {
 				if (Instance.game != null) {
 					Instance.game.delete();
 					Instance.game = null;
+					System.out.println(Instance.game);
 				}
 			} else {
 				int index = contentPane.getSelectedIndex();
@@ -553,7 +556,8 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 					values = mergeValues(values, new Object[][] {
 						{"Gravity X", world.gravX},
 						{"Gravity Y", world.gravY},
-						{"Physics Enabled", world.physicsEnabled}
+						{"Physics Enabled", world.physicsEnabled},
+						{"Speed", world.speed}
 					});
 					break;
 				}
@@ -701,6 +705,9 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			case "Physics Enabled":
 				((InstanceWorld) inst).physicsEnabled = Boolean.parseBoolean((String) newValue);
 				break;
+			case "Speed":
+				((InstanceWorld) inst).speed = Double.parseDouble((String) newValue);
+				break;
 			}
 		}
 	}
@@ -731,6 +738,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		InstanceGame game = new InstanceGame();
 		new InstanceWorld(game);
 		new InstancePlayers(game);
+		new InstanceJoints(game);
 	}
 
 }

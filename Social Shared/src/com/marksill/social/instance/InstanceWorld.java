@@ -19,6 +19,7 @@ public class InstanceWorld extends Instance {
 	public double gravX;
 	public double gravY;
 	public boolean physicsEnabled;
+	public double speed;
 	
 	/** The world's World. */
 	private World world;
@@ -66,6 +67,7 @@ public class InstanceWorld extends Instance {
 		world.setGravity(World.EARTH_GRAVITY);
 		gravX = world.getGravity().x;
 		gravY = world.getGravity().y;
+		speed = 1;
 		lastGravX = gravX;
 		lastGravY = gravY;
 		physicsEnabled = true;
@@ -91,7 +93,7 @@ public class InstanceWorld extends Instance {
 			for (int i = 0; i < copy.length; i++) {
 				world.removeBody((Body) copy[i]);
 			}
-			world.update((double) delta / 1000);
+			world.updatev(((double) delta / 1000.0) * speed);
 		}
 	}
 	

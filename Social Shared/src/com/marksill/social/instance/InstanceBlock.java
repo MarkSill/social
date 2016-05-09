@@ -1,14 +1,19 @@
 package com.marksill.social.instance;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.dynamics.joint.Joint;
 import org.dyn4j.geometry.Convex;
 import org.dyn4j.geometry.MassType;
 import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
+import org.luaj.vm2.LuaTable;
+import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.newdawn.slick.Color;
 
 /**
@@ -33,24 +38,24 @@ public class InstanceBlock extends Instance implements Cloneable {
 	public double density = BodyFixture.DEFAULT_DENSITY;
 	/** The elasticity of the block. */
 	public double elasticity = BodyFixture.DEFAULT_RESTITUTION;
+	/** The friction of the block. */
 	public double friction = BodyFixture.DEFAULT_FRICTION;
+	/** Locks the rotation of the block. */
 	public boolean rotationLocked = false;
+	/** The rotation of the block. */
 	public double rotation;
+	/** The velocity of the block. */
 	public Vector2 velocity;
 	
-	/** The physical body of the block. */
 	private Body body;
-	/** The block's position last update. */
 	private Vector2 lastPosition = new Vector2();
-	/** The block's mass last update. */
 	private double lastMass = 1;
-	/** The block's density last update. */
 	private double lastDensity = 1;
-	/** The block's elasticity last update. */
 	private double lastElasticity = 0.2;
 	private double lastFriction = 0.2;
 	private double lastRotation;
 	private Vector2 lastVelocity;
+	private List<Joint> joints;
 
 	/**
 	 * Creates a new block.
@@ -106,6 +111,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 		lastFriction = friction;
 		lastRotation = 0;
 		lastVelocity = velocity.copy();
+		joints = new ArrayList<>();
 		body = new Body();
 		setParent(getParent());
 	}
@@ -227,10 +233,29 @@ public class InstanceBlock extends Instance implements Cloneable {
 		super.setParent(parent);
 	}
 	
+	public void addJoint(Joint joint) {
+		joints.add(joint);
+	}
+	
+	public List<Joint> getJointsAsList() {
+		return new ArrayList<Joint>(joints);
+	}
+	
+	public LuaTable getJoints() {
+		List<Joint> joints = getJointsAsList();
+		LuaValue[] values = new LuaValue[joints.size()];
+		for (int i = 0; i < joints.size(); i++) {
+			values[i] = CoerceJavaToLua.coerce(joints.get(i));
+		}
+		return LuaTable.listOf(values);
+	}
+	
 	@Override
 	public void delete() {
 		InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
-		world.removeBody(body);
+		if (world != null) {
+			world.removeBody(body);
+		}
 		super.delete();
 	}
 	

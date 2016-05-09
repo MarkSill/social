@@ -7,6 +7,11 @@ import java.util.List;
 
 import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.dynamics.joint.DistanceJoint;
+import org.dyn4j.dynamics.joint.Joint;
+import org.dyn4j.dynamics.joint.RevoluteJoint;
+import org.dyn4j.dynamics.joint.RopeJoint;
+import org.dyn4j.dynamics.joint.WeldJoint;
 import org.dyn4j.geometry.AABB;
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Convex;
@@ -19,8 +24,11 @@ import org.newdawn.slick.Graphics;
 import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
+import com.marksill.social.instance.InstanceCircle;
 import com.marksill.social.instance.InstanceClientScript;
+import com.marksill.social.instance.InstanceJoints;
 import com.marksill.social.instance.InstancePlayer;
+import com.marksill.social.instance.InstanceRectangle;
 import com.marksill.social.instance.InstanceScript;
 import com.marksill.social.instance.InstanceWorld;
 import com.marksill.social.networking.NetworkServer;
@@ -75,6 +83,10 @@ public class NotGameState extends NotState {
 			i.updateVars();
 		}
 		if (Instance.game == null || !social.isRunning()) {
+			if (Instance.game != null) {
+				//FIXME: Temporary joint removal
+				InstanceJoints.removeAllJoints();
+			}
 			for (Instance i : instances) {
 				if (i instanceof InstanceScript && !(i instanceof InstanceClientScript) && ((InstanceScript) i).thread != null) {
 					((InstanceScript) i).thread.kill();
@@ -112,6 +124,7 @@ public class NotGameState extends NotState {
 		
 		renderSelection(Instance.game.findChild("World"), g, social);
 		renderInstances(Instance.game.findChild("World"), g, social);
+		renderJoints(g, social);
 		
 		if (transparencyDirection) {
 			transparency += 15;
@@ -149,26 +162,15 @@ public class NotGameState extends NotState {
 					g.pushTransform();
 					g.translate((float) pos.x * PPM, (float) -pos.y * PPM + social.getContainer().getHeight());
 					g.rotate(0, 0, rot);
-					for (BodyFixture f : fixtures) {
-						Convex shape = f.getShape();
-						g.setColor(block.color);
-						g.pushTransform();
-						g.translate((float) shape.getCenter().x * PPM, (float) shape.getCenter().y * PPM);
-						if (shape instanceof Rectangle) {
-							Rectangle rect = (Rectangle) shape;
-							float srot = (float) (-Math.toDegrees(rect.getRotation()));
-							g.pushTransform();
-							g.rotate(0, 0, srot);
-							float w = (float) (rect.getWidth()) * PPM;
-							float h = (float) (rect.getHeight()) * PPM;
-							g.fillRect(-w / 2, -h / 2, w, h);
-							g.popTransform();
-						} else if (shape instanceof Circle) {
-							Circle cir = (Circle) shape;
-							float rad = (float) (cir.getRadius() * 2) * PPM;
-							g.fillOval(-rad / 2, -rad / 2, rad, rad);
-						}
-						g.popTransform();
+					if (block instanceof InstanceRectangle) {
+						InstanceRectangle rect = (InstanceRectangle) block;
+						Vector2 size = rect.size;
+						float w = (float) (size.x * PPM), h = (float) (size.y * PPM);
+						g.fillRect(-w / 2, -h / 2, w, h);
+					} else if (block instanceof InstanceCircle) {
+						InstanceCircle circ = (InstanceCircle) block;
+						float rad = (float) (circ.radius * PPM * 2);
+						g.fillOval(-rad / 2, -rad / 2, rad, rad);
 					}
 					g.popTransform();
 				} else {
@@ -227,6 +229,33 @@ public class NotGameState extends NotState {
 		List<Instance> children = parent.getChildren();
 		for (int i = 0; i < children.size(); i++) {
 			renderSelection(children.get(i), g, social);
+		}
+	}
+	
+	public static void renderJoints(Graphics g, Social social) {
+		List<Joint> joints = InstanceJoints.getJointsAsList();
+		for (Joint j : joints) {
+			if (j instanceof DistanceJoint || j instanceof RopeJoint) {
+				Vector2 a1 = j.getAnchor1();
+				Vector2 a2 = j.getAnchor2();
+				g.setLineWidth(1);
+				if (j instanceof DistanceJoint) {
+					g.setColor(Color.red);
+				} else if (j instanceof RopeJoint) {
+					g.setColor(Color.orange);
+				}
+				float x1 = (float) a1.x * PPM, x2 = (float) a2.x * PPM, y1 = (float) (social.getContainer().getHeight() - a1.y * PPM), y2 = (float) (social.getContainer().getHeight() - a2.y * PPM);
+				g.drawLine(x1, y1, x2, y2);
+			} else if (j instanceof RevoluteJoint || j instanceof WeldJoint) {
+				Vector2 pos = j.getAnchor1();
+				float x = (float) (pos.x * PPM - 2.5), y = (float) (social.getContainer().getHeight() - pos.y * PPM - 2.5), w = 5, h = 5;
+				if (j instanceof RevoluteJoint) {
+					g.setColor(Color.blue);
+				} else if (j instanceof WeldJoint) {
+					g.setColor(Color.yellow);
+				}
+				g.fillRect(x, y, w, h);
+			}
 		}
 	}
 	

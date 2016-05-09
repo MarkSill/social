@@ -48,6 +48,11 @@ public class ScriptThread extends Thread {
 			g.set("Keyboard", CoerceJavaToLua.coerce(Keyboard.class));
 			g.set("Controllers", CoerceJavaToLua.coerce(LuaControllers.class));
 		}
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		chunk = g.load(code);
 	}
 	

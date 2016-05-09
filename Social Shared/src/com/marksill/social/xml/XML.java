@@ -21,6 +21,7 @@ import com.marksill.social.instance.InstanceCircle;
 import com.marksill.social.instance.InstanceClientScript;
 import com.marksill.social.instance.InstanceContainer;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstanceJoints;
 import com.marksill.social.instance.InstancePlayers;
 import com.marksill.social.instance.InstanceRectangle;
 import com.marksill.social.instance.InstanceScript;
@@ -65,6 +66,7 @@ public class XML {
 			InstanceWorld world = new InstanceWorld();
 			world.gravX = (double) get(e, "gravX", 0.0, Double.class);
 			world.gravY = (double) get(e, "gravY", -9.81, Double.class);
+			world.speed = (double) get(e, "speed", 1.0, Double.class);
 			i = world;
 			break;
 		case "InstanceBlock": case "InstanceRectangle": case "InstanceCircle":
@@ -131,6 +133,9 @@ public class XML {
 			InstanceContainer container = new InstanceContainer();
 			i = container;
 			break;
+		case "InstanceJoints":
+			InstanceJoints joints = new InstanceJoints();
+			i = joints;
 		case "InstancePlayer": break;
 		default:
 			i = new Instance();
@@ -138,6 +143,10 @@ public class XML {
 		}
 		if (i != null) {
 			i.name = (String) get(e, "name", "Instance", null);
+			i.id = (Long) get(e, "id", Instance.nextID++, Long.class);
+			if (i.id > Instance.nextID) {
+				Instance.nextID = i.id + 1;
+			}
 			if (parent != null) {
 				i.setParent(parent);
 			}
@@ -186,6 +195,7 @@ public class XML {
 		String className = i.getClass().getSimpleName();
 		e.setAttribute("type", className);
 		e.addContent(new Element("name").setText(i.name));
+		e.addContent(new Element("id").setText(String.valueOf(i.id)));
 		switch (className) {
 		case "InstanceBlock": case "InstanceRectangle": case "InstanceCircle":
 			InstanceBlock block;
@@ -230,6 +240,7 @@ public class XML {
 			InstanceWorld world = (InstanceWorld) i;
 			e.addContent(new Element("gravX").setText(String.valueOf(world.gravX)));
 			e.addContent(new Element("gravY").setText(String.valueOf(world.gravY)));
+			e.addContent(new Element("speed").setText(String.valueOf(world.speed)));
 			break;
 		default:
 			break;
