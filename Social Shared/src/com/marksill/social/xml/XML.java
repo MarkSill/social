@@ -22,6 +22,7 @@ import com.marksill.social.instance.InstanceClientScript;
 import com.marksill.social.instance.InstanceContainer;
 import com.marksill.social.instance.InstanceEvent;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstanceImages;
 import com.marksill.social.instance.InstanceJoints;
 import com.marksill.social.instance.InstancePlayers;
 import com.marksill.social.instance.InstanceRectangle;
@@ -56,6 +57,15 @@ public class XML {
 	public InstanceGame createGame() {
 		Element game = root.getChild("instance");
 		create(null, game);
+		if (Instance.game.findChild("World") == null) {
+			new InstanceWorld(Instance.game);
+		}
+		if (Instance.game.findChild("Players") == null) {
+			new InstancePlayers(Instance.game);
+		}
+		if (Instance.game.findChild("Images") == null) {
+			new InstanceImages(Instance.game);
+		}
 		return Instance.game;
 	}
 	
@@ -108,6 +118,7 @@ public class XML {
 			block.color = color;
 			block.rotationLocked = (boolean) get(e, "rotationLocked", false, Boolean.class);
 			block.rotation = (double) get(e, "rotation", 0.0, Double.class);
+			block.image = (String) get(e, "image", null, null);
 			i = block;
 			break;
 		case "InstanceScript": case "InstanceClientScript":
@@ -141,6 +152,10 @@ public class XML {
 		case "InstanceEvent":
 			InstanceEvent event = new InstanceEvent();
 			i = event;
+			break;
+		case "InstanceImages":
+			InstanceImages images = new InstanceImages();
+			i = images;
 			break;
 		default:
 			i = new Instance();
@@ -231,6 +246,7 @@ public class XML {
 			e.addContent(new Element("colorA").setText(String.valueOf(color.a)));
 			e.addContent(new Element("rotationLocked").setText(String.valueOf(block.rotationLocked)));
 			e.addContent(new Element("rotation").setText(String.valueOf(block.rotation)));
+			e.addContent(new Element("image").setText(block.image));
 			break;
 		case "InstancePlayers":
 			InstancePlayers players = (InstancePlayers) i;

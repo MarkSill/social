@@ -59,6 +59,7 @@ import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceCircle;
 import com.marksill.social.instance.InstanceGame;
+import com.marksill.social.instance.InstanceImages;
 import com.marksill.social.instance.InstanceJoints;
 import com.marksill.social.instance.InstancePlayers;
 import com.marksill.social.instance.InstanceRectangle;
@@ -512,7 +513,8 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 						{"Rotation", Math.toDegrees(block.rotation)},
 						{"Rotation Locked", block.rotationLocked},
 						{"Velocity X", block.velocity.x},
-						{"Velocity Y", block.velocity.y}
+						{"Velocity Y", block.velocity.y},
+						{"Image", block.image}
 					});
 					if (block instanceof InstanceRectangle) {
 						InstanceRectangle rect = (InstanceRectangle) block;
@@ -698,6 +700,9 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			case "Velocity Y":
 				((InstanceBlock) inst).velocity.y = Double.parseDouble((String) newValue);
 				break;
+			case "Image":
+				((InstanceBlock) inst).image = (String) newValue;
+				break;
 			case "Gravity X":
 				((InstanceWorld) inst).gravX = Double.parseDouble((String) newValue);
 				break;
@@ -744,6 +749,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		new InstanceWorld(game);
 		new InstancePlayers(game);
 		new InstanceJoints(game);
+		new InstanceImages(game);
 	}
 
 }

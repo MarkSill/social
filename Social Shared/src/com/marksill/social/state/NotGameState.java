@@ -17,6 +17,7 @@ import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 
 import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
@@ -24,6 +25,7 @@ import com.marksill.social.instance.InstanceBlock;
 import com.marksill.social.instance.InstanceCircle;
 import com.marksill.social.instance.InstanceClientScript;
 import com.marksill.social.instance.InstanceEvent;
+import com.marksill.social.instance.InstanceImages;
 import com.marksill.social.instance.InstanceJoints;
 import com.marksill.social.instance.InstancePlayer;
 import com.marksill.social.instance.InstanceRectangle;
@@ -165,6 +167,12 @@ public class NotGameState extends NotState {
 						Vector2 size = rect.size;
 						float w = (float) (size.x * PPM), h = (float) (size.y * PPM);
 						g.fillRect(-w / 2, -h / 2, w, h);
+						if (block.image != null) {
+							Image img = InstanceImages.getImage(block.image);
+							if (img != null) {
+								img.draw(-w / 2, -h / 2, w, h, block.color);
+							}
+						}
 					} else if (block instanceof InstanceCircle) {
 						InstanceCircle circ = (InstanceCircle) block;
 						float rad = (float) (circ.radius * PPM * 2);

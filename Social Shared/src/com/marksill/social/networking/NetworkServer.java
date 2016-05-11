@@ -105,7 +105,7 @@ public class NetworkServer extends NetworkInterface {
 					for (String key : obj.keySet()) {
 						Object last = lastObj.get(key);
 						Object current = obj.get(key);
-						if (key.equals("cname") || key.equals("joints")) {
+						if (key.equals("cname") || key.equals("joints") || key.equals("imgs") || key.equals("color")) {
 							newObj.put(key, obj.get(key));
 						} else if (last != null && current != null && !last.equals(current)) {
 							newObj.put(key, obj.get(key));

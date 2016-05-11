@@ -46,6 +46,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 	public double rotation;
 	/** The velocity of the block. */
 	public Vector2 velocity;
+	public String image;
 	
 	private Body body;
 	private Vector2 lastPosition = new Vector2();
@@ -104,6 +105,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 		rotationLocked = false;
 		rotation = 0;
 		velocity = new Vector2();
+		image = null;
 		lastPosition = new Vector2();
 		lastMass = mass;
 		lastDensity = density;
@@ -277,6 +279,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 		} else {
 			map.put("transform", null);
 		}
+		map.put("image", image);
 		return map;
 	}
 	
@@ -318,6 +321,9 @@ public class InstanceBlock extends Instance implements Cloneable {
 		}
 		if (map.get("rotation") != null) {
 			body.getTransform().setRotation((double) map.get("rotation"));
+		}
+		if (map.get("image") != null) {
+			image = (String) map.get("image");
 		}
 	}
 	

@@ -1,6 +1,15 @@
 package com.marksill.social;
 
 
+import java.io.FileInputStream;
+import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateFactory;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManagerFactory;
+
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.Color;
@@ -43,6 +52,7 @@ public class Social extends StateBasedGame {
 	private long lastTime = 0;
 	private boolean running;
 	private NetworkInterface network = null;
+	private SSLSocketFactory sslSocketFactory;
 	
 	/**
 	 * Creates a new instance of Social.
@@ -62,6 +72,21 @@ public class Social extends StateBasedGame {
 		this.graphics = graphics;
 		this.swing = swing;
 		running = true;
+		try {
+			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keyStore.load(null, null);
+			FileInputStream stream = new FileInputStream("res/cert.crt");
+			Certificate cert = CertificateFactory.getInstance("X.509").generateCertificate(stream);
+			stream.close();
+			keyStore.setCertificateEntry("test", cert);
+			TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			tmf.init(keyStore);
+			SSLContext ctx = SSLContext.getInstance("TLS");
+			ctx.init(null, tmf.getTrustManagers(), null);
+			sslSocketFactory = ctx.getSocketFactory();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (graphics) {
 			try {
 				if (swing) {
@@ -212,6 +237,10 @@ public class Social extends StateBasedGame {
 	
 	public boolean isNetworked() {
 		return network != null;
+	}
+	
+	public SSLSocketFactory getSSLSocketFactory() {
+		return sslSocketFactory;
 	}
 
 }
