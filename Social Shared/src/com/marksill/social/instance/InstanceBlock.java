@@ -320,5 +320,17 @@ public class InstanceBlock extends Instance implements Cloneable {
 			body.getTransform().setRotation((double) map.get("rotation"));
 		}
 	}
+	
+	public static InstanceBlock getBlockByBody(Body body) {
+		for (Instance i : Instance.getInstancesAsList()) {
+			if (i instanceof InstanceBlock) {
+				InstanceBlock block = (InstanceBlock) i;
+				if (block.body.equals(body)) {
+					return block;
+				}
+			}
+		}
+		return null;
+	}
 
 }

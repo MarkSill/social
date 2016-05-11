@@ -468,5 +468,9 @@ public class Instance implements Cloneable {
 			}
 		}
 	}
+	
+	public static List<Instance> getInstancesAsList() {
+		return new ArrayList<Instance>(instances);
+	}
 
 }

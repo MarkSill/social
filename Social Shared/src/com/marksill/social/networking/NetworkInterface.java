@@ -12,6 +12,7 @@ import org.newdawn.slick.Color;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
+import com.marksill.social.instance.TempJoint;
 
 public abstract class NetworkInterface {
 	
@@ -32,7 +33,8 @@ public abstract class NetworkInterface {
 			Color.class,
 			Transform.class,
 			LuaValue.class,
-			Object.class
+			Object.class,
+			TempJoint.class
 	};
 	
 	public void init(Kryo kryo) {
