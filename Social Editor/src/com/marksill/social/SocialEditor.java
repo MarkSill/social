@@ -57,6 +57,7 @@ import org.newdawn.slick.SlickException;
 
 import com.marksill.social.instance.Instance;
 import com.marksill.social.instance.InstanceBlock;
+import com.marksill.social.instance.InstanceCamera;
 import com.marksill.social.instance.InstanceCircle;
 import com.marksill.social.instance.InstanceGame;
 import com.marksill.social.instance.InstanceImages;
@@ -484,18 +485,30 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				String className = inst.getClass().getSimpleName();
 				Object[][] values = new Object[][] {
 					{"Name", inst.name},
-					{"ClassName", className.substring(8)}
+					{"ClassName", className.substring(8)},
+					{"ID", inst.id}
 				};
 				switch (className) {
+				case "InstanceCamera":
+					InstanceCamera camera = (InstanceCamera) inst;
+					values = mergeValues(values, new Object[][] {
+						{"Position X", camera.position.x},
+						{"Position Y", camera.position.y},
+						{"Scale X", camera.scale.x},
+						{"Scale Y", camera.scale.y},
+						{"Size X", camera.size.x},
+						{"Size Y", camera.size.y}
+					});
+					break;
 				case "InstanceCircle":
 				case "InstanceRectangle":
 				case "InstanceBlock":
 					InstanceBlock block = (InstanceBlock) inst;
-					Object size = block.getBody().getFixture(0).getShape();
-					if (size instanceof Rectangle) {
-						size = new Vector2(((Rectangle) size).getWidth(), ((Rectangle) size).getHeight());
+					Object shape = block.getBody().getFixture(0).getShape();
+					if (shape instanceof Rectangle) {
+						shape = new Vector2(((Rectangle) shape).getWidth(), ((Rectangle) shape).getHeight());
 					} else {
-						size = ((Convex) size).getRadius();
+						shape = ((Convex) shape).getRadius();
 					}
 					values = mergeValues(values, new Object[][] {
 						{"Position X", block.position.x},
@@ -650,10 +663,18 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				((InstanceBlock) inst).visible = Boolean.parseBoolean((String) newValue);
 				break;
 			case "Position X":
-				((InstanceBlock) inst).position = new Vector2(Double.parseDouble((String) newValue), ((InstanceBlock) inst).position.y);
+				if (inst instanceof InstanceBlock) {
+					((InstanceBlock) inst).position = new Vector2(Double.parseDouble((String) newValue), ((InstanceBlock) inst).position.y);
+				} else if (inst instanceof InstanceCamera) {
+					((InstanceCamera) inst).position = new Vector2(Double.parseDouble((String) newValue), ((InstanceCamera) inst).position.y);
+				}
 				break;
 			case "Position Y":
-				((InstanceBlock) inst).position = new Vector2(((InstanceBlock) inst).position.x, Double.parseDouble((String) newValue));
+				if (inst instanceof InstanceBlock) {
+					((InstanceBlock) inst).position = new Vector2(((InstanceBlock) inst).position.x, Double.parseDouble((String) newValue));
+				} else if (inst instanceof InstanceCamera) {
+					((InstanceCamera) inst).position = new Vector2(((InstanceCamera) inst).position.x, Double.parseDouble((String) newValue));
+				}
 				break;
 			case "Color Red":
 				((InstanceBlock) inst).color.r = Float.parseFloat((String) newValue) / 255;
@@ -683,10 +704,18 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				((InstanceCircle) inst).radius = Double.parseDouble((String) newValue);
 				break;
 			case "Size X":
-				((InstanceRectangle) inst).size.x = Double.parseDouble((String) newValue);
+				if (inst instanceof InstanceRectangle) {
+					((InstanceRectangle) inst).size.x = Double.parseDouble((String) newValue);
+				} else if (inst instanceof InstanceCamera) {
+					((InstanceCamera) inst).size.x = Double.parseDouble((String) newValue);
+				}
 				break;
 			case "Size Y":
-				((InstanceRectangle) inst).size.y = Double.parseDouble((String) newValue);
+				if (inst instanceof InstanceRectangle) {
+					((InstanceRectangle) inst).size.y = Double.parseDouble((String) newValue);
+				} else if (inst instanceof InstanceCamera) {
+					((InstanceCamera) inst).size.y = Double.parseDouble((String) newValue);
+				}
 				break;
 			case "Rotation":
 				((InstanceBlock) inst).rotation = Math.toRadians(Double.parseDouble((String) newValue));
@@ -717,6 +746,12 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 				break;
 			case "Speed":
 				((InstanceWorld) inst).speed = Double.parseDouble((String) newValue);
+				break;
+			case "Scale X":
+				((InstanceCamera) inst).scale.x = Double.parseDouble((String) newValue);
+				break;
+			case "Scale Y":
+				((InstanceCamera) inst).scale.y = Double.parseDouble((String) newValue);
 				break;
 			}
 		}

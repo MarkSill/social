@@ -285,7 +285,7 @@ public class Instance implements Cloneable {
 	
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " " + name + ": id=" + id + ", children=" + children;
+		return createMap().toString();
 	}
 	
 	/**
@@ -460,10 +460,6 @@ public class Instance implements Cloneable {
 		List<Instance> list = new ArrayList<>(instances);
 		for (Instance i : list) {
 			if (!ids.contains(i.id)) {
-				if (i instanceof InstanceRectangle) {
-					System.out.println(((InstanceRectangle) i).getParent());
-				}
-				System.out.println("Deleting object " + i + " (ID " + i.id + ")");
 				i.delete();
 			}
 		}

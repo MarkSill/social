@@ -25,6 +25,7 @@ public abstract class NetworkInterface {
 			RequestKick.class,
 			RequestUpdate.class,
 			RequestClient.class,
+			RequestPlayer.class,
 			ArrayList.class,
 			List.class,
 			Vector2.class,

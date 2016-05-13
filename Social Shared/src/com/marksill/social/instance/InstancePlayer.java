@@ -6,11 +6,15 @@ import java.util.List;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
+import com.marksill.social.Social;
+
 import net.java.games.input.Controller;
 
 public class InstancePlayer extends Instance {
 	
 	public static final String CLASS_NAME = "Player";
+	public static long pid = -1;
+	public static InstanceCamera camera = new InstanceCamera(Instance.game);
 	
 	public int cid;
 	
@@ -49,6 +53,9 @@ public class InstancePlayer extends Instance {
 		mouseClickCallbacks = new ArrayList<LuaValue>();
 		mouseMovedCallbacks = new ArrayList<LuaValue>();
 		mouseWheelCallbacks = new ArrayList<LuaValue>();
+		if (Social.getInstance().isNetworked() && Social.getInstance().isServer()) {
+			new InstanceCamera(this);
+		}
 	}
 	
 	public void addKeyboardDownCallback(LuaValue func) {

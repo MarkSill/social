@@ -3,11 +3,13 @@ package com.marksill.social.networking;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.marksill.social.instance.Instance;
+import com.marksill.social.instance.InstancePlayer;
 
 public class NetworkClient extends NetworkInterface {
 	
@@ -47,12 +49,14 @@ public class NetworkClient extends NetworkInterface {
 			Request r = (Request) data;
 			if (r instanceof RequestReadyForUsername) {
 				Map<String, Object> userinfo = new HashMap<>();
-				userinfo.put("name", "MarkSill");
-				userinfo.put("id", 0);
+				userinfo.put("name", "Player");
+				userinfo.put("id", new Random().nextInt(1000000));
 				connection.sendTCP(new RequestConnect(userinfo));
 			} else if (r instanceof RequestUpdate) {
 				Map<Long, Map<String, Object>> map = (Map<Long, Map<String, Object>>) r.data;
 				Instance.fromMap(map);
+			} else if (r instanceof RequestPlayer) {
+				InstancePlayer.pid = (long) r.data;
 			}
 		}
 	}

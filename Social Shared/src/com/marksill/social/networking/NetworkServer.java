@@ -78,7 +78,8 @@ public class NetworkServer extends NetworkInterface {
 				InstancePlayer player = new InstancePlayer((String) userinfo.get("name"));
 				player.cid = connection.getID();
 				((InstancePlayers) Instance.game.findChild("Players")).addPlayer(player);
-				connection.sendUDP(new RequestUpdate(lastMap));
+				connection.sendTCP(new RequestUpdate(lastMap));
+				connection.sendTCP(new RequestPlayer(player.id));
 				System.out.println("Sent instance information to player \"" + userinfo.get("name") + "\".");
 			} else if (data instanceof RequestClient) {
 				RequestClient client = (RequestClient) r;
