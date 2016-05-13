@@ -5,15 +5,11 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.joint.DistanceJoint;
 import org.dyn4j.dynamics.joint.Joint;
 import org.dyn4j.dynamics.joint.RevoluteJoint;
 import org.dyn4j.dynamics.joint.RopeJoint;
 import org.dyn4j.dynamics.joint.WeldJoint;
-import org.dyn4j.geometry.AABB;
-import org.dyn4j.geometry.Rectangle;
-import org.dyn4j.geometry.Transform;
 import org.dyn4j.geometry.Vector2;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;

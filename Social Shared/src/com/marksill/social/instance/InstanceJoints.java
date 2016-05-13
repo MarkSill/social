@@ -139,5 +139,13 @@ public class InstanceJoints extends Instance {
 		}
 		joints.clear();
 	}
+	
+	public static void removeJoint(Joint joint) {
+		joints.remove(joint);
+		InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
+		if (world != null) {
+			world.getWorld().removeJoint(joint);
+		}
+	}
 
 }

@@ -148,7 +148,7 @@ public class XML {
 		case "InstanceJoints":
 			InstanceJoints joints = new InstanceJoints();
 			i = joints;
-		case "InstancePlayer": break;
+		case "InstancePlayer": case "InstanceCamera": break; //These are objects that shouldn't be serialized.
 		case "InstanceEvent":
 			InstanceEvent event = new InstanceEvent();
 			i = event;
@@ -266,7 +266,9 @@ public class XML {
 		default:
 			break;
 		}
-		parent.addContent(e);
+		if (!className.equals("InstanceCamera") && !className.equals("InstancePlayer")) {
+			parent.addContent(e);
+		}
 		
 		List<Instance> children = i.getChildren();
 		for (Instance inst : children) {
