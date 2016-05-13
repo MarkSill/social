@@ -275,6 +275,9 @@ public class NotGameState extends NotState {
 	}
 	
 	public static boolean canSee(InstanceBlock block, InstanceCamera cam) {
+		return true;
+		//FIXME: Make this work again.
+		/*
 		double w = Social.getInstance().getContainer().getWidth() / PPM;
 		double h = Social.getInstance().getContainer().getHeight() / PPM;
 		Rectangle window = new Rectangle(w, h);
@@ -288,7 +291,7 @@ public class NotGameState extends NotState {
 				}
 			}
 		}
-		return false;
+		return false;*/
 	}
 
 }
