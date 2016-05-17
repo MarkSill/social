@@ -154,6 +154,15 @@ public class InstanceWorld extends Instance implements CollisionListener {
 	public boolean collision(Body b1, BodyFixture bf1, Body b2, BodyFixture bf2) {
 		InstanceBlock block1 = InstanceBlock.getBlockByBody(b1);
 		InstanceBlock block2 = InstanceBlock.getBlockByBody(b2);
+		if (block1 == null) {
+			world.removeBody(b1);
+		}
+		if (block2 == null) {
+			world.removeBody(b2);
+		}
+		if (block1 == null || block2 == null) {
+			return false;
+		}
 		return block1.collision(block2);
 	}
 
