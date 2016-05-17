@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.dyn4j.collision.manifold.Manifold;
+import org.dyn4j.collision.narrowphase.Penetration;
 import org.dyn4j.dynamics.Body;
+import org.dyn4j.dynamics.BodyFixture;
+import org.dyn4j.dynamics.CollisionListener;
 import org.dyn4j.dynamics.World;
+import org.dyn4j.dynamics.contact.ContactConstraint;
 import org.dyn4j.geometry.Vector2;
 
 /**
  * A container class for physical objects.
  */
-public class InstanceWorld extends Instance {
+public class InstanceWorld extends Instance implements CollisionListener {
 	
 	/** The world's class name. */
 	public static final String CLASS_NAME = "World";
@@ -73,6 +78,7 @@ public class InstanceWorld extends Instance {
 		physicsEnabled = true;
 		bodiesToAdd = new ArrayList<Body>();
 		bodiesToRemove = new ArrayList<Body>();
+		world.addListener(this);
 	}
 	
 	@Override
@@ -137,6 +143,28 @@ public class InstanceWorld extends Instance {
 		if (map.get("gravY") != null) {
 			gravY = (double) map.get("gravY");
 		}
+	}
+
+	@Override
+	public boolean collision(ContactConstraint arg0) {
+		return true;
+	}
+
+	@Override
+	public boolean collision(Body b1, BodyFixture bf1, Body b2, BodyFixture bf2) {
+		InstanceBlock block1 = InstanceBlock.getBlockByBody(b1);
+		InstanceBlock block2 = InstanceBlock.getBlockByBody(b2);
+		return block1.collision(block2);
+	}
+
+	@Override
+	public boolean collision(Body arg0, BodyFixture arg1, Body arg2, BodyFixture arg3, Penetration arg4) {
+		return true;
+	}
+
+	@Override
+	public boolean collision(Body arg0, BodyFixture arg1, Body arg2, BodyFixture arg3, Manifold arg4) {
+		return true;
 	}
 
 }

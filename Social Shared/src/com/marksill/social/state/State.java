@@ -8,6 +8,7 @@ import org.newdawn.slick.state.StateBasedGame;
 
 import com.marksill.social.Social;
 import com.marksill.social.instance.Instance;
+import com.marksill.social.instance.InstanceCamera;
 import com.marksill.social.instance.InstancePlayer;
 import com.marksill.social.instance.InstancePlayers;
 
@@ -88,6 +89,11 @@ public class State extends BasicGameState {
 	
 	@Override
 	public void mousePressed(int button, int x, int y) {
+		InstanceCamera cam = InstanceCamera.getCamera();
+		System.out.println(x + "; " + y + "; " + cam.position.x + "; " + cam.position.y);
+		x = (int) -(((Social.getInstance().getContainer().getWidth() / 2) / NotGameState.PPM - cam.position.x) - (x / NotGameState.PPM));
+		y = (int) (((Social.getInstance().getContainer().getHeight() / 2) / NotGameState.PPM - cam.position.y) - (y / NotGameState.PPM));
+		System.out.println(x + "; " + y);
 		if (Social.getInstance().isRunning()) {
 			super.mousePressed(button, x, y);
 			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {

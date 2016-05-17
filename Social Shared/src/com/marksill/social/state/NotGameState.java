@@ -120,16 +120,9 @@ public class NotGameState extends NotState {
 			return;
 		}
 		
-		InstanceCamera cam = null;
-		if (social.isNetworked()) {
-			if (social.isServer()) {
-				cam = InstancePlayer.camera;
-			} else {
-				cam = (InstanceCamera) ((InstancePlayer) Instance.getByID(InstancePlayer.pid)).findChild("Camera");
-			}
-		}
+		InstanceCamera cam = InstanceCamera.getCamera();
 		g.pushTransform();
-		g.translate((float) -cam.position.x * PPM, (float) -cam.position.y * PPM);
+		cam.translate(g);
 		renderSelection(Instance.game.findChild("World"), g, social, cam);
 		renderInstances(Instance.game.findChild("World"), g, social, cam);
 		renderJoints(g, social);

@@ -7,7 +7,6 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.marksill.social.Social;
-import com.marksill.social.state.NotGameState;
 
 import net.java.games.input.Controller;
 
@@ -106,12 +105,8 @@ public class InstancePlayer extends Instance {
 	}
 	
 	public void fireMousePressCallbacks(int button, int x, int y) {
-		InstanceCamera cam = InstancePlayer.camera;
-		if (Social.getInstance().isNetworked() && !Social.getInstance().isServer()) {
-			cam = (InstanceCamera) ((InstancePlayer) Instance.getByID(InstancePlayer.pid)).findChild("Camera");
-		}
 		for (LuaValue v : mousePressCallbacks) {
-			v.call(LuaValue.valueOf(button), LuaValue.valueOf(x / NotGameState.PPM - cam.position.x), LuaValue.valueOf(Social.getInstance().getContainer().getHeight() / NotGameState.PPM - y / NotGameState.PPM - cam.position.y));
+			v.call(LuaValue.valueOf(button), LuaValue.valueOf(x), LuaValue.valueOf(y));
 		}
 	}
 	

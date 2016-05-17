@@ -57,6 +57,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 	private double lastRotation;
 	private Vector2 lastVelocity;
 	private List<Joint> joints;
+	private List<LuaValue> collisionCallbacks;
 
 	/**
 	 * Creates a new block.
@@ -114,6 +115,7 @@ public class InstanceBlock extends Instance implements Cloneable {
 		lastRotation = 0;
 		lastVelocity = velocity.copy();
 		joints = new ArrayList<>();
+		collisionCallbacks = new ArrayList<>();
 		body = new Body();
 		setParent(getParent());
 	}
@@ -198,6 +200,23 @@ public class InstanceBlock extends Instance implements Cloneable {
 		fixture.setFriction(friction);
 		fixture.createMass();
 		body.addFixture(fixture);
+	}
+	
+	public boolean collision(InstanceBlock other) {
+		boolean val = true;
+		for (LuaValue v : collisionCallbacks) {
+			LuaValue result = v.call(CoerceJavaToLua.coerce(this), CoerceJavaToLua.coerce(other));
+			if (val && (result == LuaValue.NIL || result == LuaValue.TRUE)) {
+				val = true;
+			} else if (result == LuaValue.FALSE) {
+				val = false;
+			}
+		}
+		return val;
+	}
+	
+	public void addCollisionCallback(LuaValue func) {
+		collisionCallbacks.add(func);
 	}
 	
 	@Override
