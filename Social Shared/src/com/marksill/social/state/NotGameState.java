@@ -25,6 +25,7 @@ import com.marksill.social.instance.InstanceEvent;
 import com.marksill.social.instance.InstanceImages;
 import com.marksill.social.instance.InstanceJoints;
 import com.marksill.social.instance.InstancePlayer;
+import com.marksill.social.instance.InstancePlayers;
 import com.marksill.social.instance.InstanceRectangle;
 import com.marksill.social.instance.InstanceScript;
 import com.marksill.social.networking.NetworkServer;
@@ -80,7 +81,6 @@ public class NotGameState extends NotState {
 		}
 		if (Instance.game == null || !social.isRunning()) {
 			if (Instance.game != null) {
-				//FIXME: Temporary joint removal
 				InstanceJoints.removeAllJoints();
 			}
 			for (Instance i : instances) {
@@ -91,6 +91,8 @@ public class NotGameState extends NotState {
 					((InstancePlayer) i).clearCallbacks();
 				} else if (i instanceof InstanceEvent) {
 					((InstanceEvent) i).clearCallbacks();
+				} else if (i instanceof InstancePlayers) {
+					((InstancePlayers) i).clearCallbacks();
 				}
 			}
 			return;
@@ -122,10 +124,12 @@ public class NotGameState extends NotState {
 		
 		InstanceCamera cam = InstanceCamera.getCamera();
 		g.pushTransform();
-		cam.translate(g);
-		renderSelection(Instance.game.findChild("World"), g, social, cam);
-		renderInstances(Instance.game.findChild("World"), g, social, cam);
-		renderJoints(g, social);
+		if (cam != null) {
+			cam.translate(g);
+			renderSelection(Instance.game.findChild("World"), g, social, cam);
+			renderInstances(Instance.game.findChild("World"), g, social, cam);
+			renderJoints(g, social);
+		}
 		g.popTransform();
 		
 		if (transparencyDirection) {
@@ -166,12 +170,14 @@ public class NotGameState extends NotState {
 					if (block instanceof InstanceRectangle) {
 						InstanceRectangle rect = (InstanceRectangle) block;
 						Vector2 size = rect.size;
-						float w = (float) (size.x * PPM), h = (float) (size.y * PPM);
-						g.fillRect(-w / 2, -h / 2, w, h);
-						if (block.image != null) {
-							Image img = InstanceImages.getImage(block.image);
-							if (img != null) {
-								img.draw(-w / 2, -h / 2, w, h, block.color);
+						if (size != null) {
+							float w = (float) (size.x * PPM), h = (float) (size.y * PPM);
+							g.fillRect(-w / 2, -h / 2, w, h);
+							if (block.image != null) {
+								Image img = InstanceImages.getImage(block.image);
+								if (img != null) {
+									img.draw(-w / 2, -h / 2, w, h, block.color);
+								}
 							}
 						}
 					} else if (block instanceof InstanceCircle) {

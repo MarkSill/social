@@ -47,7 +47,7 @@ public class NetworkServer extends NetworkInterface {
 				for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
 					if (pl.cid == connection.getID()) {
 						System.out.println("Player " + pl.name + " disconnected.");
-						pl.delete();
+						((InstancePlayers) Instance.game.findChild("Players")).removePlayer(pl);
 						break;
 					}
 				}

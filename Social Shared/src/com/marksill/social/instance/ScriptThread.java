@@ -9,6 +9,7 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 import org.lwjgl.input.Keyboard;
 
+import com.marksill.social.lua.GetPlayer;
 import com.marksill.social.lua.LuaColor;
 import com.marksill.social.lua.LuaControllers;
 import com.marksill.social.lua.LuaWait;
@@ -49,7 +50,7 @@ public class ScriptThread extends Thread {
 		if (script instanceof InstanceClientScript) {
 			g.set("Keyboard", CoerceJavaToLua.coerce(Keyboard.class));
 			g.set("Controllers", CoerceJavaToLua.coerce(LuaControllers.class));
-			g.set("Player", CoerceJavaToLua.coerce(InstancePlayer.class));
+			g.set("player", CoerceJavaToLua.coerce(new GetPlayer()));
 		}
 		try {
 			Thread.sleep(100);

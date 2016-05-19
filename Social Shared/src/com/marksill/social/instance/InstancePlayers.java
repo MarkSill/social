@@ -13,6 +13,9 @@ public class InstancePlayers extends Instance {
 	public static final String CLASS_NAME = "Players";
 	
 	public int maxPlayers = 4;
+	
+	private List<LuaValue> playerAddedCallbacks;
+	private List<LuaValue> playerRemovedCallbacks;
 
 	public InstancePlayers() {
 		super(CLASS_NAME);
@@ -28,6 +31,12 @@ public class InstancePlayers extends Instance {
 	
 	public InstancePlayers(String name, Instance parent) {
 		super(name, parent);
+	}
+	
+	@Override
+	public void init() {
+		playerAddedCallbacks = new ArrayList<>();
+		playerRemovedCallbacks = new ArrayList<>();
 	}
 	
 	public LuaTable getPlayers() {
@@ -52,9 +61,33 @@ public class InstancePlayers extends Instance {
 	public void addPlayer(InstancePlayer player) {
 		if (getPlayers().length() < maxPlayers) {
 			player.setParent(this);
+			
+			for (LuaValue v : playerAddedCallbacks) {
+				v.call(CoerceJavaToLua.coerce(player));
+			}
 		} else {
 			player.delete();
 		}
+	}
+	
+	public void removePlayer(InstancePlayer player) {
+		for (LuaValue v : playerRemovedCallbacks) {
+			v.call(CoerceJavaToLua.coerce(player));
+		}
+		player.delete();
+	}
+	
+	public void addPlayerAddedCallback(LuaValue v) {
+		playerAddedCallbacks.add(v);
+	}
+	
+	public void addPlayerRemovedCallback(LuaValue v) {
+		playerRemovedCallbacks.add(v);
+	}
+	
+	public void clearCallbacks() {
+		playerAddedCallbacks.clear();
+		playerRemovedCallbacks.clear();
 	}
 	
 	@Override

@@ -161,6 +161,11 @@ public class Instance implements Cloneable {
 		return null;
 	}
 	
+	/** Shorthand for findChild. */
+	public Instance find(String name) {
+		return findChild(name);
+	}
+	
 	@Override
 	public Instance clone() {
 		try {
@@ -387,7 +392,7 @@ public class Instance implements Cloneable {
 	}
 	
 	public static Instance getByID(long id) {
-		for (Instance i : instances) {
+		for (Instance i : new ArrayList<Instance>(instances)) {
 			if (i.id == id) {
 				return i;
 			}

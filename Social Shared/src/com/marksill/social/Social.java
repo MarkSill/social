@@ -15,7 +15,6 @@ import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -53,6 +52,8 @@ public class Social extends StateBasedGame {
 	private boolean running;
 	private NetworkInterface network = null;
 	private SSLSocketFactory sslSocketFactory;
+	private int lastFPS;
+	private int lastFPSTime;
 	
 	/**
 	 * Creates a new instance of Social.
@@ -60,6 +61,8 @@ public class Social extends StateBasedGame {
 	public Social() {
 		super("Social");
 		social = this;
+		lastFPS = 0;
+		lastFPSTime = 0;
 	}
 	
 	/**
@@ -177,7 +180,7 @@ public class Social extends StateBasedGame {
 	public void globalRender(GameContainer container, Graphics g) {
 		g.setColor(Color.white);
 		if (debug) {
-			String debugStr = Math.round(fps) + " FPS";
+			String debugStr = lastFPS + " FPS";
 			g.drawString(debugStr, 0f, 0f);
 		}
 	}
@@ -190,13 +193,10 @@ public class Social extends StateBasedGame {
 	public void globalUpdate(GameContainer container, int delta) {
 		fps = 1000000000 / (System.nanoTime() - lastTime);
 		lastTime = System.nanoTime();
-		Input input = container.getInput();
-		if (input.isKeyDown(Input.KEY_ESCAPE)) {
-			if (swing) {
-				//((JFrame) canvas.getParent().getParent().getParent().getParent()).dispose(); //A lot of getParents()....
-			} else {
-				container.exit();
-			}
+		lastFPSTime += delta;
+		if (lastFPSTime >= 1000) {
+			lastFPSTime -= 1000;
+			lastFPS = (int) Math.round(fps);
 		}
 		if (swing) {
 			if (!canvas.added) {

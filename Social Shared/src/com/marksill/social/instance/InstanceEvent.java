@@ -10,6 +10,7 @@ import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.marksill.social.Social;
+import com.marksill.social.lua.Convert;
 import com.marksill.social.networking.NetworkInterface;
 import com.marksill.social.networking.RequestClient;
 
@@ -60,13 +61,20 @@ public class InstanceEvent extends Instance {
 		return LuaTable.listOf(values);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void fire(Object arg) {
 		if (Social.getInstance().isNetworked()) {
 			if (Social.getInstance().isServer()) {
+				if (arg instanceof Map<?, ?>) {
+					arg = Convert.toTable((Map<String, Object>) arg);
+				}
 				for (LuaValue v : new ArrayList<LuaValue>(callbacks)) {
 					v.call(CoerceJavaToLua.coerce(arg));
 				}
 			} else {
+				if (arg instanceof LuaTable && ((LuaTable) arg).istable()) {
+					arg = Convert.fromTable((LuaTable) arg);
+				}
 				NetworkInterface client = Social.getInstance().getNetworkInterface();
 				Map<String, Object> map = new HashMap<>();
 				map.put("id", id);

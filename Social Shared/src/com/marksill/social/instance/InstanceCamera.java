@@ -68,12 +68,10 @@ public class InstanceCamera extends Instance {
 	public static InstanceCamera getCamera() {
 		InstanceCamera cam = null;
 		Social social = Social.getInstance();
-		if (social.isNetworked()) {
-			if (social.isServer()) {
-				cam = InstancePlayer.camera;
-			} else {
-				cam = (InstanceCamera) ((InstancePlayer) Instance.getByID(InstancePlayer.pid)).findChild("Camera");
-			}
+		if ((social.isNetworked() && social.isServer()) || (social.isNetworked() && InstancePlayer.pid == -1)) {
+			cam = InstancePlayer.camera;
+		} else {
+			cam = (InstanceCamera) ((InstancePlayer) Instance.getByID(InstancePlayer.pid)).findChild("Camera");
 		}
 		return cam;
 	}

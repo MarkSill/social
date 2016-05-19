@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.dyn4j.dynamics.joint.DistanceJoint;
 import org.dyn4j.dynamics.joint.Joint;
+import org.dyn4j.dynamics.joint.PinJoint;
 import org.dyn4j.dynamics.joint.RevoluteJoint;
 import org.dyn4j.dynamics.joint.RopeJoint;
 import org.dyn4j.dynamics.joint.WeldJoint;
@@ -123,6 +124,13 @@ public class InstanceJoints extends Instance {
 	
 	public static WheelJoint createWheel(InstanceBlock b1, InstanceBlock b2, Vector2 anchor, Vector2 axis) {
 		WheelJoint joint = new WheelJoint(b1.getBody(), b2.getBody(), anchor, axis);
+		joints.add(joint);
+		((InstanceWorld) Instance.game.findChild("World")).getWorld().addJoint(joint);
+		return joint;
+	}
+	
+	public static PinJoint createPin(InstanceBlock b1, Vector2 target) {
+		PinJoint joint = new PinJoint(b1.getBody(), target, 8, 0.3, 1000);
 		joints.add(joint);
 		((InstanceWorld) Instance.game.findChild("World")).getWorld().addJoint(joint);
 		return joint;

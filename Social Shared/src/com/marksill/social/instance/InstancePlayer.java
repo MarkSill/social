@@ -26,6 +26,7 @@ public class InstancePlayer extends Instance {
 	private List<LuaValue> mouseClickCallbacks;
 	private List<LuaValue> mouseMovedCallbacks;
 	private List<LuaValue> mouseWheelCallbacks;
+	private List<LuaValue> removedCallbacks;
 
 	public InstancePlayer() {
 		super(CLASS_NAME);
@@ -53,6 +54,7 @@ public class InstancePlayer extends Instance {
 		mouseClickCallbacks = new ArrayList<LuaValue>();
 		mouseMovedCallbacks = new ArrayList<LuaValue>();
 		mouseWheelCallbacks = new ArrayList<LuaValue>();
+		removedCallbacks = new ArrayList<>();
 		if (Social.getInstance().isNetworked() && Social.getInstance().isServer()) {
 			new InstanceCamera(this);
 		}
@@ -170,6 +172,14 @@ public class InstancePlayer extends Instance {
 		mouseWheelCallbacks.clear();
 	}
 	
+	public void addRemovedCallback(LuaValue v) {
+		removedCallbacks.add(v);
+	}
+	
+	public void clearRemovedCallbacks() {
+		removedCallbacks.clear();
+	}
+	
 	public void clearCallbacks() {
 		clearKeyboardDownCallbacks();
 		clearKeyboardUpCallbacks();
@@ -178,6 +188,15 @@ public class InstancePlayer extends Instance {
 		clearMouseReleaseCallbacks();
 		clearMouseMovedCallbacks();
 		clearMouseWheelCallbacks();
+		clearRemovedCallbacks();
+	}
+	
+	@Override
+	public void delete() {
+		for (LuaValue v : removedCallbacks) {
+			v.call(CoerceJavaToLua.coerce(this));
+		}
+		super.delete();
 	}
 
 }
