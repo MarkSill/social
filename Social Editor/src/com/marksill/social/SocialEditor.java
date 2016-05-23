@@ -52,6 +52,7 @@ import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rtextarea.RTextScrollPane;
 import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.SlickException;
 
@@ -562,11 +563,12 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 					if (paths.length == 1 && script.tabIndex == -1) {
 						RSyntaxTextArea scriptArea = new RSyntaxTextArea();
 						scriptArea.setCodeFoldingEnabled(true);
-						JScrollPane scriptPane = new JScrollPane(scriptArea);
+						RTextScrollPane sp = new RTextScrollPane(scriptArea);
+						sp.setLineNumbersEnabled(true);
 						scriptArea.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LUA);
 						scriptArea.setText(script.code);
 						scriptArea.getDocument().addDocumentListener(new SocialDocumentListener(scriptArea, script));
-						contentPane.addTab(inst.name, scriptPane);
+						contentPane.addTab(inst.name, sp);
 						script.tabIndex = contentPane.getTabCount() - 1;
 						contentPane.setSelectedIndex(script.tabIndex);
 					}
