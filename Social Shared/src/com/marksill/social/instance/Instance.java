@@ -111,6 +111,7 @@ public class Instance implements Cloneable {
 		for (Instance i : new ArrayList<>(children)) {
 			i.delete();
 		}
+		this.finalize();
 	}
 	
 	/**
@@ -286,7 +287,13 @@ public class Instance implements Cloneable {
 	}
 
 	@Override
-	protected void finalize() {}
+	protected void finalize() {
+		try {
+			super.finalize();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+	}
 	
 	@Override
 	public String toString() {
@@ -472,6 +479,10 @@ public class Instance implements Cloneable {
 	
 	public static List<Instance> getInstancesAsList() {
 		return new ArrayList<Instance>(instances);
+	}
+	
+	public static void clear() {
+		instances.clear();
 	}
 
 }

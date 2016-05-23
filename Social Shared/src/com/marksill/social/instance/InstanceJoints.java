@@ -58,7 +58,7 @@ public class InstanceJoints extends Instance {
 	public Map<String, Object> createMap() {
 		Map<String, Object> map = super.createMap();
 		List<TempJoint> list = new ArrayList<>();
-		for (Joint j : joints) {
+		for (Joint j : new ArrayList<Joint>(joints)) {
 			TempJoint temp = new TempJoint();
 			temp.body1 = InstanceBlock.getBlockByBody(j.getBody1()).id;
 			temp.body2 = InstanceBlock.getBlockByBody(j.getBody2()).id;

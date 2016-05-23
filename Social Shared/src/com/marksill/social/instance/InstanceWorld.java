@@ -175,5 +175,13 @@ public class InstanceWorld extends Instance implements CollisionListener {
 	public boolean collision(Body arg0, BodyFixture arg1, Body arg2, BodyFixture arg3, Manifold arg4) {
 		return true;
 	}
+	
+	@Override
+	public void delete() {
+		world.removeAllBodiesAndJoints();
+		world.removeAllListeners();
+		world = null;
+		super.delete();
+	}
 
 }

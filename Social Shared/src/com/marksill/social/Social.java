@@ -242,5 +242,13 @@ public class Social extends StateBasedGame {
 	public SSLSocketFactory getSSLSocketFactory() {
 		return sslSocketFactory;
 	}
+	
+	public void clearGame() {
+		NotGameState.instances.clear();
+		Instance.clear();
+		Instance.selected.clear();
+		Instance.game.delete();
+		Instance.game = null;
+	}
 
 }

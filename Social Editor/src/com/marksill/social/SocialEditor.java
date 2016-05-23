@@ -245,9 +245,8 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		case "Close":
 			if (contentPane.getSelectedIndex() == 0) {
 				if (Instance.game != null) {
-					Instance.game.delete();
-					Instance.game = null;
-					System.out.println(Instance.game);
+					Social.getInstance().clearGame();
+					buildTree();
 				}
 			} else {
 				int index = contentPane.getSelectedIndex();
