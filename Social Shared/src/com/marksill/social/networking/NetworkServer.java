@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.luaj.vm2.lib.jse.CoerceJavaToLua;
-
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
@@ -85,7 +83,7 @@ public class NetworkServer extends NetworkInterface {
 				RequestClient client = (RequestClient) r;
 				Map<String, Object> info = (HashMap<String, Object>) client.data;
 				InstanceEvent event = (InstanceEvent) Instance.getByID((long) info.get("id"));
-				event.fire(CoerceJavaToLua.coerce(info.get("arg")));
+				event.fire(info.get("arg"));
 			}
 		}
 	}
