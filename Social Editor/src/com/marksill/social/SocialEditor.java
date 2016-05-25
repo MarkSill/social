@@ -250,6 +250,9 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 					map = new HashMap<Instance, SocialTreeNode>();
 					buildTree();
 				}
+				while (contentPane.getTabCount() > 1) {
+					contentPane.removeTabAt(contentPane.getTabCount() - 1);
+				}
 			} else {
 				int index = contentPane.getSelectedIndex();
 				List<Instance> scripts = Instance.findInstances(Instance.game, InstanceScript.class);
