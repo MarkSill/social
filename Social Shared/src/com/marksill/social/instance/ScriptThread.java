@@ -1,9 +1,13 @@
 package com.marksill.social.instance;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Rectangle;
 import org.dyn4j.geometry.Vector2;
 import org.luaj.vm2.Globals;
+import org.luaj.vm2.LuaError;
 import org.luaj.vm2.LuaValue;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
@@ -18,6 +22,9 @@ import com.marksill.social.lua.LuaWait;
  * A class for running scripts in their own threads.
  */
 public class ScriptThread extends Thread {
+	
+	public static Pattern errorPattern = Pattern.compile("(\\[.*\\]:)");
+	public static Pattern errorPattern2 = Pattern.compile("(?<=.*: ).*");
 	
 	/** The script's Lua Globals. */
 	Globals g;
@@ -62,9 +69,25 @@ public class ScriptThread extends Thread {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		chunk = g.load(code);
-		if (chunk != null) {
-			chunk.call();
+		try {
+			chunk = g.load(code);
+			if (chunk != null) {
+				chunk.call();
+			}
+		} catch (LuaError e) {
+			String str = e.getMessageObject().tojstring();
+			str = str.replace('\n', ' ');
+			Matcher m = errorPattern.matcher(str);
+			m.find();
+			int end = m.end();
+			str = str.substring(end);
+			m = errorPattern2.matcher(str);
+			m.find();
+			int start = m.start();
+			String str2 = str.substring(start);
+			str = str.substring(0, start);
+			str = "Line " + str + "\"" + str2 + "\" in script \"" + script.name + "\"";
+			System.err.println(str);
 		}
 	}
 	
