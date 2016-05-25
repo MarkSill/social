@@ -246,6 +246,8 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			if (contentPane.getSelectedIndex() == 0) {
 				if (Instance.game != null) {
 					Social.getInstance().clearGame();
+					lastMap = null;
+					map = new HashMap<Instance, SocialTreeNode>();
 					buildTree();
 				}
 			} else {
@@ -449,6 +451,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		buildTree(Instance.game, rootNode, model);
 		for (Instance i : lastMap.keySet()) {
 			if (map.get(i) == null) {
+				map.get(i).setInstance(null);
 				model.removeNodeFromParent(lastMap.get(i));
 			}
 		}

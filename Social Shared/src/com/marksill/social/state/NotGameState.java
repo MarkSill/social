@@ -70,8 +70,11 @@ public class NotGameState extends NotState {
 				Method method = editorClass.getMethod("buildTree", (Class<?>[]) null);
 				method.invoke(editor);
 			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchFieldException e) {
-				e.printStackTrace();
+				//e.printStackTrace();
 			}
+		} else if (Instance.game == null) {
+			instances.clear();
+			return;
 		}
 		if (social.isNetworked() && social.isServer()) {
 			((NetworkServer) social.getNetworkInterface()).sendUpdate();
@@ -144,7 +147,11 @@ public class NotGameState extends NotState {
 
 	@Override
 	public void reset(Social social) {
-		
+		instances = new ArrayList<>();
+		toRemove = new ArrayList<>();
+		toAdd = new ArrayList<>();
+		transparency = 255;
+		transparencyDirection = false;
 	}
 	
 	/**
@@ -287,6 +294,11 @@ public class NotGameState extends NotState {
 			}
 		}
 		return false;*/
+	}
+	
+	public static void clear() {
+		instances.clear();
+		instances = new ArrayList<>();
 	}
 
 }

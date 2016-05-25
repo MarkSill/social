@@ -34,9 +34,14 @@ public class ScriptThread extends Thread {
 	 * @param code The script's code.
 	 */
 	public ScriptThread(InstanceScript script, String code) {
-		g = JsePlatform.debugGlobals();
+		Thread.currentThread().setName("Script");
 		this.code = code;
 		this.script = script;
+	}
+	
+	@Override
+	public void run() {
+		g = JsePlatform.debugGlobals();
 		g.set("script", CoerceJavaToLua.coerce(script));
 		g.set("game", CoerceJavaToLua.coerce(Instance.game));
 		g.set("Instance", CoerceJavaToLua.coerce(Instance.class));
@@ -58,10 +63,6 @@ public class ScriptThread extends Thread {
 			e.printStackTrace();
 		}
 		chunk = g.load(code);
-	}
-	
-	@Override
-	public void run() {
 		if (chunk != null) {
 			chunk.call();
 		}
@@ -73,6 +74,19 @@ public class ScriptThread extends Thread {
 	@SuppressWarnings("deprecation")
 	public void kill() {
 		stop(); //Seems to be the only way to kill a LuaValue....
+		interrupt();
+	}
+	
+	public void finalize() {
+		try {
+			super.finalize();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+		script = null;
+		g = null;
+		chunk = null;
+		code = null;
 	}
 	
 }

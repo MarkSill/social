@@ -85,7 +85,11 @@ public class InstanceScript extends Instance {
 	public void delete() {
 		if (thread != null) {
 			thread.kill();
+			thread.finalize();
+			thread = null;
 		}
+		code = null;
+		enabled = false;
 		super.delete();
 	}
 	

@@ -244,7 +244,7 @@ public class Social extends StateBasedGame {
 	}
 	
 	public void clearGame() {
-		NotGameState.instances.clear();
+		((State) getCurrentState()).reset(getContainer(), this);
 		Instance.clear();
 		Instance.selected.clear();
 		Instance.game.delete();
