@@ -765,7 +765,9 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 	}
 	
 	public void save() {
-		new XML().saveGame(Instance.game, openFile.getPath());
+		if (!Social.getInstance().isRunning()) { //Don't save while running (to prevent accidental saves).
+			new XML().saveGame(Instance.game, openFile.getPath());
+		}
 	}
 	
 	public void saveAs() {
