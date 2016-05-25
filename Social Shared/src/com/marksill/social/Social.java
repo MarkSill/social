@@ -180,7 +180,15 @@ public class Social extends StateBasedGame {
 	public void globalRender(GameContainer container, Graphics g) {
 		g.setColor(Color.white);
 		if (debug) {
-			String debugStr = lastFPS + " FPS";
+			String serverPaused = "";
+			if (isServer()) {
+				if (isRunning()) {
+					serverPaused = " Running";
+				} else {
+					serverPaused = " Paused";
+				}
+			}
+			String debugStr = lastFPS + " FPS" + serverPaused;
 			g.drawString(debugStr, 0f, 0f);
 		}
 	}
