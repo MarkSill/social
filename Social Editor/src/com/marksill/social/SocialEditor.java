@@ -148,6 +148,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		contentPane.addTab("Game", gamePane);
 		
 		console = new JTextPane();
+		console.setEditable(false);
 		
 		JSplitPane vPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, contentPane, console);
 		vPane.setOneTouchExpandable(false);
@@ -195,6 +196,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		menu = createMenu(menubar, "Test", new MenuItem[] {
 				new MenuItem("Play/Pause", KeyEvent.VK_P, KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0)),
 				//new MenuItem("Stop", KeyEvent.VK_S, KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0))
+				new MenuItem("Clear Console", KeyEvent.VK_C)
 		});
 		menu.setMnemonic(KeyEvent.VK_T);
 		add(menubar, BorderLayout.PAGE_START);
@@ -326,6 +328,9 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 			break;
 		case "Play/Pause":
 			Social.social.setRunning(!Social.social.isRunning());
+			break;
+		case "Clear Console":
+			console.setText("");
 			break;
 			
 			//Instances:
@@ -828,7 +833,9 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		console.setCaretPosition(len);
 		console.setCharacterAttributes(aset, false);
 		String str = stamp + ": " + message.toString() + "\n";
+		console.setEditable(true);
 		console.replaceSelection(str);
+		console.setEditable(false);
 		len = console.getDocument().getLength();
 		console.setCaretPosition(len);
 		PrintStream stream = System.out;
