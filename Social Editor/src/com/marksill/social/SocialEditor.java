@@ -12,8 +12,11 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.PrintStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneLayout;
@@ -42,6 +46,10 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.TableModel;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
@@ -82,6 +90,7 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 	private Map<Instance, SocialTreeNode> map, lastMap;
 	private JTabbedPane contentPane;
 	private File openFile;
+	private JTextPane console;
 	
 	/**
 	 * @param args
@@ -138,8 +147,14 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		contentPane.setMinimumSize(new Dimension(10, 10));
 		contentPane.addTab("Game", gamePane);
 		
+		console = new JTextPane();
+		
+		JSplitPane vPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, contentPane, console);
+		vPane.setOneTouchExpandable(false);
+		vPane.setDividerLocation(600);
+		
 		//Split pane that separates the game from instances and properties
-		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, browser, contentPane);
+		JSplitPane pane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, browser, vPane);
 		pane.setOneTouchExpandable(false);
 		pane.setDividerLocation(200);
 		add(pane);
@@ -794,6 +809,33 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 		new InstancePlayers(game);
 		new InstanceJoints(game);
 		new InstanceImages(game);
+	}
+	
+	public void consolePrint(Object message) {
+		consolePrint(message, false);
+	}
+	
+	public void consolePrint(Object message, boolean error) {
+		String stamp = new SimpleDateFormat("MM/dd/yyyy hh:mm:ss").format(new Date());
+		Color color = Color.BLACK;
+		if (error) {
+			color = Color.RED;
+		}
+		StyleContext sc = StyleContext.getDefaultStyleContext();
+		AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, color);
+		aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Lucida Console");
+		int len = console.getDocument().getLength();
+		console.setCaretPosition(len);
+		console.setCharacterAttributes(aset, false);
+		String str = stamp + ": " + message.toString() + "\n";
+		console.replaceSelection(str);
+		len = console.getDocument().getLength();
+		console.setCaretPosition(len);
+		PrintStream stream = System.out;
+		if (error) {
+			stream = System.err;
+		}
+		stream.print(str);
 	}
 
 }

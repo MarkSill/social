@@ -1,7 +1,11 @@
 package com.marksill.social.instance;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.swing.JFrame;
 
 import org.dyn4j.geometry.Circle;
 import org.dyn4j.geometry.Rectangle;
@@ -17,6 +21,7 @@ import com.marksill.social.lua.GetPlayer;
 import com.marksill.social.lua.LuaColor;
 import com.marksill.social.lua.LuaControllers;
 import com.marksill.social.lua.LuaWait;
+import com.marksill.social.lua.Print;
 
 /**
  * A class for running scripts in their own threads.
@@ -59,6 +64,7 @@ public class ScriptThread extends Thread {
 		g.set("Color", CoerceJavaToLua.coerce(new LuaColor()));
 		g.set("Images", CoerceJavaToLua.coerce(InstanceImages.class));
 		g.set("Joints", CoerceJavaToLua.coerce(InstanceJoints.class));
+		g.set("print", CoerceJavaToLua.coerce(new Print()));
 		if (script instanceof InstanceClientScript) {
 			g.set("Keyboard", CoerceJavaToLua.coerce(Keyboard.class));
 			g.set("Controllers", CoerceJavaToLua.coerce(LuaControllers.class));
@@ -74,20 +80,32 @@ public class ScriptThread extends Thread {
 			if (chunk != null) {
 				chunk.call();
 			}
-		} catch (LuaError e) {
-			String str = e.getMessageObject().tojstring();
+		} catch (LuaError error) {
+			String str = error.getMessageObject().tojstring();
 			str = str.replace('\n', ' ');
 			Matcher m = errorPattern.matcher(str);
 			m.find();
 			int end = m.end();
 			str = str.substring(end);
 			m = errorPattern2.matcher(str);
-			m.find();
-			int start = m.start();
-			String str2 = str.substring(start);
-			str = str.substring(0, start);
-			str = "Line " + str + "\"" + str2 + "\" in script \"" + script.name + "\"";
-			System.err.println(str);
+			if (m.find()) {
+				int start = m.start();
+				String str2 = str.substring(start);
+				str = str.substring(0, start);
+				str = "Line " + str + "\"" + str2 + "\" in script \"" + script.name + "\"";
+				try {
+					Class<?> clazz = Class.forName("com.marksill.social.SocialEditor");
+					Method method = clazz.getDeclaredMethod("consolePrint", Object.class, boolean.class);
+					JFrame editor = (JFrame) clazz.getDeclaredField("editor").get(null);
+					if (method != null && editor != null) {
+						method.invoke(editor, str, true);
+					}
+				} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException | InvocationTargetException e) {
+					if (!(e instanceof ClassNotFoundException)) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 	}
 	
