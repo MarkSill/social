@@ -7,16 +7,20 @@ import java.util.Map;
 
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 import com.marksill.social.Social;
 import com.marksill.social.lua.Convert;
+import com.marksill.social.lua.FireEvent;
 import com.marksill.social.networking.NetworkInterface;
 import com.marksill.social.networking.RequestClient;
 
 public class InstanceEvent extends Instance {
 	
 	public static final String CLASS_NAME = "Event";
+	
+	public FireEvent fire;
 	
 	private List<LuaValue> callbacks;
 
@@ -39,6 +43,7 @@ public class InstanceEvent extends Instance {
 	@Override
 	public void init() {
 		callbacks = new ArrayList<>();
+		fire = new FireEvent();
 	}
 	
 	public void addCallback(LuaValue callback) {
@@ -62,19 +67,25 @@ public class InstanceEvent extends Instance {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void fire(Object arg) {
+	public void fireBE(Object arg) {
 		if (Social.getInstance().isNetworked()) {
 			if (Social.getInstance().isServer()) {
 				if (arg instanceof Map<?, ?>) {
 					arg = Convert.toTable((Map<String, Object>) arg);
+				} else if (arg instanceof List<?>) {
+					arg = Convert.fromList((List<Object>) arg);
+				}
+				Varargs varg;
+				if (!(arg instanceof Varargs)) {
+					varg = CoerceJavaToLua.coerce(arg);
+				} else {
+					varg = (Varargs) arg;
 				}
 				for (LuaValue v : new ArrayList<LuaValue>(callbacks)) {
-					v.call(CoerceJavaToLua.coerce(arg));
+					v.invoke(varg);
 				}
 			} else {
-				if (arg instanceof LuaTable && ((LuaTable) arg).istable()) {
-					arg = Convert.fromTable((LuaTable) arg);
-				}
+				arg = Convert.toList((Varargs) arg);
 				NetworkInterface client = Social.getInstance().getNetworkInterface();
 				Map<String, Object> map = new HashMap<>();
 				map.put("id", id);

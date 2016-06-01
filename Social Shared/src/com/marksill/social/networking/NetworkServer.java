@@ -83,7 +83,7 @@ public class NetworkServer extends NetworkInterface {
 				RequestClient client = (RequestClient) r;
 				Map<String, Object> info = (HashMap<String, Object>) client.data;
 				InstanceEvent event = (InstanceEvent) Instance.getByID((long) info.get("id"));
-				event.fire(info.get("arg"));
+				event.fireBE(info.get("arg"));
 			}
 		}
 	}

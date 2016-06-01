@@ -1,18 +1,21 @@
 package com.marksill.social.lua;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.luaj.vm2.LuaTable;
 import org.luaj.vm2.LuaValue;
+import org.luaj.vm2.Varargs;
 import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 
 public class Convert {
 	
-	public static LuaValue toTable(Map<String, Object> map) {
-		LuaTable val = LuaTable.tableOf();
-		toTable(val, map);
-		return val;
+	public static LuaTable toTable(Map<String, Object> map) {
+		LuaTable tbl = LuaTable.tableOf();
+		toTable(tbl, map);
+		return tbl;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -34,7 +37,7 @@ public class Convert {
 		for (LuaValue key : keys) {
 			String k = key.checkjstring();
 			LuaValue val = tbl.get(key);
-			Object v;
+			Object v = null;
 			if (val.istable()) {
 				v = fromTable((LuaTable) val);
 			} else if (val.isboolean()) {
@@ -43,12 +46,37 @@ public class Convert {
 				v = val.checkdouble();
 			} else if (val.isstring()) {
 				v = val.checkjstring();
-			} else {
-				v = null;
 			}
 			map.put(k, v);
 		}
 		return map;
+	}
+	
+	public static LuaTable fromList(List<Object> list) {
+		LuaTable tbl = LuaTable.tableOf();
+		for (Object o : list) {
+			tbl.insert(tbl.length(), CoerceJavaToLua.coerce(o));
+		}
+		return tbl;
+	}
+	
+	public static List<Object> toList(Varargs args) {
+		List<Object> list = new ArrayList<>();
+		for (int i = 1; i <= args.narg(); i++) {
+			LuaValue arg = args.arg(i);
+			Object o = null;
+			if (arg.istable()) {
+				o = fromTable((LuaTable) arg);
+			} else if (arg.isboolean()) {
+				o = arg.checkboolean();
+			} else if (arg.isnumber()) {
+				o = arg.checkdouble();
+			} else if (arg.isstring()) {
+				o = arg.checkjstring();
+			}
+			list.add(o);
+		}
+		return list;
 	}
 
 }

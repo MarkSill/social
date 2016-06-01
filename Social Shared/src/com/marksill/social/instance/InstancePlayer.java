@@ -194,7 +194,9 @@ public class InstancePlayer extends Instance {
 	@Override
 	public void delete() {
 		for (LuaValue v : removedCallbacks) {
-			v.call(CoerceJavaToLua.coerce(this));
+			if (v != null) {
+				v.call(CoerceJavaToLua.coerce(this));
+			}
 		}
 		super.delete();
 	}

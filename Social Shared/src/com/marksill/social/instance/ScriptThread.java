@@ -64,11 +64,12 @@ public class ScriptThread extends Thread {
 		g.set("Color", CoerceJavaToLua.coerce(new LuaColor()));
 		g.set("Images", CoerceJavaToLua.coerce(InstanceImages.class));
 		g.set("Joints", CoerceJavaToLua.coerce(InstanceJoints.class));
-		g.set("print", CoerceJavaToLua.coerce(new Print()));
 		if (script instanceof InstanceClientScript) {
 			g.set("Keyboard", CoerceJavaToLua.coerce(Keyboard.class));
 			g.set("Controllers", CoerceJavaToLua.coerce(LuaControllers.class));
 			g.set("player", CoerceJavaToLua.coerce(new GetPlayer()));
+		} else {
+			g.set("print", CoerceJavaToLua.coerce(new Print()));
 		}
 		try {
 			Thread.sleep(100);
