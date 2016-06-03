@@ -17,11 +17,11 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import org.luaj.vm2.lib.jse.JsePlatform;
 import org.lwjgl.input.Keyboard;
 
+import com.marksill.social.lua.FireEvent;
 import com.marksill.social.lua.GetPlayer;
 import com.marksill.social.lua.LuaColor;
 import com.marksill.social.lua.LuaControllers;
 import com.marksill.social.lua.LuaWait;
-import com.marksill.social.lua.Print;
 
 /**
  * A class for running scripts in their own threads.
@@ -68,8 +68,9 @@ public class ScriptThread extends Thread {
 			g.set("Keyboard", CoerceJavaToLua.coerce(Keyboard.class));
 			g.set("Controllers", CoerceJavaToLua.coerce(LuaControllers.class));
 			g.set("player", CoerceJavaToLua.coerce(new GetPlayer()));
+			g.set("fire", CoerceJavaToLua.coerce(new FireEvent()));
 		} else {
-			g.set("print", CoerceJavaToLua.coerce(new Print()));
+			//g.set("print", CoerceJavaToLua.coerce(new Print()));
 		}
 		try {
 			Thread.sleep(100);

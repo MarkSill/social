@@ -52,12 +52,13 @@ public class Convert {
 		return map;
 	}
 	
-	public static LuaTable fromList(List<Object> list) {
-		LuaTable tbl = LuaTable.tableOf();
-		for (Object o : list) {
-			tbl.insert(tbl.length(), CoerceJavaToLua.coerce(o));
+	public static Varargs fromList(List<Object> list) {
+		LuaValue[] values = new LuaValue[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			Object o = list.get(i);
+			values[i] = CoerceJavaToLua.coerce(o);
 		}
-		return tbl;
+		return LuaValue.varargsOf(values);
 	}
 	
 	public static List<Object> toList(Varargs args) {

@@ -8,6 +8,10 @@ import com.marksill.social.instance.InstanceEvent;
 
 public class FireEvent extends VarArgFunction {
 	
+	public FireEvent() {
+		super();
+	}
+	
 	@Override
 	public Varargs invoke(Varargs args) {
 		InstanceEvent event = null;

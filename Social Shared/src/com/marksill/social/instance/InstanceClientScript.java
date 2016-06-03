@@ -34,7 +34,6 @@ public class InstanceClientScript extends InstanceScript {
 		super.loadFromMap(map);
 		if (map.get("code") != null) {
 			code = (String) map.get("code");
-			System.out.println("test");
 			startStop();
 		}
 	}

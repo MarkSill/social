@@ -43,7 +43,7 @@ public class InstanceEvent extends Instance {
 	@Override
 	public void init() {
 		callbacks = new ArrayList<>();
-		fire = new FireEvent();
+		//fire = new FireEvent();
 	}
 	
 	public void addCallback(LuaValue callback) {
