@@ -161,15 +161,15 @@ public class InstanceBlock extends Instance implements Cloneable {
 				}
 			}
 			lastFriction = friction;
+			if (rotationLocked) {
+				body.getTransform().setRotation(rotation);
+			}
 			if (rotation != lastRotation) {
 				body.getTransform().setRotation(Math.toRadians(rotation));
 				lastRotation = rotation;
 			} else {
 				rotation = body.getTransform().getRotation();
 				lastRotation = rotation;
-			}
-			if (rotationLocked) {
-				body.getTransform().setRotation(rotation);
 			}
 			if (!velocity.difference(lastVelocity).isZero()) {
 				body.setLinearVelocity(velocity);
