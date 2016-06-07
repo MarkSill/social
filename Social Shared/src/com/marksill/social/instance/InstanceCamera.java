@@ -35,7 +35,7 @@ public class InstanceCamera extends Instance {
 	@Override
 	public void init() {
 		position = new Vector2();
-		scale = new Vector2();
+		scale = new Vector2(0.5, 0.5);
 		size = new Vector2(800, 600);
 	}
 	
@@ -62,7 +62,11 @@ public class InstanceCamera extends Instance {
 	}
 	
 	public void translate(Graphics g) {
-		g.translate((float) -position.x * NotGameState.PPM + Social.getInstance().getContainer().getWidth() / 2, (float) -position.y * NotGameState.PPM - Social.getInstance().getContainer().getHeight() / 2);
+		g.translate((float) -position.x * NotGameState.PPM + ((float) (Social.getInstance().getContainer().getWidth() / scale.x) / 2), (float) -position.y * NotGameState.PPM - ((float) (Social.getInstance().getContainer().getHeight() / scale.y) / 2 - (float) (Social.getInstance().getContainer().getHeight() * (1.5 - scale.y))));
+	}
+	
+	public void zoom(Graphics g) {
+		g.scale((float) scale.x, (float) scale.y);
 	}
 	
 	public static InstanceCamera getCamera() {

@@ -128,6 +128,7 @@ public class NotGameState extends NotState {
 		InstanceCamera cam = InstanceCamera.getCamera();
 		g.pushTransform();
 		if (cam != null) {
+			cam.zoom(g);
 			cam.translate(g);
 			renderSelection(Instance.game.findChild("World"), g, social, cam);
 			renderInstances(Instance.game.findChild("World"), g, social, cam);
