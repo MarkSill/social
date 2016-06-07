@@ -273,9 +273,11 @@ public class InstanceBlock extends Instance implements Cloneable {
 	
 	@Override
 	public void delete() {
-		InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
-		if (world != null) {
-			world.removeBody(body);
+		if (Instance.game != null) {
+			InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
+			if (world != null) {
+				world.removeBody(body);
+			}
 		}
 		super.delete();
 	}
