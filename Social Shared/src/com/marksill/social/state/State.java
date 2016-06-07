@@ -90,12 +90,12 @@ public class State extends BasicGameState {
 	@Override
 	public void mousePressed(int button, int x, int y) {
 		InstanceCamera cam = InstanceCamera.getCamera();
-		x = (int) -(((Social.getInstance().getContainer().getWidth() / 2) / NotGameState.PPM - cam.position.x) - (x / NotGameState.PPM));
-		y = (int) (((Social.getInstance().getContainer().getHeight() / 2) / NotGameState.PPM - cam.position.y) - (y / NotGameState.PPM));
+		float fx = (float) -(((Social.getInstance().getContainer().getWidth() / 2) / NotGameState.PPM - cam.position.x) - (x / NotGameState.PPM));
+		float fy = (float) (((Social.getInstance().getContainer().getHeight() / 2) / NotGameState.PPM - cam.position.y) - (y / NotGameState.PPM));
 		if (Social.getInstance().isRunning()) {
 			super.mousePressed(button, x, y);
 			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
-				pl.fireMousePressCallbacks(button, x, y);
+				pl.fireMousePressCallbacks(button, fx, fy);
 			}
 		}
 	}
@@ -103,12 +103,12 @@ public class State extends BasicGameState {
 	@Override
 	public void mouseReleased(int button, int x, int y) {
 		InstanceCamera cam = InstanceCamera.getCamera();
-		x = (int) -(((Social.getInstance().getContainer().getWidth() / 2) / NotGameState.PPM - cam.position.x) - (x / NotGameState.PPM));
-		y = (int) (((Social.getInstance().getContainer().getHeight() / 2) / NotGameState.PPM - cam.position.y) - (y / NotGameState.PPM));
+		float fx = (float) -(((Social.getInstance().getContainer().getWidth() / 2) / NotGameState.PPM - cam.position.x) - (x / NotGameState.PPM));
+		float fy = (float) (((Social.getInstance().getContainer().getHeight() / 2) / NotGameState.PPM - cam.position.y) - (y / NotGameState.PPM));
 		if (Social.getInstance().isRunning()) {
 			super.mouseReleased(button, x, y);
 			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
-				pl.fireMouseReleaseCallbacks(button, x, y);
+				pl.fireMouseReleaseCallbacks(button, fx, fy);
 			}
 		}
 	}
@@ -116,12 +116,12 @@ public class State extends BasicGameState {
 	@Override
 	public void mouseClicked(int button, int x, int y, int clickCount) {
 		InstanceCamera cam = InstanceCamera.getCamera();
-		x = (int) -(((Social.getInstance().getContainer().getWidth() / 2) / NotGameState.PPM - cam.position.x) - (x / NotGameState.PPM));
-		y = (int) (((Social.getInstance().getContainer().getHeight() / 2) / NotGameState.PPM - cam.position.y) - (y / NotGameState.PPM));
+		float fx = (float) -(((Social.getInstance().getContainer().getWidth() / 2) / NotGameState.PPM - cam.position.x) - (x / NotGameState.PPM));
+		float fy = (float) (((Social.getInstance().getContainer().getHeight() / 2) / NotGameState.PPM - cam.position.y) - (y / NotGameState.PPM));
 		if (Social.getInstance().isRunning()) {
 			super.mouseClicked(button, x, y, clickCount);
 			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
-				pl.fireMouseClickCallbacks(button, x, y, clickCount);
+				pl.fireMouseClickCallbacks(button, fx, fy, clickCount);
 			}
 		}
 	}
@@ -129,14 +129,14 @@ public class State extends BasicGameState {
 	@Override
 	public void mouseMoved(int oldx, int oldy, int newx, int newy) {
 		InstanceCamera cam = InstanceCamera.getCamera();
-		oldx = (int) -(((Social.getInstance().getContainer().getWidth() / 2) / NotGameState.PPM - cam.position.x) - (oldx / NotGameState.PPM));
-		oldy = (int) (((Social.getInstance().getContainer().getHeight() / 2) / NotGameState.PPM - cam.position.y) - (oldy / NotGameState.PPM));
-		newx = (int) -(((Social.getInstance().getContainer().getWidth() / 2) / NotGameState.PPM - cam.position.x) - (newx / NotGameState.PPM));
-		newy = (int) (((Social.getInstance().getContainer().getHeight() / 2) / NotGameState.PPM - cam.position.y) - (newy / NotGameState.PPM));
+		float foldx = (float) -(((Social.getInstance().getContainer().getWidth() / 2) / NotGameState.PPM - cam.position.x) - (oldx / NotGameState.PPM));
+		float foldy = (float) (((Social.getInstance().getContainer().getHeight() / 2) / NotGameState.PPM - cam.position.y) - (oldy / NotGameState.PPM));
+		float fnewx = (float) -(((Social.getInstance().getContainer().getWidth() / 2) / NotGameState.PPM - cam.position.x) - (newx / NotGameState.PPM));
+		float fnewy = (float) (((Social.getInstance().getContainer().getHeight() / 2) / NotGameState.PPM - cam.position.y) - (newy / NotGameState.PPM));
 		if (Social.getInstance().isRunning()) {
 			super.mouseMoved(oldx, oldy, newx, newy);
 			for (InstancePlayer pl : ((InstancePlayers) Instance.game.findChild("Players")).getPlayersAsList()) {
-				pl.fireMouseMovedCallbacks(oldx, oldy, newx, newy);
+				pl.fireMouseMovedCallbacks(foldx, foldy, fnewx, fnewy);
 			}
 		}
 	}

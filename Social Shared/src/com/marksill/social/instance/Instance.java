@@ -378,6 +378,9 @@ public class Instance implements Cloneable {
 		case "script":
 			instance = new InstanceScript(name, parent);
 			break;
+		case "value":
+			instance = new InstanceValue(name, parent);
+			break;
 		case "world":
 			instance = new InstanceWorld(name, parent);
 			break;

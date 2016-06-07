@@ -239,17 +239,21 @@ public class InstanceBlock extends Instance implements Cloneable {
 	
 	@Override
 	public void setParent(Instance parent) {
-		InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
-		int mode = 0; //0 = do nothing; 1 = add; 2 = remove
-		if (childOf(world) && (parent == null || (!parent.childOf(world) && parent != world))) {
-			mode = 2;
-		} else if (parent != null && (parent.childOf(world) || parent == world)) {
-			mode = 1;
-		}
-		if (mode == 1) {
-			world.addBody(body);
-		} else if (mode == 2) {
-			world.removeBody(body);
+		if (Instance.game != null) {
+			InstanceWorld world = (InstanceWorld) Instance.game.findChild("World");
+			if (world != null) {
+				int mode = 0; //0 = do nothing; 1 = add; 2 = remove
+				if (childOf(world) && (parent == null || (!parent.childOf(world) && parent != world))) {
+					mode = 2;
+				} else if (parent != null && (parent.childOf(world) || parent == world)) {
+					mode = 1;
+				}
+				if (mode == 1) {
+					world.addBody(body);
+				} else if (mode == 2) {
+					world.removeBody(body);
+				}
+			}
 		}
 		super.setParent(parent);
 	}

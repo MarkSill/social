@@ -106,7 +106,7 @@ public class InstancePlayer extends Instance {
 		mousePressCallbacks.add(func);
 	}
 	
-	public void fireMousePressCallbacks(int button, int x, int y) {
+	public void fireMousePressCallbacks(int button, float x, float y) {
 		for (LuaValue v : mousePressCallbacks) {
 			v.call(LuaValue.valueOf(button), LuaValue.valueOf(x), LuaValue.valueOf(y));
 		}
@@ -120,7 +120,7 @@ public class InstancePlayer extends Instance {
 		mouseReleaseCallbacks.add(func);
 	}
 	
-	public void fireMouseReleaseCallbacks(int button, int x, int y) {
+	public void fireMouseReleaseCallbacks(int button, float x, float y) {
 		for (LuaValue v : mouseReleaseCallbacks) {
 			v.call(LuaValue.valueOf(button), LuaValue.valueOf(x), LuaValue.valueOf(y));
 		}
@@ -134,7 +134,7 @@ public class InstancePlayer extends Instance {
 		mouseClickCallbacks.add(func);
 	}
 	
-	public void fireMouseClickCallbacks(int button, int x, int y, int clickCount) {
+	public void fireMouseClickCallbacks(int button, float x, float y, int clickCount) {
 		for (LuaValue v : mouseClickCallbacks) {
 			v.invoke(LuaValue.varargsOf(new LuaValue[] {LuaValue.valueOf(button), LuaValue.valueOf(x), LuaValue.valueOf(y), LuaValue.valueOf(clickCount)}));
 		}
@@ -148,7 +148,7 @@ public class InstancePlayer extends Instance {
 		mouseMovedCallbacks.add(func);
 	}
 	
-	public void fireMouseMovedCallbacks(int oldX, int oldY, int x, int y) {
+	public void fireMouseMovedCallbacks(float oldX, float oldY, float x, float y) {
 		for (LuaValue v : mouseMovedCallbacks) {
 			v.invoke(LuaValue.varargsOf(new LuaValue[] {LuaValue.valueOf(oldX), LuaValue.valueOf(oldY), LuaValue.valueOf(x), LuaValue.valueOf(y)}));
 		}

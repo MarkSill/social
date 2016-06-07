@@ -74,6 +74,7 @@ import com.marksill.social.instance.InstanceJoints;
 import com.marksill.social.instance.InstancePlayers;
 import com.marksill.social.instance.InstanceRectangle;
 import com.marksill.social.instance.InstanceScript;
+import com.marksill.social.instance.InstanceValue;
 import com.marksill.social.instance.InstanceWorld;
 import com.marksill.social.networking.NetworkServer;
 import com.marksill.social.xml.XML;
@@ -597,6 +598,12 @@ public class SocialEditor extends JFrame implements ActionListener, KeyListener,
 						script.tabIndex = contentPane.getTabCount() - 1;
 						contentPane.setSelectedIndex(script.tabIndex);
 					}
+					break;
+				case "InstanceValue":
+					InstanceValue value = (InstanceValue) inst;
+					values = mergeValues(values, new Object[][] {
+						{"Value", value.value}
+					});
 					break;
 				case "InstanceWorld":
 					InstanceWorld world = (InstanceWorld) inst;
